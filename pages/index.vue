@@ -1,5 +1,5 @@
 <template>
-  <Tutorial/>
+  <h1>BipBopBot</h1>
 </template>
 
 <script>
