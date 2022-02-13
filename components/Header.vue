@@ -1,5 +1,6 @@
 <template>
   <div class="header">
+
     <div class="header-side">
       <div class="header-logo" @click="redirect('/')">
         LOGO
@@ -10,6 +11,9 @@
         <div class="header-nav-menu">Nav menu 3</div>
       </div>
     </div>
+
+    <div class="header-middle"></div>
+
     <div class="header-side">
       <div class="user-nav" @click="redirect('login')">
         <div class="user-nav-button">
@@ -22,6 +26,7 @@
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
