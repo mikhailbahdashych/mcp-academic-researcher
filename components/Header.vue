@@ -1,5 +1,19 @@
 <template>
-  <div class="header"></div>
+  <div class="header">
+    <div class="header-left-side"></div>
+    <div class="header-right-side">
+      <div class="user-nav">
+        <div class="user-nav-button">
+          Log in
+        </div>
+      </div>
+      <div class="user-nav">
+        <div class="user-nav-button filled">
+          Sign up
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
