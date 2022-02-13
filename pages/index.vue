@@ -1,9 +1,15 @@
 <template>
-  <h1>BipBopBot</h1>
+  <div>
+    <Header />
+  </div>
 </template>
 
 <script>
+import Header from "~/components/Header";
 export default {
-  name: 'IndexPage'
+  name: 'IndexPage',
+  components: {
+    Header
+  }
 }
 </script>
