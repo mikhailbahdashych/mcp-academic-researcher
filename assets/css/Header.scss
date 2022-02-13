@@ -10,11 +10,18 @@
   .header-left-side {
     width: 30%;
     background-color: blueviolet;
+    min-width: 350px;
+    .header-logo {
+      width: 25%;
+      height: 50px;
+      background-color: blue;
+    }
   }
   .header-right-side {
     display: flex;
     width: 25%;
     background-color: black;
+    min-width: 350px;
     .user-nav {
       color: rgb(0, 20, 42);
       cursor: pointer;

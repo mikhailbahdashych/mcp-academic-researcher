@@ -1,6 +1,10 @@
 <template>
   <div class="header">
-    <div class="header-left-side"></div>
+    <div class="header-left-side">
+      <div class="header-logo">
+        LOGO
+      </div>
+    </div>
     <div class="header-right-side">
       <div class="user-nav">
         <div class="user-nav-button">
