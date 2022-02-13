@@ -1,11 +1,12 @@
 <template>
   <div class="header">
-    <div class="header-left-side">
+    <div class="header-side">
       <div class="header-logo">
         LOGO
       </div>
+      <div class="header-nav"></div>
     </div>
-    <div class="header-right-side">
+    <div class="header-side">
       <div class="user-nav">
         <div class="user-nav-button">
           Log in

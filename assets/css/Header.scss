@@ -7,21 +7,22 @@
   display: flex;
   position: fixed;
   justify-content: space-between;
-  .header-left-side {
+  .header-side {
     width: 30%;
-    background-color: blueviolet;
     min-width: 350px;
+    display: flex;
     .header-logo {
       width: 25%;
       height: 50px;
       background-color: blue;
+      min-width: 160px;
     }
-  }
-  .header-right-side {
-    display: flex;
-    width: 25%;
-    background-color: black;
-    min-width: 350px;
+    .header-nav {
+      width: 75%;
+      height: 50px;
+      background-color: cyan;
+      min-width: 320px;
+    }
     .user-nav {
       color: rgb(0, 20, 42);
       cursor: pointer;
