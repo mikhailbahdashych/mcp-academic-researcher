@@ -4,7 +4,11 @@
       <div class="header-logo">
         LOGO
       </div>
-      <div class="header-nav"></div>
+      <div class="header-nav">
+        <div class="header-nav-menu">Nav menu 1</div>
+        <div class="header-nav-menu">Nav menu 2</div>
+        <div class="header-nav-menu">Nav menu 3</div>
+      </div>
     </div>
     <div class="header-side">
       <div class="user-nav">
