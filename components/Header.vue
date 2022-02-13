@@ -1,7 +1,7 @@
 <template>
   <div class="header">
     <div class="header-side">
-      <div class="header-logo">
+      <div class="header-logo" @click="redirect('/')">
         LOGO
       </div>
       <div class="header-nav">
@@ -11,12 +11,12 @@
       </div>
     </div>
     <div class="header-side">
-      <div class="user-nav">
+      <div class="user-nav" @click="redirect('login')">
         <div class="user-nav-button">
           Log in
         </div>
       </div>
-      <div class="user-nav">
+      <div class="user-nav" @click="redirect('login')">
         <div class="user-nav-button filled">
           Sign up
         </div>
@@ -31,6 +31,11 @@ export default {
   data() {
     return {
 
+    }
+  },
+  methods: {
+    redirect(path) {
+      this.$router.push({ path: path })
     }
   }
 }
