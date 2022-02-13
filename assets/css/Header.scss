@@ -7,13 +7,16 @@
   display: flex;
   position: fixed;
   justify-content: space-between;
+
   .header-middle {
     width: 40%;
     background-color: black;
+    min-width: 500px;
   }
+
   .header-side {
     width: 30%;
-    min-width: 350px;
+    min-width: 500px;
     display: flex;
     .header-logo {
       width: 25%;
