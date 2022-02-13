@@ -1,6 +1,9 @@
 <template>
   <div>
     <Header />
+    <div style="padding-top: 50px">
+      
+    </div>
   </div>
 </template>
 

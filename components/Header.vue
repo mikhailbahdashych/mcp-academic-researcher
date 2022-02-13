@@ -23,7 +23,12 @@
 
 <script>
 export default {
-  name: "Header"
+  name: "Header",
+  data() {
+    return {
+
+    }
+  }
 }
 </script>
 
