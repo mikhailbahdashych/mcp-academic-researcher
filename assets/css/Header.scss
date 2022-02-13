@@ -12,6 +12,14 @@
     width: 40%;
     background-color: black;
     min-width: 500px;
+    display: flex;
+    padding-top: 10px;
+    .header-middle-search {
+      margin: 0 auto;
+      height: 20px;
+      width: 250px;
+      outline: none;
+    }
   }
 
   .header-side {

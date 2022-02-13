@@ -12,7 +12,9 @@
       </div>
     </div>
 
-    <div class="header-middle"></div>
+    <div class="header-middle">
+      <input class="header-middle-search" />
+    </div>
 
     <div class="header-side">
       <div class="user-nav" @click="redirect('login')">
