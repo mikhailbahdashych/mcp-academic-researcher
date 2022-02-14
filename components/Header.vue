@@ -22,7 +22,7 @@
           Log in
         </div>
       </div>
-      <div class="user-nav" @click="redirect('login')">
+      <div class="user-nav" @click="redirect('register')">
         <div class="user-nav-button filled">
           Sign up
         </div>

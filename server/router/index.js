@@ -12,8 +12,7 @@ const router = Router()
 
 router.post(`/login`, async (req, res) => {
   try {
-    console.log('req.body', req.body)
-    const data = await api.post('/register', req.body)
+    const data = await api.post('/login', req.body)
     res.json(data.data)
   } catch (e) {
     console.log(e)
