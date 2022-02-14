@@ -6,6 +6,11 @@
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Log In</h1>
+        <div class="login-options">
+          <p>With Email</p>
+          <div class="vertical-line" />
+          <p>With QR Code</p>
+        </div>
         <p class="paragraph-small">Email</p>
         <Input :type="'email'" />
         <p class="paragraph-small">Password</p>

@@ -18,3 +18,12 @@ body {
     cursor: pointer;
   }
 }
+
+.vertical-line {
+  width: 1px;
+  background-color: black;
+  height: 50px;
+  float: left;
+  opacity: 0.5;
+  margin: 0 20px 0 20px;
+}
