@@ -1,12 +1,18 @@
 <template>
-  <div class="basic-input-outer">
-    <input type="text" class="basic-input">
+  <div class="basic-input-outer" :style="styles">
+    <input :type="type" class="basic-input">
   </div>
 </template>
 
 <script>
 export default {
-  name: "Input"
+  name: "Input",
+  props: ['type', 'styles'],
+  data() {
+    return {
+
+    }
+  }
 }
 </script>
 

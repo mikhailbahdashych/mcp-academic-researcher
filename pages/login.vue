@@ -6,11 +6,12 @@
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Log In</h1>
-        <p>Email</p>
-        <Input />
-        <p>Password</p>
-        <Input />
+        <p class="paragraph-small">Email</p>
+        <Input :type="'email'" />
+        <p class="paragraph-small">Password</p>
+        <Input :type="'password'" :styles="'padding-bottom: 50px'" />
         <Button />
+        <p class="paragraph-small right pointer">Forgot password?</p>
       </div>
     </div>
   </div>

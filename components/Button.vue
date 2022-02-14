@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <button></button>
+  <div class="basic-button-outer">
+    <button class="basic-button">Log In</button>
   </div>
 </template>
 
@@ -10,6 +10,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+@import "../assets/css/components/Button";
 </style>
