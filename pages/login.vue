@@ -20,6 +20,7 @@
 
         <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" />
         <Button />
+        <button @click="logintest">LOGIN</button>
         <p class="paragraph-small right pointer">Forgot password?</p>
 
       </div>
@@ -28,6 +29,7 @@
 </template>
 
 <script>
+import { login } from "@/api"
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Header from "@/components/Header";
@@ -49,6 +51,10 @@ export default {
     this.chooseLogin('email')
   },
   methods: {
+    async logintest() {
+      const res = await login({testPayload: 123})
+      console.log(res)
+    },
     redirect(path) {
       this.$router.push({ path: path })
     },

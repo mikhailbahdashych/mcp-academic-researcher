@@ -1,5 +1,19 @@
+// eslint-disable-next-line nuxt/no-cjs-in-config
+const dotenv = require('dotenv');
+dotenv.config()
+
+// eslint-disable-next-line nuxt/no-cjs-in-config
 module.exports = {
   // Global page headers: https://go.nuxtjs.dev/config-head
+  privateRuntimeConfig: {
+    nodeEnv: process.env.NODE_ENV
+  },
+  mode: 'universal',
+  telemetry: false,
+  server: {
+    port: process.env.ENV_PORT,
+    host: process.env.ENV_HOST
+  },
   head: {
     title: 'botcryptotrader-front',
     htmlAttrs: {
@@ -30,6 +44,7 @@ module.exports = {
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
   buildModules: [
     // https://go.nuxtjs.dev/eslint
+    '@nuxtjs/eslint-module',
     '@nuxtjs/google-fonts'
   ],
 
@@ -40,11 +55,14 @@ module.exports = {
     }
   },
 
+  // Modules: https://go.nuxtjs.dev/config-modules
+  modules: [
+    // https://go.nuxtjs.dev/axios
+    '@nuxtjs/axios',
+  ],
+
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
-  },
+  axios: {},
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
