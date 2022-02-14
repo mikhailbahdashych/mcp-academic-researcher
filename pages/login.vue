@@ -26,7 +26,7 @@
 
         <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" />
         <Button :label="'Log In'" :clickon="() => {}" />
-        <p class="paragraph-small right pointer">Forgot password?</p>
+        <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
       </div>
     </div>
