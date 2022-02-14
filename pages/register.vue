@@ -17,7 +17,7 @@
         <Input :title="'Email'" :type="'email'" />
         <Input :title="'Password'" :type="'password'" />
         <Input :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" />
-        <Button />
+        <Button :label="'Sign up'" />
       </div>
     </div>
 

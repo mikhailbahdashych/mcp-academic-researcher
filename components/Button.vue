@@ -1,12 +1,13 @@
 <template>
   <div class="basic-button-outer">
-    <button class="basic-button">Log In</button>
+    <button class="basic-button">{{ label }}</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Button"
+  name: "Button",
+  props: ['label']
 }
 </script>
 

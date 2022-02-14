@@ -25,7 +25,7 @@
         <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" />
 
         <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" />
-        <Button />
+        <Button :label="'Log In'" />
         <p class="paragraph-small right pointer">Forgot password?</p>
 
       </div>
