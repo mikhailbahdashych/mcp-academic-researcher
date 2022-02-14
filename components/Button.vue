@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-button-outer">
+  <div @click="clickon" class="basic-button-outer">
     <button class="basic-button">{{ label }}</button>
   </div>
 </template>
@@ -7,7 +7,7 @@
 <script>
 export default {
   name: "Button",
-  props: ['label']
+  props: ['label', 'clickon']
 }
 </script>
 
