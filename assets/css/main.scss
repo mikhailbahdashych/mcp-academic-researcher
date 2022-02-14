@@ -17,6 +17,9 @@ body {
   &.pointer {
     cursor: pointer;
   }
+  &.link {
+    color: limegreen;
+  }
 }
 
 .vertical-line {

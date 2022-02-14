@@ -5,6 +5,12 @@
       <h1 @click="redirect('/')">Logo</h1>
     </div>
 
+    <div class="login-header">
+      <p class="paragraph-small right pointer">Already have account?
+        <span class="paragraph-small pointer link" @click="redirect('/login')">Log in!</span>
+      </p>
+    </div>
+
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Sign up</h1>
