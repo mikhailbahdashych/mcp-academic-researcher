@@ -40,10 +40,13 @@ export default {
   },
   data() {
     return {
-      loginWithEmail: true,
+      loginWithEmail: null,
       emailFocus: false,
       phoneFocus: false
     }
+  },
+  mounted() {
+    this.chooseLogin('email')
   },
   methods: {
     redirect(path) {
