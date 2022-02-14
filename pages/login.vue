@@ -15,12 +15,8 @@
           <p class="choose" @click="chooseLogin('phone')">With Phone Number</p>
         </div>
 
-        <div v-if="loginWithEmail">
-          <Input :title="'Email'" :type="'email'" />
-        </div>
-        <div v-else>
-          <Input :title="'Phone number'" :type="'email'" />
-        </div>
+        <Input :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" />
+        <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" />
 
         <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" />
         <Button />
@@ -45,6 +41,8 @@ export default {
   data() {
     return {
       loginWithEmail: true,
+      emailFocus: false,
+      phoneFocus: false
     }
   },
   methods: {
@@ -52,7 +50,15 @@ export default {
       this.$router.push({ path: path })
     },
     chooseLogin(option) {
-      this.loginWithEmail = option === 'email';
+      if (option === 'email') {
+        this.loginWithEmail = true
+        this.emailFocus = true
+        this.phoneFocus = false
+      } else {
+        this.loginWithEmail = false
+        this.emailFocus = false
+        this.phoneFocus = true
+      }
     }
   }
 }
