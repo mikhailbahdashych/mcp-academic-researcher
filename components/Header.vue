@@ -49,5 +49,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../assets/css/Header";
+@import "../assets/css/components/Header";
 </style>

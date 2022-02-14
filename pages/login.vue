@@ -4,17 +4,28 @@
       <h1 @click="redirect('/')">Logo</h1>
     </div>
     <div class="login-inputs">
-      <h1>Log In</h1>
+      <div class="login-inputs-container">
+        <h1>Log In</h1>
+        <p>Email</p>
+        <Input />
+        <p>Password</p>
+        <Input />
+        <Button />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import Input from "@/components/Input";
+import Button from "@/components/Button";
 import Header from "@/components/Header";
 export default {
   name: "login",
   components: {
-    Header
+    Header,
+    Input,
+    Button
   },
   data() {
     return {

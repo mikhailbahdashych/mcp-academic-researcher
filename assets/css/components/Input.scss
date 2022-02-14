@@ -1,0 +1,17 @@
+.basic-input-outer {
+  //padding-bottom: 50px;
+  .basic-input {
+    min-width: 500px;
+    min-height: 35px;
+    border-radius: 7.5px;
+    outline: none;
+    border: none;
+    background-color: rgba(#333, 0.075);
+    padding: 0 0 0 16px;
+
+    height: 48px;
+    font-size: 16px;
+    line-height: 24px;
+
+  }
+}
