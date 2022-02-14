@@ -22,9 +22,15 @@
     justify-content: center;
 
     .login-inputs-container {
-      display: block;
       .login-options {
         display: flex;
+        .choose {
+          cursor: pointer;
+          transition: 0.2s;
+        }
+        .choose:hover {
+          color: lightgreen;
+        }
       }
     }
 
