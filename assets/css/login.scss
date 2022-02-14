@@ -1,1 +1,21 @@
 @import "main";
+
+.login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  .login-content {
+    height: 100vh;
+    width: 40%;
+    background-color: lightcyan;
+  }
+
+  .login-inputs {
+    width: 600px;
+    height: 600px;
+    position: relative;
+    margin: 0 auto;
+    background-color: lightsalmon;
+  }
+}
