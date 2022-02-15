@@ -18,6 +18,7 @@
         <Input :title="'Password'" :type="'password'" v-model="password" />
         <Input :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="passwordRepeat" />
         <Button :label="'Sign up'" :clickon="register" />
+        <p v-if="error">Passwords have to match!</p>
       </div>
     </div>
 
@@ -34,13 +35,21 @@ export default {
     Input,
     Button
   },
+  watch: {
+    password() {
+      this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null);
+    },
+    passwordRepeat() {
+      this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null);
+    }
+  },
   data() {
     return {
       email: null,
       password: null,
       passwordRepeat: null,
       status: null,
-      error: null
+      error: false
     }
   },
   methods: {
@@ -55,7 +64,7 @@ export default {
         })
         this.status = res.status
       } else {
-
+        this.error = true
       }
     }
   }
