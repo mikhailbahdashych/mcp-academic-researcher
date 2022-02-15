@@ -37,7 +37,8 @@ export default {
   data() {
     return {
       email: null,
-      password: null
+      password: null,
+      status: null
     }
   },
   methods: {
@@ -49,7 +50,7 @@ export default {
         email: this.email,
         password: this.password
       })
-      console.log(res)
+      this.status = res.status
     }
   }
 }
