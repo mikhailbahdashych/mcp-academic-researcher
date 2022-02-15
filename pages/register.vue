@@ -17,7 +17,7 @@
         <Input :error="error" :title="'Email'" :type="'email'" v-model="email" />
         <Input :error="error" :title="'Password'" :type="'password'" v-model="password" />
         <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 20px'" v-model="passwordRepeat" />
-        <Checkbox :options="['asd']" />
+        <Checkbox :label="'I have read and accepted terms and conditions.'" />
         <Button :label="'Sign up'" :clickon="register" />
         <p v-if="error">Passwords have to match!</p>
       </div>
