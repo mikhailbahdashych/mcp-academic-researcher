@@ -16,7 +16,8 @@
         <h1>Sign up</h1>
         <Input :error="error" :title="'Email'" :type="'email'" v-model="email" />
         <Input :error="error" :title="'Password'" :type="'password'" v-model="password" />
-        <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="passwordRepeat" />
+        <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 20px'" v-model="passwordRepeat" />
+        <Checkbox :options="['asd']" />
         <Button :label="'Sign up'" :clickon="register" />
         <p v-if="error">Passwords have to match!</p>
       </div>
@@ -29,11 +30,13 @@
 import { register } from "@/api";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
+import Checkbox from "@/components/Checkbox";
 export default {
   name: "register",
   components: {
     Input,
-    Button
+    Button,
+    Checkbox
   },
   watch: {
     password() {
