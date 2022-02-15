@@ -57,14 +57,12 @@ export default {
       this.$router.push({ path: path })
     },
     async register() {
-      if (this.password === this.passwordRepeat) {
+      if (!this.error) {
         const res = await register({
           email: this.email,
           password: this.password
         })
         this.status = res.status
-      } else {
-        this.error = true
       }
     }
   }
