@@ -16,7 +16,7 @@
         <h1>Sign up</h1>
         <Input :title="'Email'" :type="'email'" v-model="email" />
         <Input :title="'Password'" :type="'password'" v-model="password" />
-        <Input :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" />
+        <Input :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="passwordRepeat" />
         <Button :label="'Sign up'" :clickon="register" />
       </div>
     </div>
@@ -38,7 +38,9 @@ export default {
     return {
       email: null,
       password: null,
-      status: null
+      passwordRepeat: null,
+      status: null,
+      error: null
     }
   },
   methods: {
@@ -46,11 +48,15 @@ export default {
       this.$router.push({ path: path })
     },
     async register() {
-      const res = await register({
-        email: this.email,
-        password: this.password
-      })
-      this.status = res.status
+      if (this.password === this.passwordRepeat) {
+        const res = await register({
+          email: this.email,
+          password: this.password
+        })
+        this.status = res.status
+      } else {
+
+      }
     }
   }
 }
