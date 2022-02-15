@@ -14,9 +14,9 @@
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Sign up</h1>
-        <Input :title="'Email'" :type="'email'" v-model="email" />
-        <Input :title="'Password'" :type="'password'" v-model="password" />
-        <Input :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="passwordRepeat" />
+        <Input :error="error" :title="'Email'" :type="'email'" v-model="email" />
+        <Input :error="error" :title="'Password'" :type="'password'" v-model="password" />
+        <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="passwordRepeat" />
         <Button :label="'Sign up'" :clickon="register" />
         <p v-if="error">Passwords have to match!</p>
       </div>
@@ -57,7 +57,7 @@ export default {
       this.$router.push({ path: path })
     },
     async register() {
-      if (!this.error) {
+      if (!this.error && this.password && this.passwordRepeat && this.email) {
         const res = await register({
           email: this.email,
           password: this.password

@@ -4,6 +4,7 @@
     <input
       ref="name"
       class="basic-input"
+      :class="[error ? 'error' : '']"
       :type="type"
       :disabled="disabled"
       :placeholder="placeholder"
@@ -45,6 +46,10 @@ export default {
     styles: {
       type: String,
       default: ''
+    },
+    error: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
