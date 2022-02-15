@@ -11,7 +11,6 @@ const api = axios.create({
 })
 
 export const login = async (payload) => {
-  console.log('payload', payload)
   const { data } = await api.post(`login`, payload)
   return data
 }
