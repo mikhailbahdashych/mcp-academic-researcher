@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <input type="checkbox" class="test" />
-  </div>
+  <label class="container">Three
+    <input type="checkbox">
+    <span class="checkmark"></span>
+  </label>
+
 </template>
 
 <script>
