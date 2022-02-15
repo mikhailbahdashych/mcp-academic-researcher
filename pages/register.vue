@@ -14,10 +14,10 @@
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Sign up</h1>
-        <Input :title="'Email'" :type="'email'" />
-        <Input :title="'Password'" :type="'password'" />
+        <Input :title="'Email'" :type="'email'" v-model="email" />
+        <Input :title="'Password'" :type="'password'" v-model="password" />
         <Input :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 50px'" />
-        <Button :label="'Sign up'" :clickon="() => {}" />
+        <Button :label="'Sign up'" :clickon="register" />
       </div>
     </div>
 
@@ -36,7 +36,8 @@ export default {
   },
   data() {
     return {
-
+      email: null,
+      password: null
     }
   },
   methods: {
@@ -44,7 +45,11 @@ export default {
       this.$router.push({ path: path })
     },
     async register() {
-      const res = await register()
+      const res = await register({
+        email: this.email,
+        password: this.password
+      })
+      console.log(res)
     }
   }
 }
