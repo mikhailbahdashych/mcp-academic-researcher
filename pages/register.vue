@@ -62,13 +62,13 @@ export default {
     },
     async register() {
       console.log(this.tac)
-      // if (!this.error && this.password && this.passwordRepeat && this.email) {
-      //   const res = await register({
-      //     email: this.email,
-      //     password: this.password
-      //   })
-      //   this.status = res.status
-      // }
+      if (!this.error && this.password && this.passwordRepeat && this.email) {
+        const res = await register({
+          email: this.email,
+          password: this.password
+        })
+        this.status = res.status
+      }
     }
   }
 }
