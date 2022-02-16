@@ -1,15 +1,16 @@
 <template>
-  <div style="display: flex; padding-top: 12px; padding-bottom: 12px">
+  <div class="checkbox-container">
     <label class="container">
       <input type="checkbox">
       <span class="checkmark"></span>
     </label>
-    <p style="padding-top: 3px; margin: 0">Here is some text</p>
+    <p class="checkbox-paragraph" v-html="label" />
   </div>
 </template>
 
 <script>
 export default {
+  props: ['label'],
   name: "Checkbox"
 }
 </script>

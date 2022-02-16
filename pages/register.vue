@@ -16,8 +16,8 @@
         <h1>Sign up</h1>
         <Input :error="error" :title="'Email'" :type="'email'" v-model="email" />
         <Input :error="error" :title="'Password'" :type="'password'" v-model="password" />
-        <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 20px'" v-model="passwordRepeat" />
-        <Checkbox :label="'I have read and accepted terms and conditions.'" />
+        <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
+        <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
         <p v-if="error">Passwords have to match!</p>
       </div>
@@ -52,7 +52,8 @@ export default {
       password: null,
       passwordRepeat: null,
       status: null,
-      error: false
+      error: false,
+      tac: false
     }
   },
   methods: {
@@ -60,13 +61,14 @@ export default {
       this.$router.push({ path: path })
     },
     async register() {
-      if (!this.error && this.password && this.passwordRepeat && this.email) {
-        const res = await register({
-          email: this.email,
-          password: this.password
-        })
-        this.status = res.status
-      }
+      console.log(this.tac)
+      // if (!this.error && this.password && this.passwordRepeat && this.email) {
+      //   const res = await register({
+      //     email: this.email,
+      //     password: this.password
+      //   })
+      //   this.status = res.status
+      // }
     }
   }
 }
