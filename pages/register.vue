@@ -19,7 +19,6 @@
         <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
-<!--        <input type="checkbox" v-model="tac">-->
         <p v-if="error">Passwords have to match!</p>
       </div>
     </div>
@@ -29,7 +28,7 @@
 
 <script>
 import { register } from "~/api";
-// import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
+import { mapActions } from 'vuex';
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Checkbox from "~/components/Checkbox";
@@ -41,35 +40,59 @@ export default {
     Checkbox
   },
   watch: {
-    tac: function () {
-      this.$store.dispatch("fetchTac", this.tac)
-      console.log(this.$store.getters.getTac)
-    },
+    ...mapActions(['fetchTac', 'fetchError', 'fetchStatus', 'fetchPasswordRepeat', 'fetchPassword', 'fetchEmail']),
     password() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
     passwordRepeat() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) }
   },
-  data() {
-    return {
-      email: null,
-      password: null,
-      passwordRepeat: null,
-      status: null,
-      error: false,
-      tac: false
+  computed: {
+    error: {
+      get() { return this.$store.getters.getError },
+      set(value) { this.$store.commit('setError', value) }
+    },
+    email: {
+      get() { return this.$store.getters.getEmail },
+      set(value) { this.$store.commit('setEmail', value) }
+    },
+    password: {
+      get() { return this.$store.getters.getPassword },
+      set(value) { this.$store.commit('setPassword', value) }
+    },
+    passwordRepeat: {
+      get() { return this.$store.getters.getPasswordRepeat },
+      set(value) { this.$store.commit('setPasswordRepeat', value) }
+    },
+    status: {
+      get() { return this.$store.getters.getStatus },
+      set(value) { this.$store.commit('setStatus', value) }
+    },
+    tac: {
+      get() { return this.$store.getters.getError },
+      set(value) { this.$store.commit('setTac', value) }
     }
   },
+  // data() {
+  //   return {
+  //     email: null,
+  //     password: null,
+  //     passwordRepeat: null,
+  //     status: null,
+  //     error: false,
+  //     tac: false
+  //   }
+  // },
   methods: {
     redirect(path) {
       this.$router.push({ path })
     },
     async register() {
-      if (!this.error && this.password && this.passwordRepeat && this.email) {
-        const res = await register({
-          email: this.email,
-          password: this.password
-        })
-        this.status = res.status
-      }
+      console.log(this.passwordRepeat, this.password, this.email, this.tac)
+      // if (!this.error && this.password && this.passwordRepeat && this.email) {
+      //   const res = await register({
+      //     email: this.email,
+      //     password: this.password
+      //   })
+      //   this.status = res.status
+      // }
     }
   }
 }

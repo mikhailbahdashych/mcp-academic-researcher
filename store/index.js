@@ -17,10 +17,7 @@ export const mutations = {
 }
 
 export const actions = {
-  fetchEmail(ctx, value) {
-    console.log(value)
-    ctx.commit('setEmail', value)
-  },
+  fetchEmail(ctx, value) { ctx.commit('setEmail', value) },
   fetchPassword(ctx, value) { ctx.commit('setPassword', value) },
   fetchPasswordRepeat(ctx, value) { ctx.commit('setPasswordRepeat', value) },
   fetchStatus(ctx, value) { ctx.commit('setStatus', value) },
@@ -30,9 +27,9 @@ export const actions = {
 
 export const getters = {
   getEmail: state => state.email,
-  getPassword(state) { return state.password },
-  getPasswordRepeat(state) { return state.passwordRepeat },
-  getStatus(state) { return state.status },
-  getError(state) { return state.error },
-  getTac(state) { return state.tac },
+  getPassword: state => state.password,
+  getPasswordRepeat: state => state.passwordRepeat,
+  getStatus: state => state.status,
+  getError: state => state.error,
+  getTac: state => state.tac,
 }
