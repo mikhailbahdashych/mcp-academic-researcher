@@ -39,12 +39,8 @@ export default {
     Checkbox
   },
   watch: {
-    password() {
-      this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null);
-    },
-    passwordRepeat() {
-      this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null);
-    }
+    password() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
+    passwordRepeat() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) }
   },
   data() {
     return {
@@ -58,7 +54,7 @@ export default {
   },
   methods: {
     redirect(path) {
-      this.$router.push({ path: path })
+      this.$router.push({ path })
     },
     async register() {
       console.log(this.tac)
