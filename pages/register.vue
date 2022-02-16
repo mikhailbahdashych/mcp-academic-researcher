@@ -70,29 +70,18 @@ export default {
       set(value) { this.$store.commit('setTac', value) }
     }
   },
-  // data() {
-  //   return {
-  //     email: null,
-  //     password: null,
-  //     passwordRepeat: null,
-  //     status: null,
-  //     error: false,
-  //     tac: false
-  //   }
-  // },
   methods: {
     redirect(path) {
       this.$router.push({ path })
     },
     async register() {
-      console.log(this.passwordRepeat, this.password, this.email, this.tac)
-      // if (!this.error && this.password && this.passwordRepeat && this.email) {
-      //   const res = await register({
-      //     email: this.email,
-      //     password: this.password
-      //   })
-      //   this.status = res.status
-      // }
+      if (!this.error && this.password && this.passwordRepeat && this.email) {
+        const res = await register({
+          email: this.email,
+          password: this.password
+        })
+        this.status = res.status
+      }
     }
   }
 }
