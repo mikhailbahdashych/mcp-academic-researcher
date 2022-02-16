@@ -19,6 +19,7 @@
         <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
+<!--        <input type="checkbox" v-model="tac">-->
         <p v-if="error">Passwords have to match!</p>
       </div>
     </div>
@@ -40,6 +41,10 @@ export default {
     Checkbox
   },
   watch: {
+    tac: function () {
+      this.$store.dispatch("fetchTac", this.tac)
+      console.log(this.$store.getters.getTac)
+    },
     password() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
     passwordRepeat() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) }
   },
@@ -58,7 +63,6 @@ export default {
       this.$router.push({ path })
     },
     async register() {
-      console.log(this.tac)
       if (!this.error && this.password && this.passwordRepeat && this.email) {
         const res = await register({
           email: this.email,
