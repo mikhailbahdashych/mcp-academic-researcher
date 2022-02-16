@@ -27,10 +27,11 @@
 </template>
 
 <script>
-import { register } from "@/api";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
-import Checkbox from "@/components/Checkbox";
+import { register } from "~/api";
+// import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
+import Input from "~/components/Input";
+import Button from "~/components/Button";
+import Checkbox from "~/components/Checkbox";
 export default {
   name: "register",
   components: {
