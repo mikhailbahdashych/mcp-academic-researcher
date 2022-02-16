@@ -66,8 +66,8 @@ export default {
       set(value) { this.$store.commit('setStatus', value) }
     },
     tac: {
-      get() { return this.$store.getters.getError },
-      set(value) { this.$store.commit('setTac', value) }
+      get() { return this.$store.getters.getTac },
+      set(value) { this.$store.commit('getTac', value) }
     }
   },
   methods: {
