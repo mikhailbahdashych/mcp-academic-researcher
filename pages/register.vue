@@ -17,9 +17,11 @@
         <Input :error="emailError" :title="'Email'" :type="'text'" v-model="email" />
         <Input :error="passwordError" :title="'Password'" :type="'password'" v-model="password" />
         <Input :error="passwordError" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
+
+        <p v-if="passwordError" class="paragraph-small error">Passwords have to match!</p>
+
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
-        <p v-if="passwordError">Passwords have to match!</p>
       </div>
     </div>
 

@@ -20,6 +20,9 @@ body {
   &.link {
     color: limegreen;
   }
+  &.error {
+    color: red
+  }
 }
 
 .vertical-line {
