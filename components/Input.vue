@@ -50,6 +50,10 @@ export default {
     error: {
       type: Boolean,
       default: false
+    },
+    focus: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
