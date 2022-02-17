@@ -14,7 +14,7 @@
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Sign up</h1>
-        <Input :error="error" :title="'Email'" :type="'email'" v-model="email" />
+        <Input :error="emailError" :title="'Email'" :type="'text'" v-model="email" />
         <Input :error="passwordError" :title="'Password'" :type="'password'" v-model="password" />
         <Input :error="passwordError" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
@@ -52,7 +52,8 @@ export default {
       'fetchPasswordError'
     ]),
     password() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
-    passwordRepeat() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) }
+    passwordRepeat() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
+    email() { this.emailError = !validateEmail(this.email) }
   },
   computed: {
     error: {
