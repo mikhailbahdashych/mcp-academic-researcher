@@ -21,8 +21,8 @@
           <p class="choose" @click="chooseLogin('phone')">With Phone Number</p>
         </div>
 
-        <Input :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" v-model="loginEmail" />
-        <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" v-model="loginPhone" />
+        <Input :error="loginEmailError" :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" v-model="loginEmail" />
+        <Input :error="loginPasswordError" :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" v-model="loginPhone" />
 
         <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
         <Button :label="'Log In'" :clickon="login" />
@@ -48,7 +48,7 @@ export default {
   },
   watch: {
     ...mapActions(['fetchLoginEmail', 'fetchLoginPhone', 'fetchLoginPassword', 'fetchLoginWithEmail', 'fetchEmailFocus', 'fetchPhoneFocus']),
-    // loginEmail() {  = !validateEmail(this.loginEmail) }
+    loginEmail() { this.loginEmailError = !validateEmail(this.loginEmail) }
   },
   computed: {
     loginEmail: {
@@ -76,16 +76,16 @@ export default {
       set(value) { this.$store.commit('setPhoneFocus', value) }
     },
     loginPasswordError: {
-      // get() { return this.$store.getters.getPhoneFocus },
-      // set(value) { this.$store.commit('setPhoneFocus', value) }
+      get() { return this.$store.getters.getLoginPasswordError },
+      set(value) { this.$store.commit('setLoginPasswordError', value) }
     },
     loginEmailError: {
-      // get() { return this.$store.getters.getPhoneFocus },
-      // set(value) { this.$store.commit('setPhoneFocus', value) }
+      get() { return this.$store.getters.getLoginEmailError },
+      set(value) { this.$store.commit('setLoginEmailError', value) }
     },
     loginError: {
-      // get() { return this.$store.getters.getPhoneFocus },
-      // set(value) { this.$store.commit('setPhoneFocus', value) }
+      get() { return this.$store.getters.getLoginPhone },
+      set(value) { this.$store.commit('setLoginError', value) }
     }
   },
   mounted() {
