@@ -15,11 +15,11 @@
       <div class="login-inputs-container">
         <h1>Sign up</h1>
         <Input :error="error" :title="'Email'" :type="'email'" v-model="email" />
-        <Input :error="error" :title="'Password'" :type="'password'" v-model="password" />
-        <Input :error="error" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
+        <Input :error="passwordError" :title="'Password'" :type="'password'" v-model="password" />
+        <Input :error="passwordError" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
-        <p v-if="error">Passwords have to match!</p>
+        <p v-if="passwordError">Passwords have to match!</p>
       </div>
     </div>
 
@@ -40,9 +40,18 @@ export default {
     Checkbox
   },
   watch: {
-    ...mapActions(['fetchTac', 'fetchError', 'fetchStatus', 'fetchPasswordRepeat', 'fetchPassword', 'fetchEmail']),
-    password() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
-    passwordRepeat() { this.error = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) }
+    ...mapActions([
+      'fetchTac',
+      'fetchError',
+      'fetchStatus',
+      'fetchPasswordRepeat',
+      'fetchPassword',
+      'fetchEmail',
+      'fetchEmailError',
+      'fetchPasswordError'
+    ]),
+    password() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
+    passwordRepeat() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) }
   },
   computed: {
     error: {
@@ -68,6 +77,14 @@ export default {
     tac: {
       get() { return this.$store.getters.getTac },
       set(value) { this.$store.commit('setTac', value) }
+    },
+    passwordError: {
+      get() { return this.$store.getters.getPasswordError },
+      set(value) { this.$store.commit('setPasswordError', value) }
+    },
+    emailError: {
+      get() { return this.$store.getters.getEmailError },
+      set(value) { this.$store.commit('setEmailError', value) }
     }
   },
   methods: {

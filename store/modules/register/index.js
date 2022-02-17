@@ -7,8 +7,10 @@ const state = () => ({
   password: null,
   passwordRepeat: null,
   status: null,
-  error: false,
-  tac: false
+  tac: false,
+  passwordError: false,
+  emailError: false,
+  error: false
 })
 
 export default {
