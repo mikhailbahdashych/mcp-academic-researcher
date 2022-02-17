@@ -29,6 +29,7 @@
 <script>
 import { register } from "~/api";
 import { mapActions } from "vuex";
+import { validateEmail, validatePassword } from "@/helpers/frontValidators";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Checkbox from "~/components/Checkbox";
@@ -92,18 +93,18 @@ export default {
       this.$router.push({ path })
     },
     async register() {
-
-      const validateEmail = (email) => {
-        const regex = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?')
-        return regex.test(email);
-      };
-
-      if (!this.error && this.password && this.passwordRepeat && this.email) {
-        const res = await register({
-          email: this.email,
-          password: this.password
-        })
-        this.status = res.status
+      if (this.email && validateEmail(this.email)) {
+        if () {
+          const res = await register({
+            email: this.email,
+            password: this.password
+          })
+          this.status = res.status
+        } else {
+          // something with pass
+        }
+      } else {
+        // something with email
       }
     }
   }
