@@ -8,7 +8,10 @@ const state = () => ({
   loginPassword: null,
   loginWithEmail: null,
   emailFocus: false,
-  phoneFocus: false
+  phoneFocus: false,
+  loginPasswordError: false,
+  loginEmailError: false,
+  loginError: false
 })
 
 export default {
