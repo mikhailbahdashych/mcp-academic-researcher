@@ -37,7 +37,7 @@
 <script>
 import { login } from "~/api";
 import { mapActions } from "vuex";
-import { validateEmail, validatePassword} from "~/helpers/frontValidators";
+import { validateEmail } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 export default {
