@@ -92,6 +92,12 @@ export default {
       this.$router.push({ path })
     },
     async register() {
+
+      const validateEmail = (email) => {
+        const regex = new RegExp('[a-z0-9!#$%&\'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&\'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?')
+        return regex.test(email);
+      };
+
       if (!this.error && this.password && this.passwordRepeat && this.email) {
         const res = await register({
           email: this.email,
