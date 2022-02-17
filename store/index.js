@@ -1,35 +1,13 @@
-export const state = () => ({
-  email: null,
-  password: null,
-  passwordRepeat: null,
-  status: null,
-  error: false,
-  tac: false
-})
+import Vuex from 'vuex';
+import register from './modules/register'
 
-export const mutations = {
-  setEmail(state, value) { state.email = value },
-  setPassword(state, value) { state.password = value },
-  setPasswordRepeat(state, value) { state.passwordRepeat = value },
-  setStatus(state, value) { state.status = value },
-  setError(state, value) { state.error = value },
-  setTac(state, value) { state.tac = value }
+const createStore = () => {
+  return new Vuex.Store({
+    namespaced: true,
+    modules: {
+      register
+    }
+  })
 }
 
-export const actions = {
-  fetchEmail(ctx, value) { ctx.commit('setEmail', value) },
-  fetchPassword(ctx, value) { ctx.commit('setPassword', value) },
-  fetchPasswordRepeat(ctx, value) { ctx.commit('setPasswordRepeat', value) },
-  fetchStatus(ctx, value) { ctx.commit('setStatus', value) },
-  fetchError(ctx, value) { ctx.commit('setError', value) },
-  fetchTac(ctx, value) { ctx.commit('setTac', value) },
-}
-
-export const getters = {
-  getEmail: state => state.email,
-  getPassword: state => state.password,
-  getPasswordRepeat: state => state.passwordRepeat,
-  getStatus: state => state.status,
-  getError: state => state.error,
-  getTac: state => state.tac,
-}
+export default createStore

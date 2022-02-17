@@ -67,7 +67,7 @@ export default {
     },
     tac: {
       get() { return this.$store.getters.getTac },
-      set(value) { this.$store.commit('getTac', value) }
+      set(value) { this.$store.commit('setTac', value) }
     }
   },
   methods: {
