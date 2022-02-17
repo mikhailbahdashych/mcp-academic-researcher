@@ -21,11 +21,11 @@
           <p class="choose" @click="chooseLogin('phone')">With Phone Number</p>
         </div>
 
-        <Input :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" />
-        <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" />
+        <Input :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" v-model="loginEmail" />
+        <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" v-model="loginPhone" />
 
-        <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" />
-        <Button :label="'Log In'" :clickon="() => {}" />
+        <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
+        <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
       </div>
@@ -45,21 +45,42 @@ export default {
     Input,
     Button
   },
-  watch: {},
-  computed: {},
-  // data() {
-  //   return {
-  //     loginWithEmail: null,
-  //     emailFocus: false,
-  //     phoneFocus: false
-  //   }
-  // },
+  watch: {
+    ...mapActions(['fetchLoginEmail', 'fetchLoginPhone', 'fetchLoginPassword', 'fetchLoginWithEmail', 'fetchEmailFocus', 'fetchPhoneFocus']),
+  },
+  computed: {
+    loginEmail: {
+      get() { return this.$store.getters.getLoginEmail },
+      set(value) { this.$store.commit('setLoginEmail', value) }
+    },
+    loginPhone: {
+      get() { return this.$store.getters.getLoginPhone },
+      set(value) { this.$store.commit('setLoginPhone', value) }
+    },
+    loginPassword: {
+      get() { return this.$store.getters.getLoginPassword },
+      set(value) { this.$store.commit('setLoginPassword', value) }
+    },
+    loginWithEmail: {
+      get() { return this.$store.getters.getLoginWithEmail },
+      set(value) { this.$store.commit('setLoginWithEmail', value) }
+    },
+    emailFocus: {
+      get() { return this.$store.getters.getEmailFocus },
+      set(value) { this.$store.commit('setEmailFocus', value) }
+    },
+    phoneFocus: {
+      get() { return this.$store.getters.getPhoneFocus },
+      set(value) { this.$store.commit('setPhoneFocus', value) }
+    }
+  },
   mounted() {
     this.chooseLogin('email')
   },
   methods: {
     async login() {
-      const res = await login()
+      console.log(this.loginEmail, this.loginPassword, this.loginPhone)
+      // const res = await login()
     },
     redirect(path) {
       this.$router.push({ path: path })
