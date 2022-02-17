@@ -48,7 +48,7 @@ export default {
   },
   watch: {
     ...mapActions(['fetchLoginEmail', 'fetchLoginPhone', 'fetchLoginPassword', 'fetchLoginWithEmail', 'fetchEmailFocus', 'fetchPhoneFocus']),
-    // loginEmail() { this.loginEmail = !validateEmail(this.loginEmail) }
+    // loginEmail() {  = !validateEmail(this.loginEmail) }
   },
   computed: {
     loginEmail: {
@@ -74,6 +74,18 @@ export default {
     phoneFocus: {
       get() { return this.$store.getters.getPhoneFocus },
       set(value) { this.$store.commit('setPhoneFocus', value) }
+    },
+    loginPasswordError: {
+      // get() { return this.$store.getters.getPhoneFocus },
+      // set(value) { this.$store.commit('setPhoneFocus', value) }
+    },
+    loginEmailError: {
+      // get() { return this.$store.getters.getPhoneFocus },
+      // set(value) { this.$store.commit('setPhoneFocus', value) }
+    },
+    loginError: {
+      // get() { return this.$store.getters.getPhoneFocus },
+      // set(value) { this.$store.commit('setPhoneFocus', value) }
     }
   },
   mounted() {

@@ -5,4 +5,7 @@ export default {
   fetchLoginWithEmail(ctx, value) { ctx.commit('setLoginWithEmail', value) },
   fetchEmailFocus(ctx, value) { ctx.commit('setEmailFocus', value) },
   fetchPhoneFocus(ctx, value) { ctx.commit('setPhoneFocus', value) },
+  fetchLoginPasswordError(ctx, value) { ctx.commit('setLoginPasswordError', value) },
+  fetchLoginEmailError(ctx, value) { ctx.commit('setLoginEmailError', value) },
+  fetchLoginError(ctx, value) { ctx.commit('setLoginError', value) }
 }
