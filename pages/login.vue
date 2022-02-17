@@ -35,10 +35,11 @@
 </template>
 
 <script>
-import { login } from "@/api"
+import { login } from "~/api";
 import { mapActions } from "vuex";
-import Input from "@/components/Input";
-import Button from "@/components/Button";
+import { validateEmail, validatePassword} from "~/helpers/frontValidators";
+import Input from "~/components/Input";
+import Button from "~/components/Button";
 export default {
   name: "login",
   components: {
@@ -47,6 +48,7 @@ export default {
   },
   watch: {
     ...mapActions(['fetchLoginEmail', 'fetchLoginPhone', 'fetchLoginPassword', 'fetchLoginWithEmail', 'fetchEmailFocus', 'fetchPhoneFocus']),
+    // loginEmail() { this.loginEmail = !validateEmail(this.loginEmail) }
   },
   computed: {
     loginEmail: {
@@ -90,10 +92,12 @@ export default {
         this.loginWithEmail = true
         this.emailFocus = true
         this.phoneFocus = false
+        this.loginPhone = null
       } else {
         this.loginWithEmail = false
         this.emailFocus = false
         this.phoneFocus = true
+        this.loginEmail = null
       }
     }
   }
