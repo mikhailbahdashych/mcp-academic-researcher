@@ -4,7 +4,7 @@
     <input
       ref="name"
       class="basic-input"
-      :class="[error ? 'error' : '']"
+      :class="[error && innerValue.length > 0 ? 'error' : '']"
       :type="type"
       :disabled="disabled"
       :placeholder="placeholder"

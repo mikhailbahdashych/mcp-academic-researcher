@@ -13,6 +13,9 @@
     &.error {
       border: 0.5px solid red;
     }
+    &.error:focus {
+      border: 0.5px solid red;
+    }
   }
   .basic-input:focus {
     border: 0.5px solid lightgreen;
