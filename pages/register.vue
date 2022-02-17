@@ -28,7 +28,7 @@
 
 <script>
 import { register } from "~/api";
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Checkbox from "~/components/Checkbox";

@@ -36,6 +36,7 @@
 
 <script>
 import { login } from "@/api"
+import { mapActions } from "vuex";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 export default {
@@ -44,13 +45,15 @@ export default {
     Input,
     Button
   },
-  data() {
-    return {
-      loginWithEmail: null,
-      emailFocus: false,
-      phoneFocus: false
-    }
-  },
+  watch: {},
+  computed: {},
+  // data() {
+  //   return {
+  //     loginWithEmail: null,
+  //     emailFocus: false,
+  //     phoneFocus: false
+  //   }
+  // },
   mounted() {
     this.chooseLogin('email')
   },
