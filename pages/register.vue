@@ -94,17 +94,21 @@ export default {
     },
     async register() {
       if (this.email && validateEmail(this.email)) {
-        if () {
+        if (
+          this.password && this.passwordRepeat
+          && this.password === this.passwordRepeat
+          && validatePassword(this.password) && validatePassword(this.passwordRepeat)
+        ) {
           const res = await register({
             email: this.email,
             password: this.password
           })
           this.status = res.status
         } else {
-          // something with pass
+          this.passwordError = true
         }
       } else {
-        // something with email
+        this.emailError = true
       }
     }
   }
