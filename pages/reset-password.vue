@@ -22,6 +22,7 @@
         </div>
 
         <InputWithButton
+          :error="resetPasswordEmailError"
           :button-click-on="() => {}"
           :title="'Email'"
           :focus="resetPasswordEmailFocus"

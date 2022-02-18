@@ -34,6 +34,10 @@ export default {
       type: String,
       default: ''
     },
+    value: {
+      type: String,
+      default: ''
+    },
     type: {
       type: String,
       default: 'text'
