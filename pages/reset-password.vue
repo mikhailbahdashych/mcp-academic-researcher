@@ -28,7 +28,7 @@
         />
 
         <Input :title="'Verification code'" :styles="'padding-bottom: 30px'" />
-        <Button :label="'Submit'" />
+        <Button :label="'Submit'" :clickon="resetPassword" />
       </div>
     </div>
 
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { resetPassword } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
@@ -70,6 +71,9 @@ export default {
     }
   },
   methods: {
+    async resetPassword() {
+      // const res = await resetPassword()
+    },
     redirect(path) {
       this.$router.push({ path: path })
     },
