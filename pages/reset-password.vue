@@ -22,7 +22,7 @@
         </div>
 
         <InputWithButton
-          :button-click-on="test"
+          :button-click-on="() => {}"
           :title="'Email'"
           :button-title="'Send code'"
         />
@@ -36,6 +36,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import InputWithButton from "~/components/InputWithButton";
 import Button from "~/components/Button";
@@ -46,15 +48,28 @@ export default {
     InputWithButton,
     Button
   },
-  data() {
-    return {
-
+  watch: {
+    ...mapActions([
+      'fetchResetPasswordEmail',
+      'fetchResetPasswordPhone',
+      'fetchResetPasswordCode'
+    ])
+  },
+  computed: {
+    resetPasswordEmail: {
+      get() { return this.$store.getters.getResetPasswordEmail },
+      set(value) { this.$store.commit('setResetPasswordEmail', value) }
+    },
+    resetPasswordPhone: {
+      get() { return this.$store.getters.getResetPasswordPhone },
+      set(value) { this.$store.commit('setResetPasswordPhone', value) }
+    },
+    resetPasswordCode: {
+      get() { return this.$store.getters.getResetPasswordCode },
+      set(value) { this.$store.commit('setResetPasswordCode', value) }
     }
   },
   methods: {
-    test() {
-      console.log(123)
-    },
     redirect(path) {
       this.$router.push({ path: path })
     },
