@@ -28,4 +28,13 @@ router.post(`/register`, async (req, res) => {
   }
 })
 
+router.post(`/reset-password`, async (req, res) => {
+  try {
+    const data = await api.post('/reset-password', req.body)
+    res.json(data.data)
+  } catch (e) {
+    console.log(e)
+  }
+})
+
 module.exports = router

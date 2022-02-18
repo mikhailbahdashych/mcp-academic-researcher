@@ -19,3 +19,7 @@ export const register = async (payload) => {
   const { data } =  await api.post(`register`, payload)
   return data
 }
+
+export const resetPassword = async (payload) => {
+  const { data } = await api.post(`reset-password`, payload)
+}
