@@ -5,7 +5,11 @@ import mutations from "./mutations";
 const state = () => ({
   resetPasswordEmail: null,
   resetPasswordPhone: null,
-  resetPasswordCode: null
+  resetPasswordCode: null,
+  resetPasswordEmailError: false,
+  resetPasswordEmailFocus: false,
+  resetPasswordPhoneFocus: false,
+  resetPasswordLoginWithEmail: false
 })
 
 export default {

@@ -30,6 +30,15 @@ export default {
     buttonClickOn: {
       type: Function,
       default: () => {}
+    },
+    focus: {
+      type: Boolean,
+      default: false
+    }
+  },
+  watch: {
+    focus: function() {
+      if (this.focus) this.$refs.name.focus()
     }
   }
 }

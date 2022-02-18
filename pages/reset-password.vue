@@ -24,7 +24,18 @@
         <InputWithButton
           :button-click-on="() => {}"
           :title="'Email'"
+          :focus="resetPasswordEmailFocus"
           :button-title="'Send code'"
+          :style="[!resetPasswordLoginWithEmail ? {'display': 'none'} : {'': ''}]"
+          v-model="resetPasswordEmail"
+        />
+        <InputWithButton
+          :button-click-on="() => {}"
+          :title="'Phone'"
+          :focus="resetPasswordPhoneFocus"
+          :button-title="'Send code'"
+          :style="[resetPasswordLoginWithEmail ? {'display': 'none'} : {'': ''}]"
+          v-model="resetPasswordPhone"
         />
 
         <Input :title="'Verification code'" :styles="'padding-bottom: 30px'" />
@@ -38,7 +49,7 @@
 <script>
 import { resetPassword } from "~/api";
 import { mapActions } from "vuex";
-import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
+import { validateEmail } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import InputWithButton from "~/components/InputWithButton";
 import Button from "~/components/Button";
@@ -53,8 +64,13 @@ export default {
     ...mapActions([
       'fetchResetPasswordEmail',
       'fetchResetPasswordPhone',
-      'fetchResetPasswordCode'
-    ])
+      'fetchResetPasswordCode',
+      'fetchResetPasswordEmailError',
+      'fetchResetPasswordEmailFocus',
+      'fetchResetPasswordPhoneFocus',
+      'fetchResetPasswordLoginWithEmail'
+    ]),
+    resetPasswordEmail() { this.resetPasswordEmailError = !validateEmail(this.resetPasswordEmail) },
   },
   computed: {
     resetPasswordEmail: {
@@ -68,7 +84,26 @@ export default {
     resetPasswordCode: {
       get() { return this.$store.getters.getResetPasswordCode },
       set(value) { this.$store.commit('setResetPasswordCode', value) }
+    },
+    resetPasswordEmailError: {
+      get() { return this.$store.getters.getResetPasswordEmailError },
+      set(value) { this.$store.commit('setResetPasswordEmailError', value) }
+    },
+    resetPasswordEmailFocus: {
+      get() { return this.$store.getters.getResetPasswordEmailFocus },
+      set(value) { this.$store.commit('setResetPasswordEmailFocus', value) }
+    },
+    resetPasswordPhoneFocus: {
+      get() { return this.$store.getters.getResetPasswordPhoneFocus },
+      set(value) { this.$store.commit('setResetPasswordPhoneFocus', value) }
+    },
+    resetPasswordLoginWithEmail: {
+      get() { return this.$store.getters.getResetPasswordLoginWithEmail },
+      set(value) { this.$store.commit('setResetPasswordLoginWithEmail', value) }
     }
+  },
+  mounted() {
+    this.chooseOption('email')
   },
   methods: {
     async resetPassword() {
@@ -79,9 +114,11 @@ export default {
     },
     chooseOption(option) {
       if (option === 'email') {
-        //
+        this.resetPasswordLoginWithEmail = true
+        this.resetPasswordEmailFocus = true
       } else {
-        //
+        this.resetPasswordLoginWithEmail = false
+        this.resetPasswordPhoneFocus = true
       }
     }
   }

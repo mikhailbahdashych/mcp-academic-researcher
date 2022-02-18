@@ -21,8 +21,21 @@
           <p class="choose" @click="chooseLogin('phone')">With Phone Number</p>
         </div>
 
-        <Input :error="loginEmailError" :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" v-model="loginEmail" />
-        <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" v-model="loginPhone" />
+        <Input
+          :error="loginEmailError"
+          :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]"
+          :focus="emailFocus"
+          :title="'Email'"
+          :type="'email'"
+          v-model="loginEmail"
+        />
+        <Input
+          :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]"
+          :focus="phoneFocus"
+          :title="'Phone number'"
+          :type="'email'"
+          v-model="loginPhone"
+        />
 
         <Input :error="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
         <Button :label="'Log In'" :clickon="login" />
