@@ -116,9 +116,13 @@ export default {
       if (option === 'email') {
         this.resetPasswordLoginWithEmail = true
         this.resetPasswordEmailFocus = true
+        this.resetPasswordPhoneFocus = false
+        this.resetPasswordPhone = null
       } else {
         this.resetPasswordLoginWithEmail = false
+        this.resetPasswordEmailFocus = false
         this.resetPasswordPhoneFocus = true
+        this.resetPasswordEmail = null
       }
     }
   }

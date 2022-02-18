@@ -3,7 +3,7 @@ export default {
   getResetPasswordPhone: state => state.resetPasswordPhone,
   getResetPasswordCode: state => state.resetPasswordCode,
   getResetPasswordEmailError: state => state.resetPasswordEmailError,
-  getResetPasswordEmailFocus: state => state.resetPasswordPhoneFocus,
+  getResetPasswordEmailFocus: state => state.resetPasswordEmailFocus,
   getResetPasswordPhoneFocus: state => state.resetPasswordPhoneFocus,
   getResetPasswordLoginWithEmail: state => state.resetPasswordLoginWithEmail
 }
