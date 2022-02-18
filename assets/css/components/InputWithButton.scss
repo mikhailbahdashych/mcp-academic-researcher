@@ -1,0 +1,20 @@
+.main-class {
+  display: flex;
+  width: 100%;
+  .basic-input {
+    width: 80%;
+    border-radius: 7.5px;
+    outline: none;
+    border: 0.5px solid rgba(0,0,0,0);
+    background-color: rgba(#333, 0.075);
+    padding: 0 0 0 16px;
+    height: 48px;
+    font-size: 16px;
+    line-height: 24px;
+    transition: 0.3s;
+    margin-right: 15px;
+  }
+  .input-button {
+    width: 20%;
+  }
+}
