@@ -24,7 +24,7 @@
         <Input :error="loginEmailError" :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="emailFocus" :title="'Email'" :type="'email'" v-model="loginEmail" />
         <Input :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]" :focus="phoneFocus" :title="'Phone number'" :type="'email'" v-model="loginPhone" />
 
-        <Input :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
+        <Input :error="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
         <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
@@ -37,7 +37,7 @@
 <script>
 import { login } from "~/api";
 import { mapActions } from "vuex";
-import { validateEmail } from "~/helpers/frontValidators";
+import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 export default {
@@ -58,7 +58,8 @@ export default {
       'fetchLoginPasswordError',
       'fetchLoginError'
     ]),
-    loginEmail() { this.loginEmailError = !validateEmail(this.loginEmail) }
+    loginEmail() { this.loginEmailError = !validateEmail(this.loginEmail) },
+    loginPassword() { this.loginPasswordError = !validatePasswordLength(this.loginPassword) }
   },
   computed: {
     loginEmail: {
