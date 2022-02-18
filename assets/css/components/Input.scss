@@ -10,6 +10,7 @@
     height: 48px;
     font-size: 16px;
     line-height: 24px;
+    transition: 0.3s;
     &.error {
       border: 0.5px solid red;
     }

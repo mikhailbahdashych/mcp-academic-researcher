@@ -104,7 +104,6 @@ export default {
   },
   methods: {
     async login() {
-      console.log(this.loginEmail, this.loginPassword, this.loginPhone)
       // const res = await login()
     },
     redirect(path) {
