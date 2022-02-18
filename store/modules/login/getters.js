@@ -5,6 +5,7 @@ export default {
   getLoginWithEmail: state => state.loginWithEmail,
   getEmailFocus: state => state.emailFocus,
   getPhoneFocus: state => state.phoneFocus,
+  getLoginPasswordError: state => state.loginPasswordError,
   getLoginEmailError: state => state.loginEmailError,
   getLoginError: state => state.loginError
 }

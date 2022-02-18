@@ -47,7 +47,17 @@ export default {
     Button
   },
   watch: {
-    ...mapActions(['fetchLoginEmail', 'fetchLoginPhone', 'fetchLoginPassword', 'fetchLoginWithEmail', 'fetchEmailFocus', 'fetchPhoneFocus']),
+    ...mapActions([
+      'fetchLoginEmail',
+      'fetchLoginPhone',
+      'fetchLoginPassword',
+      'fetchLoginWithEmail',
+      'fetchEmailFocus',
+      'fetchPhoneFocus',
+      'fetchLoginEmailError',
+      'fetchLoginPasswordError',
+      'fetchLoginError'
+    ]),
     loginEmail() { this.loginEmailError = !validateEmail(this.loginEmail) }
   },
   computed: {
@@ -80,8 +90,12 @@ export default {
       set(value) { this.$store.commit('setLoginEmailError', value) }
     },
     loginError: {
-      get() { return this.$store.getters.getLoginPhone },
+      get() { return this.$store.getters.getLoginError },
       set(value) { this.$store.commit('setLoginError', value) }
+    },
+    loginPasswordError: {
+      get() { return this.$store.getters.getLoginPasswordError },
+      set(value) { this.$store.commit('setLoginPasswordError', value) }
     }
   },
   mounted() {
