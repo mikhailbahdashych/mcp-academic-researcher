@@ -21,7 +21,11 @@
           <p class="choose" @click="chooseOption('phone')">Phone</p>
         </div>
 
-        <InputWithButton :button-click-on="test" :title="'Email'" :button-title="'Send code'" />
+        <InputWithButton
+          :button-click-on="test"
+          :title="'Email'"
+          :button-title="'Send code'"
+        />
 
         <Input :title="'Verification code'" :styles="'padding-bottom: 30px'" />
         <Button :label="'Submit'" />
