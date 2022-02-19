@@ -25,3 +25,19 @@ export const validatePasswordLength = (password) => {
     return null
   }
 }
+
+export const validatePasswordRules = (password) => {
+  let legitPassword = false
+  if (password) {
+    if (password.length >= 8) {
+      if (/[a-zA-Z]/.test(password)) {
+        if (/\d/.test(password)) {
+          if (/[#?!@$%^&*-]/.test(password)) {
+            legitPassword = true
+          }
+        }
+      }
+    }
+  }
+  return legitPassword
+}

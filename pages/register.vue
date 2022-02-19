@@ -38,7 +38,7 @@
 <script>
 import { register } from "~/api";
 import { mapActions } from "vuex";
-import { validateEmail, validatePassword } from "~/helpers/frontValidators";
+import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Checkbox from "~/components/Checkbox";
@@ -60,6 +60,7 @@ export default {
       'fetchEmailError',
       'fetchPasswordError'
     ]),
+    // @TODO CHECK FOR EVERY CONDITION
     password() { this.validPassword() },
     passwordRepeat() { this.validPassword() },
     email() {
