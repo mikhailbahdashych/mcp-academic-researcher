@@ -18,10 +18,13 @@
         <Input :error="passwordError" :title="'Password'" :type="'password'" v-model="password" />
         <Input :error="passwordError" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
 
-        <p v-if="passwordError" class="paragraph-small error">Passwords have to match!</p>
+        <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
+        <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
+        <p v-if="passwordError.passwordRules" class="paragraph-small error">There will be rules</p>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
+        {{passwordError}}
       </div>
     </div>
 
@@ -31,7 +34,7 @@
 <script>
 import { register } from "~/api";
 import { mapActions } from "vuex";
-import { validateEmail, validatePassword } from "~/helpers/frontValidators";
+import { validateEmail, validatePassword, validatePasswordLength } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Checkbox from "~/components/Checkbox";
@@ -53,8 +56,8 @@ export default {
       'fetchEmailError',
       'fetchPasswordError'
     ]),
-    password() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
-    passwordRepeat() { this.passwordError = (this.password !== this.passwordRepeat) && (this.password !== null && this.passwordRepeat !== null) },
+    password() { this.validPassword() },
+    passwordRepeat() { this.validPassword() },
     email() { this.emailError = !validateEmail(this.email) }
   },
   computed: {
@@ -94,6 +97,17 @@ export default {
   methods: {
     redirect(path) {
       this.$router.push({ path })
+    },
+    validPassword() {
+      if (!validatePasswordLength(this.password) || !validatePasswordLength(this.passwordRepeat)) {
+        this.passwordError.passwordRequirement = true
+      } else {
+        if (this.password !== this.passwordRepeat) {
+          this.passwordError.passwordMismatch = true
+        } else {
+          this.passwordError.passwordRules = true
+        }
+      }
     },
     async register() {
       if (this.email && validateEmail(this.email)) {

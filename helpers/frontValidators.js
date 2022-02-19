@@ -10,5 +10,5 @@ export const validatePassword = (password) => {
 }
 
 export const validatePasswordLength = (password) => {
-  return password.length >= 8
+  if (password) return password.length >= 8
 }
