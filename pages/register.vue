@@ -106,12 +106,15 @@ export default {
             email: this.email,
             password: this.password
           })
-          if (res.status === 1) {
-
-          }
           this.status = res.status
         } else {
-          this.passwordError = true
+          if (!this.password || !this.passwordRepeat) {
+            // password fields are required
+          } else if (this.password !== this.passwordRepeat) {
+            // password match
+          } else {
+            // password rules
+          }
         }
       } else {
         this.emailError = true

@@ -117,10 +117,14 @@ export default {
   },
   methods: {
     async login() {
-      const res = await login({
-        email: this.email,
-        password: this.password
-      })
+      try {
+        const res = await login({
+          email: this.email,
+          password: this.password
+        })
+      } catch (e) {
+        console.log(e)
+      }
     },
     redirect(path) {
       this.$router.push({ path: path })
