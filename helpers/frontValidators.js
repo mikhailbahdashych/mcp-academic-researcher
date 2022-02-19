@@ -4,7 +4,6 @@ export const validateEmail = (email) => {
 }
 
 export const validatePassword = (password) => {
-  // at least one upper case, one lower case, one digit, one spec. char., min 8 length
   const regex = new RegExp("^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")
   return regex.test(password)
 }

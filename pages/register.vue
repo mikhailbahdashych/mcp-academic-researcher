@@ -20,7 +20,13 @@
 
         <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
-        <p v-if="passwordError.passwordRules" class="paragraph-small error">There will be rules</p>
+        <div v-if="passwordError.passwordRules" class="password-requirement">
+          <p>Password length should be more than 8 characters</p>
+          <p>Password should contain at least one uppercase character</p>
+          <p>Password should contain at least one lowercase character</p>
+          <p>Password should contain at least one special character</p>
+          <p>Password should contain at least one digit character</p>
+        </div>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
@@ -100,7 +106,7 @@ export default {
     validPassword() {
       this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
       this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
-      this.passwordError.passwordRules = !!(this.password || this.passwordRepeat);
+      this.passwordError.passwordRules = !!(!validatePassword(this.password) || !validatePassword(this.passwordRepeat));
     },
     async register() {
       if (this.email && validateEmail(this.email)) {
