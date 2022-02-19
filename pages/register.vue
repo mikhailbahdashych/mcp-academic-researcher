@@ -47,7 +47,6 @@
           </p>
         </div>
 
-        {{passwordRulesList}}
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
       </div>

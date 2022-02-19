@@ -35,19 +35,19 @@ export const validatePasswordRules = (password) => {
     digitChar: false
   }
   if (password) {
-    if (!password.length >= 8) {
+    if (password.length >= 8) {
       legitPassword.eightChars = true
     }
-    if (!/[a-z]/.test(password)) {
+    if (/[a-z]/.test(password)) {
       legitPassword.lowCase = true
     }
-    if (!/[#?!@$%^&*-]/.test(password)) {
+    if (/[#?!@$%^&*-]/.test(password)) {
       legitPassword.specChar = true
     }
-    if (!/\d/.test(password)) {
+    if (/\d/.test(password)) {
       legitPassword.digitChar = true
     }
-    if (!/[A-Z]/.test(password)) {
+    if (/[A-Z]/.test(password)) {
       legitPassword.uppCase = true
     }
   }
