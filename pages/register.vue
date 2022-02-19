@@ -20,13 +20,34 @@
         <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
-          <p>Password length should be more than 8 characters</p>
-          <p>Password should contain at least one uppercase character</p>
-          <p>Password should contain at least one lowercase character</p>
-          <p>Password should contain at least one special character</p>
-          <p>Password should contain at least one digit character</p>
+          <p>
+            Password length should be more than 8 characters
+            <span v-if="passwordRulesList.eightChars" style="color: green">OK</span>
+            <span v-else style="color: red">NOT OK</span>
+          </p>
+          <p>
+            Password should contain at least one uppercase character
+            <span v-if="passwordRulesList.uppCase" style="color: green">OK</span>
+            <span v-else style="color: red">NOT OK</span>
+          </p>
+          <p>
+            Password should contain at least one lowercase character
+            <span v-if="passwordRulesList.lowCase" style="color: green">OK</span>
+            <span v-else style="color: red">NOT OK</span>
+          </p>
+          <p>
+            Password should contain at least one special character
+            <span v-if="passwordRulesList.specChar" style="color: green">OK</span>
+            <span v-else style="color: red">NOT OK</span>
+          </p>
+          <p>
+            Password should contain at least one digit character
+            <span v-if="passwordRulesList.digitChar" style="color: green">OK</span>
+            <span v-else style="color: red">NOT OK</span>
+          </p>
         </div>
 
+        {{passwordRulesList}}
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
       </div>
@@ -58,9 +79,9 @@ export default {
       'fetchPassword',
       'fetchEmail',
       'fetchEmailError',
-      'fetchPasswordError'
+      'fetchPasswordError',
+      'fetchPasswordRulesList'
     ]),
-    // @TODO CHECK FOR EVERY CONDITION
     password() { this.validPassword() },
     passwordRepeat() { this.validPassword() },
     email() {
@@ -101,6 +122,10 @@ export default {
     emailError: {
       get() { return this.$store.getters.getEmailError },
       set(value) { this.$store.commit('setEmailError', value) }
+    },
+    passwordRulesList: {
+      get() { return this.$store.getters.getPasswordRulesList },
+      set(value) { this.$store.commit('setPasswordRulesList', value) }
     }
   },
   methods: {
@@ -114,6 +139,8 @@ export default {
       (!this.passwordError.passwordMismatch && !this.passwordError.passwordRequirement && !this.passwordError.passwordRules)
     },
     validPassword() {
+      this.$store.commit('setPasswordRulesList', validatePasswordRules(this.password))
+      console.log(this.passwordRulesList)
       this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
       this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
       this.passwordError.passwordRules = !!(!validatePassword(this.password) || !validatePassword(this.passwordRepeat));

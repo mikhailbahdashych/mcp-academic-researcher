@@ -7,4 +7,5 @@ export default {
   getEmailError: state => state.emailError,
   getPasswordError: state => state.passwordError,
   getTac: state => state.tac,
+  getPasswordRulesList: state => state.passwordRulesList,
 }

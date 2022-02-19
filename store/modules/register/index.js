@@ -15,6 +15,13 @@ const state = () => ({
     passwordRequirement: false,
     passwordRules: false
   },
+  passwordRulesList: {
+    eightChars: false,
+    uppCase: false,
+    lowCase: false,
+    specChar: false,
+    digitChar: false
+  }
 })
 
 export default {

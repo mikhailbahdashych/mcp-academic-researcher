@@ -7,4 +7,5 @@ export default {
   setEmailError(state, value) { state.emailError = value },
   setTac(state, value) { state.tac = value },
   setPasswordError(state, value) { state.passwordError[value.key] = value.value },
+  setPasswordRulesList(state, value) { state.passwordRulesList = value },
 }

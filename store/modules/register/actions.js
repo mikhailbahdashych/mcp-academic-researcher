@@ -7,4 +7,5 @@ export default {
   fetchEmailError(ctx, value) { ctx.commit('setEmailError', value) },
   fetchPasswordError(ctx, value) { ctx.commit('setPasswordError', value) },
   fetchTac(ctx, value) { ctx.commit('setTac', value) },
+  fetchPasswordRulesList(ctx, value) { ctx.commit('setPasswordRulesList', value) },
 }

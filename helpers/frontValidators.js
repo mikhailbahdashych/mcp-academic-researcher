@@ -27,16 +27,28 @@ export const validatePasswordLength = (password) => {
 }
 
 export const validatePasswordRules = (password) => {
-  let legitPassword = false
+  let legitPassword = {
+    eightChars: false,
+    uppCase: false,
+    lowCase: false,
+    specChar: false,
+    digitChar: false
+  }
   if (password) {
-    if (password.length >= 8) {
-      if (/[a-zA-Z]/.test(password)) {
-        if (/\d/.test(password)) {
-          if (/[#?!@$%^&*-]/.test(password)) {
-            legitPassword = true
-          }
-        }
-      }
+    if (!password.length >= 8) {
+      legitPassword.eightChars = true
+    }
+    if (!/[a-z]/.test(password)) {
+      legitPassword.lowCase = true
+    }
+    if (!/[#?!@$%^&*-]/.test(password)) {
+      legitPassword.specChar = true
+    }
+    if (!/\d/.test(password)) {
+      legitPassword.digitChar = true
+    }
+    if (!/[A-Z]/.test(password)) {
+      legitPassword.uppCase = true
     }
   }
   return legitPassword
