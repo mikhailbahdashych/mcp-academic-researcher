@@ -62,7 +62,11 @@ export default {
     ]),
     password() { this.validPassword() },
     passwordRepeat() { this.validPassword() },
-    email() { this.emailError = !validateEmail(this.email) }
+    email() {
+      if (!validateEmail(this.email)) this.emailError = true
+      else if (validateEmail(this.email) === 1) this.emailError = false
+      else this.emailError = false
+    }
   },
   computed: {
     error: {
