@@ -22,7 +22,7 @@
         </div>
 
         <Input
-          :error="loginEmailError"
+          :oneerror="loginEmailError"
           :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]"
           :focus="emailFocus"
           :title="'Email'"
@@ -37,7 +37,7 @@
           v-model="loginPhone"
         />
 
-        <Input :error="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
+        <Input :oneerror="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
         <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
