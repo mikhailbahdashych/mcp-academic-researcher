@@ -24,7 +24,6 @@
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
         <Button :label="'Sign up'" :clickon="register" />
-        {{passwordError}}
       </div>
     </div>
 
@@ -99,15 +98,9 @@ export default {
       this.$router.push({ path })
     },
     validPassword() {
-      if (!validatePasswordLength(this.password) || !validatePasswordLength(this.passwordRepeat)) {
-        this.passwordError.passwordRequirement = true
-      } else {
-        if (this.password !== this.passwordRepeat) {
-          this.passwordError.passwordMismatch = true
-        } else {
-          this.passwordError.passwordRules = true
-        }
-      }
+      this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
+      this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
+      this.passwordError.passwordRules = !!(this.password || this.passwordRepeat);
     },
     async register() {
       if (this.email && validateEmail(this.email)) {
