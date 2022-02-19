@@ -14,10 +14,9 @@
     <div class="login-inputs">
       <div class="login-inputs-container">
         <h1>Sign up</h1>
-        <Input :error="emailError" :title="'Email'" :type="'text'" v-model="email" />
-        <Input :error="passwordError" :title="'Password'" :type="'password'" v-model="password" />
-        <Input :error="passwordError" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
-
+        <Input :oneerror="emailError" :title="'Email'" :type="'text'" v-model="email" />
+        <Input :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password" />
+        <Input :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
         <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
@@ -107,6 +106,11 @@ export default {
       this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
       this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
       this.passwordError.passwordRules = !!(!validatePassword(this.password) || !validatePassword(this.passwordRepeat));
+      if (!this.password && !this.passwordRepeat) {
+        this.passwordError.passwordMismatch = false
+        this.passwordError.passwordRequirement = false
+        this.passwordError.passwordRules = false
+      }
     },
     async register() {
       if (this.email && validateEmail(this.email)) {

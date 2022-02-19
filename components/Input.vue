@@ -4,7 +4,10 @@
     <input
       ref="name"
       class="basic-input"
-      :class="[error && innerValue && innerValue.length > 0 ? 'error' : '']"
+      :class="[
+        oneerror ||
+        (error.passwordMismatch || error.passwordRequirement || error.passwordRules)
+        && innerValue && innerValue.length > 0 ? 'error' : '']"
       :type="type"
       :disabled="disabled"
       :placeholder="placeholder"
@@ -48,10 +51,14 @@ export default {
       default: ''
     },
     error: {
+      type: Object,
+      default: function () { return {}}
+    },
+    focus: {
       type: Boolean,
       default: false
     },
-    focus: {
+    oneerror: {
       type: Boolean,
       default: false
     }
