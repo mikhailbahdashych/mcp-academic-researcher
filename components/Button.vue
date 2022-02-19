@@ -1,13 +1,13 @@
 <template>
   <div @click="clickon" class="basic-button-outer">
-    <button class="basic-button">{{ label }}</button>
+    <button :disabled="disabled" class="basic-button">{{ label }}</button>
   </div>
 </template>
 
 <script>
 export default {
   name: "Button",
-  props: ['label', 'clickon']
+  props: ['label', 'clickon', 'disabled']
 }
 </script>
 

@@ -38,7 +38,7 @@
 <script>
 import { register } from "~/api";
 import { mapActions } from "vuex";
-import { validateEmail, validatePassword, validatePasswordLength } from "~/helpers/frontValidators";
+import { validateEmail, validatePassword } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import Checkbox from "~/components/Checkbox";
@@ -102,6 +102,12 @@ export default {
     redirect(path) {
       this.$router.push({ path })
     },
+    validFields() {
+      return this.tac &&
+      !this.emailError &&
+      this.email && this.password && this.passwordRepeat &&
+      (!this.passwordError.passwordMismatch && !this.passwordError.passwordRequirement && !this.passwordError.passwordRules)
+    },
     validPassword() {
       this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
       this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
@@ -113,28 +119,14 @@ export default {
       }
     },
     async register() {
-      if (this.email && validateEmail(this.email)) {
-        if (
-          this.password && this.passwordRepeat
-          && this.password === this.passwordRepeat
-          && validatePassword(this.password) && validatePassword(this.passwordRepeat)
-        ) {
-          const res = await register({
-            email: this.email,
-            password: this.password
-          })
-          this.status = res.status
-        } else {
-          if (!this.password || !this.passwordRepeat) {
-            // password fields are required
-          } else if (this.password !== this.passwordRepeat) {
-            // password match
-          } else {
-            // password rules
-          }
-        }
+      if (this.validFields()) {
+        const res = await register({
+          email: this.email,
+          password: this.password
+        })
+        this.status = res.status
       } else {
-        this.emailError = true
+        console.log('error')
       }
     }
   }

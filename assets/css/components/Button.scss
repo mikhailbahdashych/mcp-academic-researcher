@@ -7,4 +7,8 @@
     cursor: pointer;
     background-color: lightgreen;
   }
+  .basic-button:disabled {
+    background-color: #cccccc;
+    cursor: auto;
+  }
 }
