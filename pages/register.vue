@@ -106,6 +106,9 @@ export default {
             email: this.email,
             password: this.password
           })
+          if (res.status === 1) {
+
+          }
           this.status = res.status
         } else {
           this.passwordError = true

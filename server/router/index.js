@@ -37,4 +37,13 @@ router.post(`/reset-password`, async (req, res) => {
   }
 })
 
+router.post(`/verification-code`, async (req, res) => {
+  try {
+    const data = await api.post('/verification-code', req.body)
+    res.json(data.data)
+  } catch (e) {
+    console.log(e)
+  }
+})
+
 module.exports = router

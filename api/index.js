@@ -24,3 +24,8 @@ export const resetPassword = async (payload) => {
   const { data } = await api.post(`reset-password`, payload)
   return data
 }
+
+export const sendVerificationCode = async (payload) => {
+  const { data } = await api.post(`verification-code`, payload)
+  return data
+}
