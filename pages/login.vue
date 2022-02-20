@@ -119,8 +119,9 @@ export default {
     async login() {
       try {
         const res = await login({
-          email: this.email,
-          password: this.password
+          email: this.loginEmail,
+          phone: this.loginPhone,
+          password: this.loginPassword
         })
       } catch (e) {
         console.log(e)
