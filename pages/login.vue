@@ -118,11 +118,12 @@ export default {
   methods: {
     async login() {
       try {
-        const res = await login({
+        const token = await login({
           email: this.loginEmail,
           phone: this.loginPhone,
           password: this.loginPassword
         })
+        localStorage.setItem('token', token)
       } catch (e) {
         console.log(e)
       }
