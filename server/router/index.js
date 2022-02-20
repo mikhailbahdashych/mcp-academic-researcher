@@ -15,7 +15,7 @@ router.post(`/login`, async (req, res) => {
     const data = await api.post('/login', req.body)
     res.json(data.data)
   } catch (e) {
-    console.log(e)
+    res.status(e.response.status).json(e.response.data)
   }
 })
 
@@ -24,7 +24,7 @@ router.post(`/register`, async (req, res) => {
     const data = await api.post('/register', req.body)
     res.json(data.data)
   } catch (e) {
-    console.log(e)
+    res.status(e.response.status).json(e.response.data)
   }
 })
 
@@ -33,7 +33,7 @@ router.post(`/reset-password`, async (req, res) => {
     const data = await api.post('/reset-password', req.body)
     res.json(data.data)
   } catch (e) {
-    console.log(e)
+    res.status(e.response.status).json(e.response.data)
   }
 })
 
@@ -42,7 +42,7 @@ router.post(`/verification-code`, async (req, res) => {
     const data = await api.post('/verification-code', req.body)
     res.json(data.data)
   } catch (e) {
-    console.log(e)
+    res.status(e.response.status).json(e.response.data)
   }
 })
 
