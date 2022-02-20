@@ -33,12 +33,16 @@
 </template>
 
 <script>
+import { verifyToken } from "~/api";
 export default {
   name: "Header",
   data() {
     return {
 
     }
+  },
+  async mounted() {
+    await verifyToken({token: localStorage.getItem('token')})
   },
   methods: {
     redirect(path) {

@@ -40,3 +40,8 @@ export const sendVerificationCode = async (payload) => {
   const { data } = await api.post(`verification-code`, payload)
   return data
 }
+
+export const verifyToken = async (payload) => {
+  const { data } = await api.post('verify-token', payload)
+  return data
+}
