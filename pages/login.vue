@@ -37,7 +37,8 @@
           v-model="loginPhone"
         />
 
-        <Input :oneerror="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 50px'" v-model="loginPassword" />
+        <Input :oneerror="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 25px'" v-model="loginPassword" />
+        <p v-if="loginError === -1" class="paragraph-small error">Wrong credentials!</p>
         <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
@@ -117,17 +118,16 @@ export default {
   },
   methods: {
     async login() {
-      try {
-        const token = await login({
-          email: this.loginEmail,
-          phone: this.loginPhone,
-          password: this.loginPassword
-        })
+      await login({
+        email: this.loginEmail,
+        phone: this.loginPhone,
+        password: this.loginPassword
+      }).then(async (token) => {
         localStorage.setItem('token', token)
-        await this.$router.push({ path: '/account' })
-      } catch (e) {
-        console.log(e)
-      }
+        await this.$router.push({path: '/account'})
+      }).catch(() => {
+        this.$store.commit('setLoginError', -1)
+      })
     },
     redirect(path) {
       this.$router.push({ path: path })
