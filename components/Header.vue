@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { verifyToken } from "~/api";
+import auth from '~/mixins/auth'
 export default {
   name: "Header",
   data() {
@@ -41,18 +41,7 @@ export default {
 
     }
   },
-  async mounted() {
-    // @TODO FRONT END MIDDLEWARE
-    if (!localStorage.getItem('token')) {
-      await this.$router.push({path: '/login'})
-    } else {
-      const checkToken = await verifyToken({ token: localStorage.getItem('token') })
-      if (checkToken.error) {
-        localStorage.removeItem('token')
-        await this.$router.push({path: '/login'})
-      }
-    }
-  },
+  mixins: [auth],
   methods: {
     redirect(path) {
       this.$router.push({ path: path })
