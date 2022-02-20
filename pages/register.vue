@@ -12,7 +12,7 @@
     </div>
 
     <div class="login-inputs">
-      <div class="login-inputs-container">
+      <div v-if="status !== 1" class="login-inputs-container">
         <h1>Sign up</h1>
         <Input :oneerror="emailError" :title="'Email'" :type="'text'" v-model="email" />
         <Input :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password" />
@@ -48,7 +48,12 @@
         </div>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
+        <p v-if="status === -1" class="paragraph-small error">User with this email already exists!</p>
         <Button :label="'Sign up'" :clickon="register" :disabled="!validFields()" />
+      </div>
+      <div class="login-inputs-container" v-else>
+        <h2>Conformation email has been sent.</h2>
+        <p>Please, follow the instruction in the email to complete registration process.</p>
       </div>
     </div>
 
@@ -150,13 +155,14 @@ export default {
     },
     async register() {
       if (this.validFields()) {
-        const res = await register({
+        await register({
           email: this.email,
           password: this.password
+        }).then(() => {
+          this.$store.commit('setStatus', 1)
+        }).catch(() => {
+          this.$store.commit('setStatus', -1)
         })
-        this.status = res.status
-      } else {
-        console.log('error')
       }
     }
   }
