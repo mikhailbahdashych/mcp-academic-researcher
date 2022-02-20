@@ -108,7 +108,9 @@ export default {
   },
   methods: {
     async resetPassword() {
-      // const res = await resetPassword()
+      const res = await resetPassword({
+        email: this.resetPasswordEmail
+      })
     },
     redirect(path) {
       this.$router.push({ path: path })
