@@ -43,6 +43,11 @@ export default {
   },
   async mounted() {
     await verifyToken({token: localStorage.getItem('token')})
+    .then((res) => {
+      console.log(res)
+    }).catch((err) => {
+      console.log(err)
+    })
   },
   methods: {
     redirect(path) {
