@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import auth from '~/mixins/auth'
 export default {
   name: "Header",
   data() {
@@ -41,7 +40,6 @@ export default {
 
     }
   },
-  mixins: [auth],
   methods: {
     redirect(path) {
       this.$router.push({ path: path })
