@@ -139,7 +139,6 @@ export default {
     },
     validPassword() {
       this.$store.commit('setPasswordRulesList', validatePasswordRules(this.password))
-      console.log(this.passwordRulesList)
       this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
       this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
       this.passwordError.passwordRules = !!(!validatePassword(this.password) || !validatePassword(this.passwordRepeat));
