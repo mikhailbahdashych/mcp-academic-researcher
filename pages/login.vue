@@ -124,6 +124,7 @@ export default {
           password: this.loginPassword
         })
         localStorage.setItem('token', token)
+        await this.$router.push({ path: '/account' })
       } catch (e) {
         console.log(e)
       }
