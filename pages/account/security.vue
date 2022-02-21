@@ -1,7 +1,8 @@
 <template>
-  <div>
+  <div style="padding: 50px; width: 600px; margin: 0 auto">
     <h1>Here is security subpage</h1>
-    <Input />
+    <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
+    <Input :title="'Code'" :type="'text'" />
     <Button :label="'Set 2FA'" :clickon="set2fa" />
   </div>
 </template>
@@ -19,6 +20,9 @@ export default {
   methods: {
     async set2fa() {
       await set2fa()
+    },
+    generate2fa() {
+
     }
   }
 }
