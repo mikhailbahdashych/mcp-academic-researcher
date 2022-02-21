@@ -1,8 +1,7 @@
 <template>
   <div style="padding: 50px; width: 600px; margin: 0 auto">
     <h1>Here is security subpage</h1>
-    {{token}}
-    <img :src="token.qr" alt="">
+    <img :src="token.qr" alt="2fa">
     <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
     <Input :title="'Code'" :type="'text'" v-model="code" />
     <Button :label="'Set 2FA'" :clickon="set2fa" />
@@ -34,7 +33,7 @@ export default {
       })
     },
     generate2fa() {
-      this.token = node2fa.generateSecret()
+      this.token = node2fa.generateSecret({name: 'test', account: 'dupa@dupa.com'})
     }
   }
 }
