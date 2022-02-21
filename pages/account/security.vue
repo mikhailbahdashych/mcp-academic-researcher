@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import { set2fa } from "~/api";
 export default {
   name: "security"
 }
