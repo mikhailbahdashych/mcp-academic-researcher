@@ -1,5 +1,7 @@
 <template>
-  <div></div>
+  <div>
+    <h1>Here is account page</h1>
+  </div>
 </template>
 
 <script>
@@ -9,5 +11,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../assets/css/account";
+@import "../../assets/css/account";
 </style>
