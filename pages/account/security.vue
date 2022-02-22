@@ -29,7 +29,8 @@ export default {
     async set2fa() {
       await set2fa({
         code: this.code,
-        token: this.token
+        token: this.token,
+        jwt: localStorage.getItem('token')
       })
     },
     generate2fa() {
