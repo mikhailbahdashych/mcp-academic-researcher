@@ -57,6 +57,7 @@ router.post('/verify-token', async (req, res) => {
 
 router.post('/set-2fa', async (req, res) => {
   try {
+    // @TODO FIX HEADERS
     const data = await api.post('/set-2fa', req.body, {headers: req.headers})
     res.json(data.data)
   } catch (e) {
