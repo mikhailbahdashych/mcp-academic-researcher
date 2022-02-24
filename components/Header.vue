@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { verifyUserTokenSoft } from "@/helpers/auth";
+import { verifyUserTokenSoft } from "~/helpers/auth";
 export default {
   name: "Header",
   async mounted() {

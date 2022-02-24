@@ -13,6 +13,15 @@ export const verifyUserToken = async (router) => {
 }
 
 export const verifyUserTokenSoft = async () => {
-  const checkToken = await verifyToken({ token: localStorage.getItem('token') })
-  return !checkToken.error;
+  if (localStorage.getItem('token')) {
+    const checkToken = await verifyToken({ token: localStorage.getItem('token') })
+    if (checkToken.error) {
+      localStorage.removeItem('token')
+      return false
+    } else {
+      return true
+    }
+  } else {
+    return false
+  }
 }
