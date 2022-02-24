@@ -7,6 +7,8 @@
       <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
       <Input :title="'Code'" :type="'text'" v-model="code" />
       <Button :label="'Set 2FA'" :clickon="set2fa" />
+      <p v-if="twofaStatus.status === 1">2fa setted</p>
+      <p v-else>2fa not setted</p>
     </div>
   </div>
 </template>
@@ -26,12 +28,13 @@ export default {
   data() {
     return {
       code: null,
-      token: {}
+      token: {},
+      twofaStatus: {}
     }
   },
   async mounted() {
     await verifyUserToken(this.$router)
-    // await verify2fa()
+    await this.check2fa()
   },
   methods: {
     async set2fa() {
@@ -43,6 +46,9 @@ export default {
     },
     generate2fa() {
       this.token = node2fa.generateSecret({name: 'test', account: 'dupa@dupa.com'})
+    },
+    async check2fa() {
+      this.twofaStatus = await verify2fa({token: localStorage.getItem('token')})
     }
   }
 }
