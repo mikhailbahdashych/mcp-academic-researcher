@@ -50,3 +50,8 @@ export const set2fa = async (payload) => {
   const { data } = await api.post('/set-2fa', payload)
   return data
 }
+
+export const verify2fa = async (payload) => {
+  const { data } = await api.post('/verify-2fa', payload)
+  return data
+}
