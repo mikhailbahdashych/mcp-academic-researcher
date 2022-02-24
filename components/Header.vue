@@ -35,6 +35,11 @@
           My account
         </div>
       </div>
+      <div class="user-nav" @click="logout">
+        <div class="user-nav-button filled">
+          Log out
+        </div>
+      </div>
     </div>
 
   </div>
@@ -55,6 +60,10 @@ export default {
   methods: {
     redirect(path) {
       this.$router.push({ path: path })
+    },
+    logout() {
+      localStorage.removeItem('token')
+      this.$router.push({ path: '/' })
     }
   }
 }
