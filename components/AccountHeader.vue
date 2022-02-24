@@ -1,8 +1,8 @@
 <template>
   <div class="account-header">
     <div class="account-header-inner">
-      <div v-for="item in accountHeaderItems">
-        <h3>{{item.title}}</h3>
+      <div v-for="item in accountHeaderItems" class="account-header-item-block">
+        <h3 class="account-header-item">{{item.title}}</h3>
       </div>
     </div>
   </div>
