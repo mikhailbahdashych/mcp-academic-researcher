@@ -16,15 +16,23 @@
       <input class="header-middle-search" />
     </div>
 
-    <div class="header-side">
-      <div class="user-nav" @click="redirect('login')">
+    <div class="header-side" v-if="!tokenStatus">
+      <div class="user-nav" @click="redirect('/login')">
         <div class="user-nav-button">
           Log in
         </div>
       </div>
-      <div class="user-nav" @click="redirect('register')">
+      <div class="user-nav" @click="redirect('/register')">
         <div class="user-nav-button filled">
           Sign up
+        </div>
+      </div>
+    </div>
+
+    <div class="header-side" v-else>
+      <div class="user-nav" @click="redirect('/account')">
+        <div class="user-nav-button filled">
+          My account
         </div>
       </div>
     </div>
@@ -33,11 +41,15 @@
 </template>
 
 <script>
+import { verifyUserTokenSoft } from "@/helpers/auth";
 export default {
   name: "Header",
+  async mounted() {
+    this.tokenStatus = await verifyUserTokenSoft()
+  },
   data() {
     return {
-
+      tokenStatus: null
     }
   },
   methods: {

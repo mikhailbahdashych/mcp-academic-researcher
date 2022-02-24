@@ -11,3 +11,8 @@ export const verifyUserToken = async (router) => {
     }
   }
 }
+
+export const verifyUserTokenSoft = async () => {
+  const checkToken = await verifyToken({ token: localStorage.getItem('token') })
+  return !checkToken.error;
+}
