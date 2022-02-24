@@ -1,10 +1,13 @@
 <template>
-  <div style="padding: 50px; width: 600px; margin: 0 auto">
-    <h1>Here is security subpage</h1>
-    <img :src="token.qr" alt="2fa">
-    <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
-    <Input :title="'Code'" :type="'text'" v-model="code" />
-    <Button :label="'Set 2FA'" :clickon="set2fa" />
+  <div>
+    <Header />
+    <div style="padding: 50px; width: 600px; margin: 0 auto">
+      <h1>Here is security subpage</h1>
+      <img :src="token.qr" alt="2fa">
+      <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
+      <Input :title="'Code'" :type="'text'" v-model="code" />
+      <Button :label="'Set 2FA'" :clickon="set2fa" />
+    </div>
   </div>
 </template>
 
@@ -28,6 +31,7 @@ export default {
   },
   async mounted() {
     await verifyUserToken(this.$router)
+    // await verify2fa()
   },
   methods: {
     async set2fa() {
@@ -44,6 +48,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+@import "../../assets/css/account";
 </style>

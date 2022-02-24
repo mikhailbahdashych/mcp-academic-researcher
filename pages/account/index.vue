@@ -1,12 +1,16 @@
 <template>
   <div>
-    <h1>Here is account page</h1>
+    <Header />
   </div>
 </template>
 
 <script>
+import Header from "~/components/Header";
 export default {
-  name: "account"
+  name: "account",
+  components: {
+    Header
+  }
 }
 </script>
 
