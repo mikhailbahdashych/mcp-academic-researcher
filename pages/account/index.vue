@@ -1,16 +1,19 @@
 <template>
   <div>
     <Header />
+    <AccountHeader />
   </div>
 </template>
 
 <script>
 import { verifyUserToken } from "@/helpers/auth";
 import Header from "~/components/Header";
+import AccountHeader from "~/components/AccountHeader";
 export default {
   name: "account",
   components: {
-    Header
+    Header,
+    AccountHeader
   },
   async mounted() {
     await verifyUserToken(this.$router)

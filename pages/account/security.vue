@@ -1,6 +1,7 @@
 <template>
   <div>
     <Header />
+    <AccountHeader />
     <div style="padding: 50px; width: 600px; margin: 0 auto">
       <h1>Here is security subpage</h1>
       <img :src="token.qr" alt="2fa">
@@ -18,12 +19,14 @@ import { set2fa, verify2fa } from "~/api";
 import { verifyUserToken } from "~/helpers/auth";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
+import AccountHeader from "~/components/AccountHeader";
 import * as node2fa from "node-2fa";
 export default {
   name: "security",
   components: {
     Input,
-    Button
+    Button,
+    AccountHeader
   },
   data() {
     return {
