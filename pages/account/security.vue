@@ -27,7 +27,7 @@ export default {
     }
   },
   async mounted() {
-    await verifyUserToken()
+    await verifyUserToken(this.$router)
   },
   methods: {
     async set2fa() {
