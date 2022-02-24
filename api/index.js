@@ -22,31 +22,31 @@ api.interceptors.request.use(function (config) {
 
 
 export const login = async (payload) => {
-  const { data } = await api.post(`login`, payload)
+  const { data } = await api.post(`/login`, payload)
   return data
 }
 
 export const register = async (payload) => {
-  const { data } =  await api.post(`register`, payload)
+  const { data } =  await api.post(`/register`, payload)
   return data
 }
 
 export const resetPassword = async (payload) => {
-  const { data } = await api.post(`reset-password`, payload)
+  const { data } = await api.post(`/reset-password`, payload)
   return data
 }
 
 export const sendVerificationCode = async (payload) => {
-  const { data } = await api.post(`verification-code`, payload)
+  const { data } = await api.post(`/verification-code`, payload)
   return data
 }
 
 export const verifyToken = async (payload) => {
-  const { data } = await api.post('verify-token', payload)
+  const { data } = await api.post('/verify-token', payload)
   return data
 }
 
 export const set2fa = async (payload) => {
-  const { data } = await api.post('set-2fa', payload)
+  const { data } = await api.post('/set-2fa', payload)
   return data
 }
