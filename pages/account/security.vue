@@ -10,6 +10,7 @@
 
 <script>
 import { set2fa } from "~/api";
+import { verifyUserToken } from "~/helpers/auth";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import * as node2fa from "node-2fa";
@@ -24,6 +25,9 @@ export default {
       code: null,
       token: {}
     }
+  },
+  async mounted() {
+    await verifyUserToken()
   },
   methods: {
     async set2fa() {
