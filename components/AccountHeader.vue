@@ -2,7 +2,9 @@
   <div class="account-header">
     <div class="account-header-inner">
       <div v-for="item in accountHeaderItems" class="account-header-item-block">
-        <h3 class="account-header-item" @click="redirect(item.route)">{{item.title}}</h3>
+        <h3 :style="[item.active ? {'color': 'red'} : {'': ''}]" class="account-header-item" @click="redirect(item.route)">
+          {{item.title}}
+        </h3>
       </div>
     </div>
   </div>
@@ -14,16 +16,18 @@ export default {
   data() {
     return {
       accountHeaderItems: [
-        { title: 'My account', route: '/account' },
-        { title: 'Settings', route: '/account/settings' },
-        { title: 'Security', route: '/account/security' },
+        { title: 'My account', route: '/account', active: false },
+        { title: 'Settings', route: '/account/settings', active: false },
+        { title: 'Security', route: '/account/security', active: false },
       ]
     }
   },
   watch: {
     '$route.path': {
       handler: function(path) {
-        console.log(path)
+        this.accountHeaderItems.map(i => {
+          if (i.route === path) i.active = true
+        })
       },
       deep: true,
       immediate: true
