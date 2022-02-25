@@ -4,6 +4,7 @@
     <input
       ref="name"
       class="basic-input"
+      :style="inputStyles"
       :class="[
         oneerror ||
         (error.passwordMismatch || error.passwordRequirement || error.passwordRules)
@@ -47,6 +48,10 @@ export default {
       default: ''
     },
     styles: {
+      type: String,
+      default: ''
+    },
+    inputStyles: {
       type: String,
       default: ''
     },

@@ -14,14 +14,14 @@
         <div class="container-password-change">
           <div class="inner-block">
             <p>Change your password</p>
-            <Input :title="'Current password'" :type="'password'" v-model="currentPassword" />
-            <Input :title="'New password'" :type="'password'" v-model="newPassword" />
-            <Input :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
+            <Input :input-styles="'width: calc(100% - 15px)'" :title="'Current password'" :type="'password'" v-model="currentPassword" />
+            <Input :input-styles="'width: calc(100% - 15px)'" :title="'New password'" :type="'password'" v-model="newPassword" />
+            <Input :input-styles="'width: calc(100% - 15px)'" :styles="'padding-bottom: 20px'" :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
             <Button :label="'Change password'" :clickon="changePassword" />
           </div>
         </div>
       </div>
-      <div class="containers">
+      <div class="account-containers">
         <div class="container-close-account">
           <div class="inner-block">
             <p>Close account</p>
