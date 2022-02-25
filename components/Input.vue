@@ -4,11 +4,10 @@
     <input
       ref="name"
       class="basic-input"
-      :style="inputStyles"
       :class="[
         oneerror ||
         (error.passwordMismatch || error.passwordRequirement || error.passwordRules)
-        && innerValue && innerValue.length > 0 ? 'error' : '']"
+        && innerValue && innerValue.length > 0 ? 'error' : additionalClass]"
       :type="type"
       :disabled="disabled"
       :placeholder="placeholder"
@@ -51,7 +50,7 @@ export default {
       type: String,
       default: ''
     },
-    inputStyles: {
+    additionalClass: {
       type: String,
       default: ''
     },

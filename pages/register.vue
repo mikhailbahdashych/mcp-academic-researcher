@@ -14,9 +14,9 @@
     <div class="login-inputs">
       <div v-if="status !== 1" class="login-inputs-container">
         <h1>Sign up</h1>
-        <Input :input-styles="'width: 500px'" :oneerror="emailError" :title="'Email'" :type="'text'" v-model="email" />
-        <Input :input-styles="'width: 500px'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password" />
-        <Input :input-styles="'width: 500px'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="emailError" :title="'Email'" :type="'text'" v-model="email" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" :styles="'padding-bottom: 10px'" v-model="passwordRepeat" />
         <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">

@@ -14,9 +14,9 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change your password</p>
-            <Input :input-styles="'width: calc(100% - 15px)'" :title="'Current password'" :type="'password'" v-model="currentPassword" />
-            <Input :input-styles="'width: calc(100% - 15px)'" :title="'New password'" :type="'password'" v-model="newPassword" />
-            <Input :input-styles="'width: calc(100% - 15px)'" :styles="'padding-bottom: 20px'" :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
+            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="currentPassword" />
+            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="newPassword" />
+            <Input :additional-class="'basic-input-box'" :styles="'padding-bottom: 20px'" :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
             <Button :label="'Change password'" :clickon="changePassword" />
           </div>
         </div>
@@ -25,9 +25,9 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
-            <Input :input-styles="'width: calc(100% - 15px)'" :title="'Current email'" :type="'password'" v-model="currentPassword" />
-            <Input :input-styles="'width: calc(100% - 15px)'" :title="'New email'" :type="'password'" v-model="newPassword" />
-            <Input :input-styles="'width: calc(100% - 15px)'" :styles="'padding-bottom: 20px'" :title="'Repeat new email'" :type="'password'" v-model="newPasswordRepeat" />
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'password'" v-model="currentPassword" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'password'" v-model="newPassword" />
+            <Input :additional-class="'basic-input-box'" :styles="'padding-bottom: 20px'" :title="'Repeat new email'" :type="'password'" v-model="newPasswordRepeat" />
             <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>

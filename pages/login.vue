@@ -22,7 +22,7 @@
         </div>
 
         <Input
-          :input-styles="'width: 500px'"
+          :additional-class="'basic-input-wide'"
           :oneerror="loginEmailError"
           :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]"
           :focus="emailFocus"
@@ -31,7 +31,7 @@
           v-model="loginEmail"
         />
         <Input
-          :input-styles="'width: 500px'"
+          :additional-class="'basic-input-wide'"
           :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]"
           :focus="phoneFocus"
           :title="'Phone number'"
@@ -39,7 +39,7 @@
           v-model="loginPhone"
         />
 
-        <Input :input-styles="'width: 500px'" :oneerror="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 25px'" v-model="loginPassword" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 25px'" v-model="loginPassword" />
         <p v-if="loginError === -1" class="paragraph-small error">Wrong credentials!</p>
         <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
