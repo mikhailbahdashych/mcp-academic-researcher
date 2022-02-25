@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { set2fa, verify2fa, changePassword, closeAccount } from "~/api";
+import { set2fa, verify2fa, changePassword, closeAccount, changeEmail } from "~/api";
 import { verifyUserToken } from "~/helpers/auth";
 import Input from "~/components/Input";
 import Button from "~/components/Button";

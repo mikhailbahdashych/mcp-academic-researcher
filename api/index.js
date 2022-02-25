@@ -65,3 +65,8 @@ export const closeAccount = async (payload) => {
   const { data } = await api.post('/close-account', payload)
   return data
 }
+
+export const changeEmail = async (payload) => {
+  const { data } = await api.post('/change-email', payload)
+  return data
+}

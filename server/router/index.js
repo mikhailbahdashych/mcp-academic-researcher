@@ -91,4 +91,13 @@ router.post('/close-account', async (req, res) => {
   }
 })
 
+router.post('/change-email', async (req, res) => {
+  try {
+    const data = await api.post('/change-email', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 module.exports = router
