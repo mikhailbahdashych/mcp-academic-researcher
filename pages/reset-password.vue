@@ -22,6 +22,7 @@
         </div>
 
         <InputWithButton
+          :additional-class="'basic-input-wide'"
           :error="resetPasswordEmailError"
           :button-click-on="() => {}"
           :title="'Email'"
@@ -31,6 +32,7 @@
           v-model="resetPasswordEmail"
         />
         <InputWithButton
+          :additional-class="'basic-input-wide'"
           :button-click-on="() => {}"
           :title="'Phone'"
           :focus="resetPasswordPhoneFocus"
@@ -39,7 +41,7 @@
           v-model="resetPasswordPhone"
         />
 
-        <Input :title="'Verification code'" :additional-class="'margin-bottom-30'" />
+        <Input :title="'Verification code'" :additional-class="'margin-bottom-30 basic-input-wide'" />
         <Button :label="'Submit'" :clickon="resetPassword" />
       </div>
     </div>

@@ -5,7 +5,7 @@
       <input
         ref="name"
         class="basic-input-button"
-        :class="[error && innerValue && innerValue.length > 0 ? 'error' : '']"
+        :class="[error && innerValue && innerValue.length > 0 ? 'error' : additionalClass]"
         :type="type"
         :disabled="disabled"
         :placeholder="placeholder"
@@ -35,6 +35,10 @@ export default {
       default: ''
     },
     value: {
+      type: String,
+      default: ''
+    },
+    additionalClass: {
       type: String,
       default: ''
     },
