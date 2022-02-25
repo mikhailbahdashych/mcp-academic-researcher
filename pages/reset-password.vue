@@ -39,7 +39,7 @@
           v-model="resetPasswordPhone"
         />
 
-        <Input :title="'Verification code'" :styles="'padding-bottom: 30px'" />
+        <Input :title="'Verification code'" :additional-class="'margin-bottom-30'" />
         <Button :label="'Submit'" :clickon="resetPassword" />
       </div>
     </div>

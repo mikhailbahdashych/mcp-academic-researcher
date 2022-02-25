@@ -16,7 +16,7 @@
             <p>Change your password</p>
             <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="currentPassword" />
             <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="newPassword" />
-            <Input :additional-class="'basic-input-box'" :styles="'padding-bottom: 20px'" :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
             <Button :label="'Change password'" :clickon="changePassword" />
           </div>
         </div>
@@ -27,7 +27,7 @@
             <p>Change email</p>
             <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'password'" v-model="currentPassword" />
             <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'password'" v-model="newPassword" />
-            <Input :additional-class="'basic-input-box'" :styles="'padding-bottom: 20px'" :title="'Repeat new email'" :type="'password'" v-model="newPasswordRepeat" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'password'" v-model="newPasswordRepeat" />
             <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>

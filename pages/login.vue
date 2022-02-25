@@ -39,7 +39,7 @@
           v-model="loginPhone"
         />
 
-        <Input :additional-class="'basic-input-wide'" :oneerror="loginPasswordError" :title="'Password'" :type="'password'" :styles="'padding-bottom: 25px'" v-model="loginPassword" />
+        <Input :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword" />
         <p v-if="loginError === -1" class="paragraph-small error">Wrong credentials!</p>
         <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
