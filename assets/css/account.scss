@@ -1,29 +1,15 @@
 .account-container {
   width: 80%;
-  background-color: #019fb6;
   margin: 50px auto 0;
   .account-containers {
     display: flex;
     justify-content: space-between;
-    .container-qr {
+    .security-container {
+      margin: 25px;
       width: 50%;
       height: 500px;
-      background-color: lightgoldenrodyellow;
-    }
-    .container-password-change {
-      width: 50%;
-      height: 500px;
-      background-color: lightblue;
-    }
-    .container-close-account {
-      width: 50%;
-      height: 500px;
-      background-color: lightpink;
-    }
-    .container-change-email {
-      width: 50%;
-      height: 500px;
-      background-color: lightslategrey;
+      border: 0.5px solid black;
+      border-radius: 15px;
     }
   }
 }

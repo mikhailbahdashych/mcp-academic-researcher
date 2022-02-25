@@ -5,13 +5,13 @@
     <div class="account-container">
       <h1>Here is security subpage</h1>
       <div class="account-containers">
-        <div class="container-qr">
+        <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
             <Button :label="'Click here to generate 2FA'" :clickon="generate2fa" />
           </div>
         </div>
-        <div class="container-password-change">
+        <div class="security-container">
           <div class="inner-block">
             <p>Change your password</p>
             <Input :input-styles="'width: calc(100% - 15px)'" :title="'Current password'" :type="'password'" v-model="currentPassword" />
@@ -22,12 +22,12 @@
         </div>
       </div>
       <div class="account-containers">
-        <div class="container-change-email">
+        <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
           </div>
         </div>
-        <div class="container-close-account">
+        <div class="security-container">
           <div class="inner-block">
             <p>Close account</p>
           </div>
