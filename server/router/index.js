@@ -73,4 +73,22 @@ router.post('/verify-2fa', async (req, res) => {
   }
 })
 
+router.post('/change-password', async (req, res) => {
+  try {
+    const data = await api.post('/change-password', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
+router.post('/close-account', async (req, res) => {
+  try {
+    const data = await api.post('/close-account', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 module.exports = router

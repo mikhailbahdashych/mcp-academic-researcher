@@ -55,3 +55,13 @@ export const verify2fa = async (payload) => {
   const { data } = await api.post('/verify-2fa', payload)
   return data
 }
+
+export const changePassword = async (payload) => {
+  const { data } = await api.post('/change-password', payload)
+  return data
+}
+
+export const closeAccount = async (payload) => {
+  const { data } = await api.post('/close-account', payload)
+  return data
+}
