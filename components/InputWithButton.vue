@@ -1,11 +1,11 @@
 <template>
   <div>
     <p class="paragraph-small">{{ title }}</p>
-    <div class="main-class">
+    <div class="main-class" :class="additionalClass">
       <input
         ref="name"
         class="basic-input-button"
-        :class="[error && innerValue && innerValue.length > 0 ? 'error' : additionalClass]"
+        :class="[error && innerValue && innerValue.length > 0 ? 'error' : '']"
         :type="type"
         :disabled="disabled"
         :placeholder="placeholder"
