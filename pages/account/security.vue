@@ -25,6 +25,10 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
+            <Input :input-styles="'width: calc(100% - 15px)'" :title="'Current email'" :type="'password'" v-model="currentPassword" />
+            <Input :input-styles="'width: calc(100% - 15px)'" :title="'New email'" :type="'password'" v-model="newPassword" />
+            <Input :input-styles="'width: calc(100% - 15px)'" :styles="'padding-bottom: 20px'" :title="'Repeat new email'" :type="'password'" v-model="newPasswordRepeat" />
+            <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>
         <div class="security-container">
@@ -85,13 +89,18 @@ export default {
       })
     },
     generate2fa() {
-      this.token = node2fa.generateSecret({name: 'test', account: 'dupa@dupa.com'})
+      this.token = node2fa.generateSecret({
+        name: 'Bot crypto trader', account: 'dupa@dupa.com'
+      })
     },
     async check2fa() {
       this.twofaStatus = await verify2fa({token: localStorage.getItem('token')})
     },
     async changePassword() {
-
+      await changePassword()
+    },
+    async changeEmail() {
+      await changeEmail()
     }
   }
 }
