@@ -23,14 +23,14 @@
 
         <Input
           :oneerror="loginEmailError"
-          :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]"
+          :style="[!loginWithEmail ? {'display': 'none', 'min-width': '500px'} : {'min-width': '500px'}]"
           :focus="emailFocus"
           :title="'Email'"
           :type="'email'"
           v-model="loginEmail"
         />
         <Input
-          :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]"
+          :style="[loginWithEmail ? {'display': 'none', 'min-width': '500px'} : {'min-width': '500px'}]"
           :focus="phoneFocus"
           :title="'Phone number'"
           :type="'email'"

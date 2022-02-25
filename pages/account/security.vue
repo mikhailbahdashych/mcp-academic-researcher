@@ -2,9 +2,9 @@
   <div>
     <Header />
     <AccountHeader />
-    <div class="container">
+    <div class="account-container">
       <h1>Here is security subpage</h1>
-      <div class="containers">
+      <div class="account-containers">
         <div class="container-qr">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
@@ -14,6 +14,10 @@
         <div class="container-password-change">
           <div class="inner-block">
             <p>Change your password</p>
+            <Input :title="'Current password'" :type="'password'" v-model="currentPassword" />
+            <Input :title="'New password'" :type="'password'" v-model="newPassword" />
+            <Input :title="'Repeat new password'" :type="'password'" v-model="newPasswordRepeat" />
+            <Button :label="'Change password'" :clickon="changePassword" />
           </div>
         </div>
       </div>
@@ -56,7 +60,11 @@ export default {
     return {
       code: null,
       token: {},
-      twofaStatus: {}
+      twofaStatus: {},
+
+      currentPassword: null,
+      newPassword: null,
+      newPasswordRepeat: null
     }
   },
   async mounted() {
@@ -76,6 +84,9 @@ export default {
     },
     async check2fa() {
       this.twofaStatus = await verify2fa({token: localStorage.getItem('token')})
+    },
+    async changePassword() {
+
     }
   }
 }
