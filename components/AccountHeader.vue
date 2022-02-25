@@ -20,6 +20,15 @@ export default {
       ]
     }
   },
+  watch: {
+    '$route.path': {
+      handler: function(path) {
+        console.log(path)
+      },
+      deep: true,
+      immediate: true
+    }
+  },
   methods: {
     redirect(path) {
       this.$router.push({ path })
