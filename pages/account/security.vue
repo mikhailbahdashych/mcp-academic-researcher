@@ -5,11 +5,24 @@
     <div class="container">
       <h1>Here is security subpage</h1>
       <div class="containers">
-        <div class="container-qr"></div>
-        <div class="container-password-change"></div>
+        <div class="container-qr">
+          <div class="inner-block">
+            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
+            <Button :label="'Click here to generate 2FA'" :clickon="generate2fa" />
+          </div>
+        </div>
+        <div class="container-password-change">
+          <div class="inner-block">
+            <p>Change your password</p>
+          </div>
+        </div>
       </div>
       <div class="containers">
-        <div class="container-close-account"></div>
+        <div class="container-close-account">
+          <div class="inner-block">
+            <p>Close account</p>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -26,7 +39,7 @@
 </template>
 
 <script>
-import { set2fa, verify2fa } from "~/api";
+import { set2fa, verify2fa, changePassword, closeAccount } from "~/api";
 import { verifyUserToken } from "~/helpers/auth";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
