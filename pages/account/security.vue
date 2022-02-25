@@ -22,6 +22,11 @@
         </div>
       </div>
       <div class="account-containers">
+        <div class="container-change-email">
+          <div class="inner-block">
+            <p>Change email</p>
+          </div>
+        </div>
         <div class="container-close-account">
           <div class="inner-block">
             <p>Close account</p>
