@@ -1,0 +1,24 @@
+.container {
+  width: 80%;
+  background-color: #019fb6;
+  margin: 50px auto 0;
+  .containers {
+    display: flex;
+    justify-content: space-between;
+    .container-qr {
+      width: 50%;
+      height: 500px;
+      background-color: lightgreen;
+    }
+    .container-password-change {
+      width: 50%;
+      height: 500px;
+      background-color: lightblue;
+    }
+    .container-close-account {
+      width: 50%;
+      height: 500px;
+      background-color: lightpink;
+    }
+  }
+}
