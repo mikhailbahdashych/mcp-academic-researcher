@@ -63,21 +63,6 @@ export default {
     Button,
     AccountHeader
   },
-  data() {
-    return {
-      code: null,
-      token: {},
-      twofaStatus: {},
-
-      currentPassword: null,
-      newPassword: null,
-      newPasswordRepeat: null,
-
-      currentEmail: null,
-      newEmail: null,
-      newEmailRepeat: null
-    }
-  },
   watch: {
     ...mapActions([
       'fetchSecurityCode',
@@ -90,6 +75,12 @@ export default {
       'fetchSecurityNewEmail',
       'fetchSecurityNewEmailRepeat'
     ])
+  },
+  computed: {
+    code: {
+      get() { return this.$store.getters.code },
+      set(value) { this.$store.commit('setLoginEmail', value) }
+    },
   },
   async mounted() {
     await verifyUserToken(this.$router)

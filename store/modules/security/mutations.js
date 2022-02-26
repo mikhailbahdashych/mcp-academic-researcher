@@ -1,22 +1,22 @@
 export default {
-  setSecurityCode(state, value) { state.code = value },
-  setSecurityToken(state, value) { state.token = value },
-  setSecurityTwoFaStatus(state, value) { state.twofaStatus = value },
-  setSecurityCurrentPassword(state, value) { state.currentPassword = value },
-  setSecurityNewPassword(state, value) { state.newPassword = value },
-  setSecurityNewPasswordRepeat(state, value) { state.newPasswordRepeat = value },
-  setSecurityCurrentEmail(state, value) { state.currentEmail = value },
-  setSecurityNewEmail(state, value) { state.newEmail = value },
-  setSecurityNewEmailRepeat(state, value) { state.newEmailRepeat = value },
+  setSecurityCode(state, value) { state.securityCode = value },
+  setSecurityToken(state, value) { state.securityToken = value },
+  setSecurityTwoFaStatus(state, value) { state.securityTwofaStatus = value },
+  setSecurityCurrentPassword(state, value) { state.securityCurrentPassword = value },
+  setSecurityNewPassword(state, value) { state.securityNewPassword = value },
+  setSecurityNewPasswordRepeat(state, value) { state.securityNewPasswordRepeat = value },
+  setSecurityCurrentEmail(state, value) { state.securityCurrentEmail = value },
+  setSecurityNewEmail(state, value) { state.securityNewEmail = value },
+  setSecurityNewEmailRepeat(state, value) { state.securityNewEmailRepeat = value },
   setSecurityDefaultValues(state) {
-    state.code = null
-    state.token = {}
-    state.twofaStatus = {}
-    state.currentPassword = null
-    state.newPassword = null
-    state.newPasswordRepeat = null
-    state.currentEmail = null
-    state.newEmail = null
-    state.newEmailRepeat = null
+    state.securityCode = null
+    state.securityToken = {}
+    state.securityTwofaStatus = {}
+    state.securityCurrentPassword = null
+    state.securityNewPassword = null
+    state.securityNewPasswordRepeat = null
+    state.securityCurrentEmail = null
+    state.securityNewEmail = null
+    state.securityNewEmailRepeat = null
   }
 }

@@ -3,15 +3,15 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const state = () => ({
-  code: null,
-  token: {},
-  twofaStatus: {},
-  currentPassword: null,
-  newPassword: null,
-  newPasswordRepeat: null,
-  currentEmail: null,
-  newEmail: null,
-  newEmailRepeat: null
+  securityCode: null,
+  securityToken: {},
+  securityTwofaStatus: {},
+  securityCurrentPassword: null,
+  securityNewPassword: null,
+  securityNewPasswordRepeat: null,
+  securityCurrentEmail: null,
+  securityNewEmail: null,
+  securityNewEmailRepeat: null
 })
 
 export default {
