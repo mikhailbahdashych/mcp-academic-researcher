@@ -78,39 +78,39 @@ export default {
   },
   computed: {
     securityCode: {
-      get() { return this.$store.getters.securityCode },
+      get() { return this.$store.getters.getSecurityCode },
       set(value) { this.$store.commit('setSecurityCode', value) }
     },
     securityToken: {
-      get() { return this.$store.getters.securityToken },
+      get() { return this.$store.getters.getSecurityToken },
       set(value) { this.$store.commit('setSecurityToken', value) }
     },
     securityTwofaStatus: {
-      get() { return this.$store.getters.securityTwofaStatus },
+      get() { return this.$store.getters.getSecurityTwoFaStatus },
       set(value) { this.$store.commit('setSecurityTwoFaStatus', value) }
     },
     securityCurrentPassword: {
-      get() { return this.$store.getters.securityCurrentPassword },
+      get() { return this.$store.getters.getSecurityCurrentPassword },
       set(value) { this.$store.commit('setSecurityCurrentPassword', value) }
     },
     securityNewPassword: {
-      get() { return this.$store.getters.securityNewPassword },
+      get() { return this.$store.getters.getSecurityNewPassword },
       set(value) { this.$store.commit('setSecurityNewPassword', value) }
     },
     securityNewPasswordRepeat: {
-      get() { return this.$store.getters.securityNewPasswordRepeat },
+      get() { return this.$store.getters.getSecurityNewPasswordRepeat },
       set(value) { this.$store.commit('setSecurityNewPasswordRepeat', value) }
     },
     securityCurrentEmail: {
-      get() { return this.$store.getters.securityCurrentEmail },
+      get() { return this.$store.getters.getSecurityCurrentEmail },
       set(value) { this.$store.commit('setSecurityCurrentEmail', value) }
     },
     securityNewEmail: {
-      get() { return this.$store.getters.securityNewEmail },
+      get() { return this.$store.getters.getSecurityNewEmail },
       set(value) { this.$store.commit('setSecurityNewEmail', value) }
     },
     securityNewEmailRepeat: {
-      get() { return this.$store.getters.securityNewEmailRepeat },
+      get() { return this.$store.getters.getSecurityNewEmailRepeat },
       set(value) { this.$store.commit('setSecurityNewEmailRepeat', value) }
     }
   },
