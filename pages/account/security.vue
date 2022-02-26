@@ -8,7 +8,6 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            {{this.$store.getters.getSecurityCodeError}}
             <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
             <img :src="securityToken.qr" alt="2fa">
             <Input :title="'Code'" :type="'text'" v-model="securityCode" />
