@@ -22,28 +22,48 @@ api.interceptors.request.use(function (config) {
 
 
 export const login = async (payload) => {
-  const { data } = await api.post(`/login`, payload)
-  return data
+  try {
+    const { data } = await api.post(`/login`, payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const register = async (payload) => {
-  const { data } =  await api.post(`/register`, payload)
-  return data
+  try {
+    const { data } =  await api.post(`/register`, payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const resetPassword = async (payload) => {
-  const { data } = await api.post(`/reset-password`, payload)
-  return data
+  try {
+    const { data } = await api.post(`/reset-password`, payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const sendVerificationCode = async (payload) => {
-  const { data } = await api.post(`/verification-code`, payload)
-  return data
+  try {
+    const { data } = await api.post(`/verification-code`, payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const verifyToken = async (payload) => {
-  const { data } = await api.post('/verify-token', payload)
-  return data
+  try {
+    const { data } = await api.post('/verify-token', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const set2fa = async (payload) => {
@@ -56,21 +76,37 @@ export const set2fa = async (payload) => {
 }
 
 export const verify2fa = async (payload) => {
-  const { data } = await api.post('/verify-2fa', payload)
-  return data
+  try {
+    const { data } = await api.post('/verify-2fa', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const changePassword = async (payload) => {
-  const { data } = await api.post('/change-password', payload)
-  return data
+  try {
+    const { data } = await api.post('/change-password', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const closeAccount = async (payload) => {
-  const { data } = await api.post('/close-account', payload)
-  return data
+  try {
+    const { data } = await api.post('/close-account', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
 
 export const changeEmail = async (payload) => {
-  const { data } = await api.post('/change-email', payload)
-  return data
+  try {
+    const { data } = await api.post('/change-email', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
 }
