@@ -1,4 +1,4 @@
-import { set2fa, verify2fa } from "~/api";
+import { set2fa, verify2fa, changePassword, changeEmail, closeAccount } from "~/api";
 
 export default {
   fetchSecurityCode(ctx, value) { ctx.commit('setSecurityCode', value) },
@@ -18,5 +18,29 @@ export default {
   async fetchCheck2fa(ctx, value) {
     const response = await verify2fa(value)
     ctx.commit('setSecurityToken', { value: response.status, key: 'status' })
+  },
+
+  async fetchChangePassword(ctx, value) {
+    const response = await changePassword(value)
+    if (response.status === 1) {
+      localStorage.removeItem('token')
+      await this.$router.push({ path: '/' })
+    }
+  },
+
+  async fetchChangeEmail(ctx, value) {
+    const response = await changeEmail(value)
+    if (response.status === 1) {
+      localStorage.removeItem('token')
+      await this.$router.push({ path: '/' })
+    }
+  },
+
+  async fetchCloseAccount(ctx, value) {
+    const response = await closeAccount(value)
+    if (response.status === 1) {
+      localStorage.removeItem('token')
+      await this.$router.push({ path: '/' })
+    }
   }
 }

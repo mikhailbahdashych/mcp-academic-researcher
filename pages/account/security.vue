@@ -75,7 +75,10 @@ export default {
       'fetchSecurityNewEmailRepeat',
       'fetchSecurityCodeError',
       'fetchSet2fa',
-      'fetchCheck2fa'
+      'fetchCheck2fa',
+      'fetchChangePassword',
+      'fetchChangeEmail',
+      'fetchCloseAccount'
     ])
   },
   computed: {
@@ -137,35 +140,23 @@ export default {
       })
     },
     async changePassword() {
-      const response = await changePassword({
+      await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityCurrentPassword,
         newPassword: this.securityNewPassword,
         newPasswordRepeat: this.securityNewPasswordRepeat,
         token: localStorage.getItem('token')
       })
-      if (response.status === 1) {
-        localStorage.removeItem('token')
-        await this.$router.push({ path: '/' })
-      }
     },
     async changeEmail() {
-      const response = await changeEmail({
+      await this.$store.dispatch('fetchChangeEmail', {
         currentEmail: this.securityCurrentEmail,
         newEmail: this.securityNewEmail,
         newEmailRepeat: this.securityNewEmailRepeat,
         token: localStorage.getItem('token')
       })
-      if (response.status === 1) {
-        localStorage.removeItem('token')
-        await this.$router.push({ path: '/' })
-      }
     },
     async closeAccount() {
-      const response = await closeAccount({ token: localStorage.getItem('token') })
-      if (response.status === 1) {
-        localStorage.removeItem('token')
-        await this.$router.push({ path: '/' })
-      }
+      await this.$store.dispatch('fetchCloseAccount', { token: localStorage.getItem('token') })
     }
   }
 }
