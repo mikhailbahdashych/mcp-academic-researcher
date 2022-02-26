@@ -25,15 +25,16 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'password'" v-model="currentPassword" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'password'" v-model="newPassword" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'password'" v-model="newPasswordRepeat" />
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="currentEmail" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="newEmail" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="newEmailRepeat" />
             <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>
         <div class="security-container">
           <div class="inner-block">
             <p>Close account</p>
+            <Button :label="'Close account'" :clickon="closeAccount" />
           </div>
         </div>
       </div>
@@ -73,7 +74,11 @@ export default {
 
       currentPassword: null,
       newPassword: null,
-      newPasswordRepeat: null
+      newPasswordRepeat: null,
+
+      currentEmail: null,
+      newEmail: null,
+      newEmailRepeat: null
     }
   },
   async mounted() {
@@ -101,6 +106,11 @@ export default {
     },
     async changeEmail() {
       await changeEmail()
+    },
+    async closeAccount() {
+      await closeAccount({ token: localStorage.getItem('token') })
+      // localStorage.removeItem('token')
+
     }
   }
 }
