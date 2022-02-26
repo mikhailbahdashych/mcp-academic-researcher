@@ -110,7 +110,16 @@ export default {
       }
     },
     async changeEmail() {
-      await changeEmail()
+      const response = await changeEmail({
+        currentEmail: this.currentEmail,
+        newEmail: this.newEmail,
+        newEmailRepeat: this.newEmailRepeat,
+        token: localStorage.getItem('token')
+      })
+      if (response.status === 1) {
+        localStorage.removeItem('token')
+        await this.$router.push({ path: '/' })
+      }
     },
     async closeAccount() {
       const response = await closeAccount({ token: localStorage.getItem('token') })
