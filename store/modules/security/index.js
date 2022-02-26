@@ -6,7 +6,6 @@ const state = () => ({
   securityCode: null,
   securityCodeError: null,
   securityToken: { qr: null, status: null },
-  securityTwofaStatus: {},
   securityCurrentPassword: null,
   securityNewPassword: null,
   securityNewPasswordRepeat: null,

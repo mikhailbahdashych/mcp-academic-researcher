@@ -67,7 +67,6 @@ export default {
     ...mapActions([
       'fetchSecurityCode',
       'fetchSecurityToken',
-      'fetchSecurityTwoFaStatus',
       'fetchSecurityCurrentPassword',
       'fetchSecurityNewPassword',
       'fetchSecurityNewPasswordRepeat',
@@ -86,10 +85,6 @@ export default {
     securityToken: {
       get() { return this.$store.getters.getSecurityToken },
       set(value) { this.$store.commit('setSecurityToken', value) }
-    },
-    securityTwofaStatus: {
-      get() { return this.$store.getters.getSecurityTwoFaStatus },
-      set(value) { this.$store.commit('setSecurityTwoFaStatus', value) }
     },
     securityCurrentPassword: {
       get() { return this.$store.getters.getSecurityCurrentPassword },
@@ -141,7 +136,9 @@ export default {
       })
     },
     async check2fa() {
-      this.securityTwofaStatus = await verify2fa({token: localStorage.getItem('token')})
+       await verify2fa({token: localStorage.getItem('token')}).then((res) => {
+         this.securityToken.status = res.status
+       })
     },
     async changePassword() {
       const response = await changePassword({
