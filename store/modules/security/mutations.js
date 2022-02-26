@@ -1,7 +1,7 @@
 export default {
   setSecurityCode(state, value) { state.securityCode = value },
   setSecurityCodeError(state, value) { state.securityCodeError = value },
-  setSecurityToken(state, value) { state.securityToken = value },
+  setSecurityToken(state, value) { state.securityToken[value.key] = value.value },
   setSecurityCurrentPassword(state, value) { state.securityCurrentPassword = value },
   setSecurityNewPassword(state, value) { state.securityNewPassword = value },
   setSecurityNewPasswordRepeat(state, value) { state.securityNewPasswordRepeat = value },

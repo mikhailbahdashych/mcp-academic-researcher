@@ -74,7 +74,8 @@ export default {
       'fetchSecurityNewEmail',
       'fetchSecurityNewEmailRepeat',
       'fetchSecurityCodeError',
-      'fetchSet2fa'
+      'fetchSet2fa',
+      'fetchCheck2fa'
     ])
   },
   computed: {
@@ -120,7 +121,7 @@ export default {
   },
   async mounted() {
     await verifyUserToken(this.$router)
-    await this.check2fa()
+    await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
     async set2fa() {
@@ -134,11 +135,6 @@ export default {
       this.securityToken = node2fa.generateSecret({
         name: 'Bot crypto trader', account: 'dupa@dupa.com'
       })
-    },
-    async check2fa() {
-       await verify2fa({token: localStorage.getItem('token')}).then((res) => {
-         this.securityToken.status = res.status
-       })
     },
     async changePassword() {
       const response = await changePassword({
