@@ -10,7 +10,7 @@ export default {
   setSecurityNewEmailRepeat(state, value) { state.securityNewEmailRepeat = value },
   setSecurityDefaultValues(state) {
     state.securityCode = null
-    state.securityToken = {}
+    state.securityToken = { qr: 'asd', status: 'asd' }
     state.securityTwofaStatus = {}
     state.securityCurrentPassword = null
     state.securityNewPassword = null
