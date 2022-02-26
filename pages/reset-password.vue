@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { resetPassword, sendVerificationCode } from "~/api";
+import { resetPassword } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail } from "~/helpers/frontValidators";
 import Input from "~/components/Input";

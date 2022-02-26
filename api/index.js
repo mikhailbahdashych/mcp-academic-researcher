@@ -110,3 +110,12 @@ export const changeEmail = async (payload) => {
     return e.response.data
   }
 }
+
+export const sendEmail = async (payload) => {
+  try {
+    const { data } = await api.post('/send-email', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
