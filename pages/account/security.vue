@@ -8,7 +8,12 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button :label="'Click here to generate 2FA'" :clickon="generate2fa" />
+            <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
+            <img :src="token.qr" alt="2fa">
+            <Input :title="'Code'" :type="'text'" v-model="code" />
+            <Button :label="'Set 2FA'" :clickon="set2fa" />
+            <p v-if="twofaStatus.status === 1">2fa setted</p>
+            <p v-else>2fa not setted</p>
           </div>
         </div>
         <div class="security-container">
@@ -40,15 +45,6 @@
       </div>
 
     </div>
-<!--    <div style="padding: 50px; width: 600px; margin: 0 auto">-->
-<!--      <h1>Here is security subpage</h1>-->
-<!--      <img :src="token.qr" alt="2fa">-->
-<!--      <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />-->
-<!--      <Input :title="'Code'" :type="'text'" v-model="code" />-->
-<!--      <Button :label="'Set 2FA'" :clickon="set2fa" />-->
-<!--      <p v-if="twofaStatus.status === 1">2fa setted</p>-->
-<!--      <p v-else>2fa not setted</p>-->
-<!--    </div>-->
   </div>
 </template>
 
