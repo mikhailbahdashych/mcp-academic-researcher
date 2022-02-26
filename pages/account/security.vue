@@ -23,7 +23,6 @@
             <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityNewPassword" />
             <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityNewPasswordRepeat" />
             <Button :label="'Change password'" :clickon="changePassword" />
-            <Button :label="'Send test email'" :clickon="testSendEmail" />
           </div>
         </div>
       </div>
@@ -128,11 +127,6 @@ export default {
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
-    async testSendEmail() {
-      await sendEmail({
-        message: 'Here is some email message'
-      })
-    },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityCode,
