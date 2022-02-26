@@ -132,6 +132,9 @@ export default {
       set(value) { this.$store.commit('setPasswordRulesList', value) }
     }
   },
+  destroyed() {
+    this.$store.commit('setDefaultValues')
+  },
   methods: {
     redirect(path) {
       this.$router.push({ path })

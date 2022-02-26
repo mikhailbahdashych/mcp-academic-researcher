@@ -7,5 +7,16 @@ export default {
   setPhoneFocus(state, value) { state.phoneFocus = value },
   setLoginPasswordError(state, value) { state.loginPasswordError = value },
   setLoginEmailError(state, value) { state.loginEmailError = value },
-  setLoginError(state, value) { state.loginError = value }
+  setLoginError(state, value) { state.loginError = value },
+  setLoginDefaultValues(state) {
+    state.loginEmail = null
+    state.loginPhone = null
+    state.loginPassword = null
+    state.loginWithEmail = null
+    state.emailFocus = false
+    state.phoneFocus = false
+    state.loginPasswordError = false
+    state.loginEmailError = false
+    state.loginError = false
+  },
 }

@@ -105,6 +105,9 @@ export default {
       set(value) { this.$store.commit('setResetPasswordLoginWithEmail', value) }
     }
   },
+  destroyed() {
+    this.$store.commit('setResetPasswordDefaultValues')
+  },
   mounted() {
     this.chooseOption('email')
   },

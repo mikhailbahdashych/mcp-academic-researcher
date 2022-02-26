@@ -115,6 +115,9 @@ export default {
       set(value) { this.$store.commit('setLoginPasswordError', value) }
     }
   },
+  destroyed() {
+    this.$store.commit('setLoginDefaultValues')
+  },
   mounted() {
     this.chooseLogin('email')
   },

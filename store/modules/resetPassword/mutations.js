@@ -5,5 +5,14 @@ export default {
   setResetPasswordEmailError(state, value) { state.resetPasswordEmailError = value },
   setResetPasswordEmailFocus(state, value) { state.resetPasswordEmailFocus = value },
   setResetPasswordPhoneFocus(state, value) { state.resetPasswordPhoneFocus = value },
-  setResetPasswordLoginWithEmail(state, value) { state.resetPasswordLoginWithEmail = value }
+  setResetPasswordLoginWithEmail(state, value) { state.resetPasswordLoginWithEmail = value },
+  setResetPasswordDefaultValues(state) {
+    state.resetPasswordEmail = null
+    state.resetPasswordPhone = null
+    state.resetPasswordCode = null
+    state.resetPasswordEmailError = false
+    state.resetPasswordEmailFocus = false
+    state.resetPasswordPhoneFocus = false
+    state.resetPasswordLoginWithEmail = false
+  }
 }
