@@ -98,7 +98,16 @@ export default {
       this.twofaStatus = await verify2fa({token: localStorage.getItem('token')})
     },
     async changePassword() {
-      await changePassword()
+      const response = await changePassword({
+        currentPassword: this.currentPassword,
+        newPassword: this.newPassword,
+        newPasswordRepeat: this.newPasswordRepeat,
+        token: localStorage.getItem('token')
+      })
+      if (response.status === 1) {
+        localStorage.removeItem('token')
+        await this.$router.push({ path: '/' })
+      }
     },
     async changeEmail() {
       await changeEmail()
