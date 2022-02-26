@@ -51,7 +51,7 @@ export const set2fa = async (payload) => {
     const { data } = await api.post('/set-2fa', payload)
     return data
   } catch (e) {
-    console.log(e)
+    return e.response.data
   }
 }
 
