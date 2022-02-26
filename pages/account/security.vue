@@ -77,10 +77,45 @@ export default {
     ])
   },
   computed: {
-    code: {
-      get() { return this.$store.getters.code },
-      set(value) { this.$store.commit('setLoginEmail', value) }
+    securityCode: {
+      get() { return this.$store.getters.securityCode },
+      set(value) { this.$store.commit('setSecurityCode', value) }
     },
+    securityToken: {
+      get() { return this.$store.getters.securityToken },
+      set(value) { this.$store.commit('setSecurityToken', value) }
+    },
+    securityTwofaStatus: {
+      get() { return this.$store.getters.securityTwofaStatus },
+      set(value) { this.$store.commit('setSecurityTwoFaStatus', value) }
+    },
+    securityCurrentPassword: {
+      get() { return this.$store.getters.securityCurrentPassword },
+      set(value) { this.$store.commit('setSecurityCurrentPassword', value) }
+    },
+    securityNewPassword: {
+      get() { return this.$store.getters.securityNewPassword },
+      set(value) { this.$store.commit('setSecurityNewPassword', value) }
+    },
+    securityNewPasswordRepeat: {
+      get() { return this.$store.getters.securityNewPasswordRepeat },
+      set(value) { this.$store.commit('setSecurityNewPasswordRepeat', value) }
+    },
+    securityCurrentEmail: {
+      get() { return this.$store.getters.securityCurrentEmail },
+      set(value) { this.$store.commit('setSecurityCurrentEmail', value) }
+    },
+    securityNewEmail: {
+      get() { return this.$store.getters.securityNewEmail },
+      set(value) { this.$store.commit('setSecurityNewEmail', value) }
+    },
+    securityNewEmailRepeat: {
+      get() { return this.$store.getters.securityNewEmailRepeat },
+      set(value) { this.$store.commit('setSecurityNewEmailRepeat', value) }
+    }
+  },
+  destroyed() {
+    this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
     await verifyUserToken(this.$router)
@@ -89,24 +124,24 @@ export default {
   methods: {
     async set2fa() {
       await set2fa({
-        code: this.code,
-        token: this.token,
+        code: this.securityCode,
+        token: this.securityToken,
         jwt: localStorage.getItem('token')
       })
     },
     generate2fa() {
-      this.token = node2fa.generateSecret({
+      this.securityToken = node2fa.generateSecret({
         name: 'Bot crypto trader', account: 'dupa@dupa.com'
       })
     },
     async check2fa() {
-      this.twofaStatus = await verify2fa({token: localStorage.getItem('token')})
+      this.securityTwofaStatus = await verify2fa({token: localStorage.getItem('token')})
     },
     async changePassword() {
       const response = await changePassword({
-        currentPassword: this.currentPassword,
-        newPassword: this.newPassword,
-        newPasswordRepeat: this.newPasswordRepeat,
+        currentPassword: this.securityCurrentPassword,
+        newPassword: this.securityNewPassword,
+        newPasswordRepeat: this.securityNewPasswordRepeat,
         token: localStorage.getItem('token')
       })
       if (response.status === 1) {
@@ -116,9 +151,9 @@ export default {
     },
     async changeEmail() {
       const response = await changeEmail({
-        currentEmail: this.currentEmail,
-        newEmail: this.newEmail,
-        newEmailRepeat: this.newEmailRepeat,
+        currentEmail: this.securityCurrentEmail,
+        newEmail: this.securityNewEmail,
+        newEmailRepeat: this.securityNewEmailRepeat,
         token: localStorage.getItem('token')
       })
       if (response.status === 1) {
