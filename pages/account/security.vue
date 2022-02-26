@@ -51,6 +51,7 @@
 <script>
 import { set2fa, verify2fa, changePassword, closeAccount, changeEmail } from "~/api";
 import { verifyUserToken } from "~/helpers/auth";
+import { mapActions } from "vuex";
 import Input from "~/components/Input";
 import Button from "~/components/Button";
 import AccountHeader from "~/components/AccountHeader";
@@ -76,6 +77,19 @@ export default {
       newEmail: null,
       newEmailRepeat: null
     }
+  },
+  watch: {
+    ...mapActions([
+      'fetchSecurityCode',
+      'fetchSecurityToken',
+      'fetchSecurityTwoFaStatus',
+      'fetchSecurityCurrentPassword',
+      'fetchSecurityNewPassword',
+      'fetchSecurityNewPasswordRepeat',
+      'fetchSecurityCurrentEmail',
+      'fetchSecurityNewEmail',
+      'fetchSecurityNewEmailRepeat'
+    ])
   },
   async mounted() {
     await verifyUserToken(this.$router)
