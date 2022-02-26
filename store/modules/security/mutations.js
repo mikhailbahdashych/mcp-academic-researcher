@@ -1,5 +1,6 @@
 export default {
   setSecurityCode(state, value) { state.securityCode = value },
+  setSecurityCodeError(state, value) { state.securityCodeError = value },
   setSecurityToken(state, value) { state.securityToken = value },
   setSecurityTwoFaStatus(state, value) { state.securityTwofaStatus = value },
   setSecurityCurrentPassword(state, value) { state.securityCurrentPassword = value },
@@ -10,6 +11,7 @@ export default {
   setSecurityNewEmailRepeat(state, value) { state.securityNewEmailRepeat = value },
   setSecurityDefaultValues(state) {
     state.securityCode = null
+    state.securityCodeError = null
     state.securityToken = { qr: null, status: null }
     state.securityTwofaStatus = {}
     state.securityCurrentPassword = null

@@ -47,8 +47,12 @@ export const verifyToken = async (payload) => {
 }
 
 export const set2fa = async (payload) => {
-  const { data } = await api.post('/set-2fa', payload)
-  return data
+  try {
+    const { data } = await api.post('/set-2fa', payload)
+    return data
+  } catch (e) {
+    console.log(e)
+  }
 }
 
 export const verify2fa = async (payload) => {

@@ -8,6 +8,7 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
+            {{this.$store.getters.getSecurityCodeError}}
             <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
             <img :src="securityToken.qr" alt="2fa">
             <Input :title="'Code'" :type="'text'" v-model="securityCode" />
@@ -73,7 +74,9 @@ export default {
       'fetchSecurityNewPasswordRepeat',
       'fetchSecurityCurrentEmail',
       'fetchSecurityNewEmail',
-      'fetchSecurityNewEmailRepeat'
+      'fetchSecurityNewEmailRepeat',
+      'fetchSecurityCodeError',
+      'fetchSet2fa'
     ])
   },
   computed: {
@@ -112,6 +115,10 @@ export default {
     securityNewEmailRepeat: {
       get() { return this.$store.getters.getSecurityNewEmailRepeat },
       set(value) { this.$store.commit('setSecurityNewEmailRepeat', value) }
+    },
+    securityCodeError: {
+      get() { return this.$store.getters.getSecurityCodeError },
+      set(value) { this.$store.commit('setSecurityCodeError', value) }
     }
   },
   destroyed() {
@@ -123,7 +130,7 @@ export default {
   },
   methods: {
     async set2fa() {
-      await set2fa({
+      await this.$store.dispatch('fetchSet2fa', {
         code: this.securityCode,
         token: this.securityToken,
         jwt: localStorage.getItem('token')
