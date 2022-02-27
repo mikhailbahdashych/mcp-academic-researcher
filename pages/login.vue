@@ -123,18 +123,26 @@ export default {
   },
   methods: {
     async login() {
-      await login({
-        email: this.loginEmail,
-        phone: this.loginPhone,
-        password: this.loginPassword
-      }).then(async (token) => {
-        localStorage.setItem('token', token)
-        this.$store.commit('setLoginPassword', null)
-        this.$store.commit('setLoginEmail', null)
-        await this.$router.push({path: '/account'})
-      }).catch(() => {
-        this.$store.commit('setLoginError', -1)
-      })
+      if (
+        (this.loginEmail || this.loginPhone) &&
+        (!this.loginEmailError && !this.loginPasswordError)
+      ) {
+        await login({
+          email: this.loginEmail,
+          phone: this.loginPhone,
+          password: this.loginPassword
+        }).then(async (token) => {
+          localStorage.setItem('token', token)
+          this.$store.commit('setLoginPassword', null)
+          this.$store.commit('setLoginEmail', null)
+          await this.$router.push({path: '/account'})
+        }).catch(() => {
+          this.$store.commit('setLoginError', -1)
+        })
+      } else {
+        this.loginEmailError = true
+        this.loginPasswordError = true
+      }
     },
     redirect(path) {
       this.$router.push({ path: path })
