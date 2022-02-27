@@ -28,6 +28,15 @@ router.post(`/register`, async (req, res) => {
   }
 })
 
+router.post('/confirm-registration', async (req, res) => {
+  try {
+    const data = await api.post('/confirm-registration', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 router.post(`/reset-password`, async (req, res) => {
   try {
     const data = await api.post('/reset-password', req.body)

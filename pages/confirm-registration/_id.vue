@@ -15,10 +15,15 @@
 </template>
 
 <script>
+import { confirmRegistration } from "~/api";
 export default {
   name: "confirm-registration",
-  mounted() {
-    console.log(this.$route.params.id)
+  async mounted() {
+    if (this.$route.params.id) {
+      await confirmRegistration({ confirmToken: this.$route.params.id })
+    } else {
+      this.redirect('/')
+    }
   },
   methods: {
     redirect(path) {

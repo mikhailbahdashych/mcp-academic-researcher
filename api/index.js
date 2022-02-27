@@ -39,6 +39,15 @@ export const register = async (payload) => {
   }
 }
 
+export const confirmRegistration = async (payload) => {
+  try {
+    const { data } = await api.post('/confirm-registration', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
+
 export const resetPassword = async (payload) => {
   try {
     const { data } = await api.post(`/reset-password`, payload)
