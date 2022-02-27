@@ -34,6 +34,7 @@
             <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityNewEmail" />
             <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityNewEmailRepeat" />
             <Button :label="'Change email'" :clickon="changeEmail" />
+            <Button :label="'Send email'" :clickon="sendEmailMessage" />
           </div>
         </div>
         <div class="security-container">
@@ -127,6 +128,9 @@ export default {
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
+    async sendEmailMessage() {
+      await sendEmail({message: 'Here is some test message for email'})
+    },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityCode,
