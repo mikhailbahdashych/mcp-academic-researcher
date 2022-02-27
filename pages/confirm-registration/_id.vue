@@ -21,6 +21,9 @@ export default {
   async mounted() {
     if (this.$route.params.id) {
       await confirmRegistration({ confirmToken: this.$route.params.id })
+      .then((res) => {
+        console.log(res)
+      })
     } else {
       this.redirect('/')
     }
