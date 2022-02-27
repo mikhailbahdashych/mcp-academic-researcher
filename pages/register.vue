@@ -162,8 +162,9 @@ export default {
           email: this.email,
           password: this.password
         }).then(async () => {
-          await sendEmail({ type: 'reg', to: this.email })
-          this.$store.commit('setStatus', 1)
+          await sendEmail({ type: 'reg', to: this.email }).then(() => {
+            this.$store.commit('setStatus', 1)
+          })
         }).catch(() => {
           this.$store.commit('setStatus', -1)
         })
