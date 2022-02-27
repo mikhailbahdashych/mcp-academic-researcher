@@ -7,7 +7,9 @@
 
     <div class="login-inputs">
       <div class="login-inputs-container">
-        <h1>Here is some text fomr confirm registr</h1>
+        <h1 v-if="status === null">Trying to confirm your email</h1>
+        <h1 v-else-if="status === 1">Your email was successfully confirmed</h1>
+        <h1 v-else>Something went wrong</h1>
       </div>
     </div>
 
@@ -18,11 +20,16 @@
 import { confirmRegistration } from "~/api";
 export default {
   name: "confirm-registration",
+  data() {
+    return {
+      status: null
+    }
+  },
   async mounted() {
     if (this.$route.params.id) {
       await confirmRegistration({ confirmToken: this.$route.params.id })
       .then((res) => {
-        console.log(res)
+        this.status = res.status
       })
     } else {
       this.redirect('/')
