@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { register } from "~/api";
+import { register, sendEmail } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
@@ -161,7 +161,8 @@ export default {
         await register({
           email: this.email,
           password: this.password
-        }).then(() => {
+        }).then(async () => {
+          await sendEmail({ type: 'reg', to: this.email })
           this.$store.commit('setStatus', 1)
         }).catch(() => {
           this.$store.commit('setStatus', -1)
