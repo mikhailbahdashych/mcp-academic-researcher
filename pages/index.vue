@@ -1,18 +1,21 @@
 <template>
   <div>
-    <Waves />
-    <div class="home">
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta maxime sed temporibus. Cum cumque est ex id ipsam libero, qui quia sunt ut voluptatum? A, aliquam delectus eius est hic id incidunt inventore iusto magni maxime minima necessitatibus nesciunt officiis perferendis, quam quidem, quis quisquam quo rem sapiente vitae voluptatem.
-    </div>
+    <Loader />
+<!--    <Waves />-->
+<!--    <div class="home">-->
+<!--      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta maxime sed temporibus. Cum cumque est ex id ipsam libero, qui quia sunt ut voluptatum? A, aliquam delectus eius est hic id incidunt inventore iusto magni maxime minima necessitatibus nesciunt officiis perferendis, quam quidem, quis quisquam quo rem sapiente vitae voluptatem.-->
+<!--    </div>-->
   </div>
 </template>
 
 <script>
+import Loader from "@/components/Loader";
 import Waves from "@/components/Waves";
 export default {
   name: 'IndexPage',
   components: {
-    Waves
+    Waves,
+    Loader
   }
 }
 </script>
