@@ -9,46 +9,50 @@
   }
 }
 
-.loader-box {
-  .spinner-box {
-    width: 300px;
-    height: 300px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-  }
-  .leo-border {
-    position: absolute;
-    width: 150px;
-    height: 150px;
-    padding: 3px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 50%;
+.spinner-box {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  position: absolute;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 20%;
+}
+.leo-border {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  padding: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
 
+  &.first-color {
+    background: $firstcolorrgb;
+    background: linear-gradient(0deg, $firstcolorrgbopacity 33%, $firstcolorrgb 100%);
+    animation: spin3D 1.8s linear 0s infinite;
+  }
+  &.second-color {
+    background: $secondcolorrgb;
+    background: linear-gradient(0deg, $secondcolorrgbopacity 33%, $secondcolorrgb 100%);
+    animation: spin3D 2.2s linear 0s infinite;
+  }
+
+  .leo-core {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
     &.first-color {
-      background: $firstcolorrgb;
-      background: linear-gradient(0deg, $firstcolorrgbopacity 33%, $firstcolorrgb 100%);
-      animation: spin3D 1.8s linear 0s infinite;
+      background-color: $backgroundcolorsecond;
     }
     &.second-color {
-      background: $secondcolorrgb;
-      background: linear-gradient(0deg, $secondcolorrgbopacity 33%, $secondcolorrgb 100%);
-      animation: spin3D 2.2s linear 0s infinite;
-    }
-
-    .leo-core {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      &.first-color {
-        background-color: $backgroundcolorsecond;
-      }
-      &.second-color {
-        background-color: $backgroundcolor;
-      }
+      background-color: $backgroundcolor;
     }
   }
 }
