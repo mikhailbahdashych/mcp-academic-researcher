@@ -9,58 +9,47 @@
   }
 }
 
-* {
-  box-sizing: border-box;
-}
-
-body {
-  min-height: 100vh;
-  background-color: #1d2630;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
-
-.spinner-box {
-  width: 300px;
-  height: 300px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: transparent;
-}
-
-.leo-border {
-  position: absolute;
-  width: 150px;
-  height: 150px;
-  padding: 3px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-
-  &.first-color {
-    background: $firstcolorrgb;
-    background: linear-gradient(0deg, $firstcolorrgbopacity 33%, $firstcolorrgb 100%);
-    animation: spin3D 1.8s linear 0s infinite;
+.loader-box {
+  .spinner-box {
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
   }
-  &.second-color {
-    background: $secondcolorrgb;
-    background: linear-gradient(0deg, $secondcolorrgbopacity 33%, $secondcolorrgb 100%);
-    animation: spin3D 2.2s linear 0s infinite;
-  }
-}
+  .leo-border {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
 
-.leo-core {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  &.first-color {
-    background-color: $backgroundcolorsecond;
-  }
-  &.second-color {
-    background-color: $backgroundcolor;
+    &.first-color {
+      background: $firstcolorrgb;
+      background: linear-gradient(0deg, $firstcolorrgbopacity 33%, $firstcolorrgb 100%);
+      animation: spin3D 1.8s linear 0s infinite;
+    }
+    &.second-color {
+      background: $secondcolorrgb;
+      background: linear-gradient(0deg, $secondcolorrgbopacity 33%, $secondcolorrgb 100%);
+      animation: spin3D 2.2s linear 0s infinite;
+    }
+
+    .leo-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      &.first-color {
+        background-color: $backgroundcolorsecond;
+      }
+      &.second-color {
+        background-color: $backgroundcolor;
+      }
+    }
   }
 }
+
