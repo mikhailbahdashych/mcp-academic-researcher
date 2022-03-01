@@ -1,15 +1,17 @@
 @import "main";
+@import "basics";
 
 .login {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100%;
+  background-color: $backgroundcolorsecond;
 
   .login-content {
     height: 100vh;
     width: 40%;
-    background-color: lightgreen;
+    background-color: $backgroundcolor;
   }
 
   .login-header {
@@ -38,17 +40,20 @@
         .choose {
           cursor: pointer;
           transition: 0.2s;
+          color: white;
         }
         .choose:hover {
-          color: lightgreen;
+          color: gold;
         }
       }
       .password-requirement {
         width: 100%;
         border-radius: 7.5px;
-        border: 0.5px solid rgba(0,0,0,0.5);
+        border: 0.5px solid rgba(#fff,0.9);
         p {
           padding-left: 15px;
+          color: white;
+          opacity: 0.9;
         }
       }
     }

@@ -10,7 +10,8 @@ body {
 
 .paragraph-small {
   font-size: 12px;
-  opacity: 0.65;
+  opacity: 0.9;
+  color: white;
   &.right {
     float: right;
   }
@@ -27,7 +28,7 @@ body {
 
 .vertical-line {
   width: 1px;
-  background-color: black;
+  background-color: white;
   height: 50px;
   float: left;
   opacity: 0.5;
