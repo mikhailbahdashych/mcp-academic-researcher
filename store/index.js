@@ -7,6 +7,9 @@ import security from "./modules/security";
 const createStore = () => {
   return new Vuex.Store({
     namespaced: true,
+    state: { loading: false },
+    actions: { fetchLoading(ctx, value) { ctx.commit('setLoading', value) } },
+    mutations: { setLoading(state, value) { state.loading = value } },
     modules: {
       register,
       login,
