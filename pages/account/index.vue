@@ -16,7 +16,7 @@ export default {
     AccountHeader
   },
   async mounted() {
-    await verifyUserToken(this.$router)
+    // await verifyUserToken(this.$router)
   }
 }
 </script>

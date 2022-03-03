@@ -16,7 +16,7 @@
       <input class="header-middle-search" />
     </div>
 
-    <div class="header-side" v-if="!tokenStatus">
+    <div class="header-side" v-if="this.$store.getters.getSecurityToken">
       <div class="user-nav" @click="redirect('/login')">
         <div class="user-nav-button">
           Log in
@@ -46,17 +46,8 @@
 </template>
 
 <script>
-import { verifyUserTokenSoft } from "~/helpers/auth";
 export default {
   name: "Header",
-  async mounted() {
-    this.tokenStatus = await verifyUserTokenSoft()
-  },
-  data() {
-    return {
-      tokenStatus: null
-    }
-  },
   methods: {
     redirect(path) {
       this.$router.push({ path: path })
