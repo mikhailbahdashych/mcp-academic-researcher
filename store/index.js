@@ -19,6 +19,10 @@ const createStore = () => {
       setLoading(state, value) { state.loading = value },
       setToken(state, value) { state.token = value }
     },
+    getters: {
+      getLoading: state => state.loading,
+      getToken: state => state.token
+    },
     modules: {
       register,
       login,
