@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import { verifyUserToken } from "~/helpers/auth";
 import AccountHeader from "~/components/AccountHeader";
 import Header from "~/components/Header";
 export default {
@@ -13,6 +14,9 @@ export default {
   components: {
     AccountHeader,
     Header
+  },
+  async mounted() {
+    await verifyUserToken(this.$router)
   }
 }
 </script>
