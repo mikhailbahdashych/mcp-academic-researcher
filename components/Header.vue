@@ -16,7 +16,7 @@
       <input class="header-middle-search" />
     </div>
 
-    <div class="header-side" v-if="this.$store.getters.getToken">
+    <div class="header-side" v-if="this.$store.getters.getToken !== 1">
       <div class="user-nav" @click="redirect('/login')">
         <div class="user-nav-button">
           Log in

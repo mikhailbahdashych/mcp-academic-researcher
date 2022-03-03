@@ -92,3 +92,5 @@ sw.*
 package-lock.json
 
 jwt
+
+test.js

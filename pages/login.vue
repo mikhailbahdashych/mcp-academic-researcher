@@ -138,6 +138,7 @@ export default {
             localStorage.setItem('token', token)
             this.$store.commit('setLoginPassword', null)
             this.$store.commit('setLoginEmail', null)
+            this.$store.commit('setToken', 1)
             await this.$router.push({path: '/account'})
           }
         })
