@@ -103,7 +103,8 @@ export default {
       'fetchCheck2fa',
       'fetchChangePassword',
       'fetchChangeEmail',
-      'fetchCloseAccount'
+      'fetchCloseAccount',
+      'fetchGenerate2fa'
     ])
   },
   computed: {
@@ -178,10 +179,7 @@ export default {
       this.showModal.ga = true
     },
     generate2fa() {
-      this.securityToken = node2fa.generateSecret({
-        name: 'Bot crypto trader', account: 'dupa@dupa.com'
-      })
-      console.log(this.securityToken)
+      this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', email: 'asdasd' })
     },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
