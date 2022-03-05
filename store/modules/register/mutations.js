@@ -35,11 +35,6 @@ export default {
       {lowCase: false, text: 'Password should contain at least one lowercase character'},
       {specChar: false, text: 'Password should contain at least one special character'},
       {digitChar: false, text: 'Password should contain at least one digit character'}
-      // eightChars: false,
-      // uppCase: false,
-      // lowCase: false,
-      // specChar: false,
-      // digitChar: false
     ]
   }
 }

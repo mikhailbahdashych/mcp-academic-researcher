@@ -21,39 +21,17 @@
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
 
-<!--          <div v-for="rule in passwordRulesList">-->
-<!--            <p>-->
-<!--              {{ rule.text }}-->
-<!--              <span v-if="passwordRulesList.eightChars" style="color: green">OK</span>-->
-<!--              <span v-else style="color: red">NOT OK</span>-->
-<!--            </p>-->
-<!--          </div>-->
-
-          <p>
-            Password length should be more than 8 characters
-            <span v-if="passwordRulesList.eightChars" style="color: green">OK</span>
-            <span v-else style="color: red">NOT OK</span>
-          </p>
-          <p>
-            Password should contain at least one uppercase character
-            <span v-if="passwordRulesList.uppCase" style="color: green">OK</span>
-            <span v-else style="color: red">NOT OK</span>
-          </p>
-          <p>
-            Password should contain at least one lowercase character
-            <span v-if="passwordRulesList.lowCase" style="color: green">OK</span>
-            <span v-else style="color: red">NOT OK</span>
-          </p>
-          <p>
-            Password should contain at least one special character
-            <span v-if="passwordRulesList.specChar" style="color: green">OK</span>
-            <span v-else style="color: red">NOT OK</span>
-          </p>
-          <p>
-            Password should contain at least one digit character
-            <span v-if="passwordRulesList.digitChar" style="color: green">OK</span>
-            <span v-else style="color: red">NOT OK</span>
-          </p>
+          <div v-for="rule in passwordRulesList">
+            <div v-for="(item) in Object.entries(rule)">
+              <p>
+                <span v-if="item[0] === 'text'">{{ item[1] }}</span>
+                <span v-else>
+                  <span v-if="item[1]">OK</span>
+                <span v-else>WRONG</span>
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
