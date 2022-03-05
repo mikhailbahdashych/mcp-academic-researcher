@@ -1,8 +1,11 @@
 import { verifyToken } from "@/api";
+import createStore from "~/store";
 
 export const verifyUserToken = async (router) => {
-  // @TODO DO SOMETHING WITH LOCALSTORAGE
-  if (!localStorage.getItem('token')) return await router.push({path: '/login'})
+  if (!localStorage.getItem('token')) {
+    console.log(createStore().getters.getToken)
+    return await router.push({path: '/login'})
+  }
 
   const checkToken = await verifyToken({ token: localStorage.getItem('token') })
 
