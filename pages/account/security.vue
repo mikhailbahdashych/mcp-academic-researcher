@@ -32,7 +32,6 @@
             <Button :label="'Click here to generate and set 2FA'" :clickon="show2FaModal" />
             <p v-if="securityToken.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
-            {{securityToken}}
             <basic-modal
               @close="closeModal"
               v-if="showModal.ga"
@@ -41,8 +40,8 @@
               To start, click the button below."
             >
               <Button :label="'Generate 2FA'" :clickon="generate2fa" />
-              {{securityToken}}
-              <img :src="securityToken.qr" alt="2fa">
+              {{this.$store.getters.getSecurityToken}}
+              <img :src="this.$store.getters.getSecurityToken.qr" alt="2fa">
             </basic-modal>
           </div>
         </div>
@@ -91,7 +90,7 @@ export default {
   watch: {
     ...mapActions([
       'fetchSecurityCode',
-      'fetchSecurityToken',
+      'fetch2fa',
       'fetchSecurityCurrentPassword',
       'fetchSecurityNewPassword',
       'fetchSecurityNewPasswordRepeat',
@@ -114,7 +113,7 @@ export default {
     },
     securityToken: {
       get() { return this.$store.getters.getSecurityToken },
-      set(value) { this.$store.commit('setSecurityToken', value) }
+      set(value) { this.$store.commit('set2fa', value) }
     },
     securityCurrentPassword: {
       get() { return this.$store.getters.getSecurityCurrentPassword },
