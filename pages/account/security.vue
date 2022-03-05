@@ -29,8 +29,8 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button :label="'Click here to generate and set 2FA'" :clickon="show2FaModal" />
-            <p v-if="twofa.status === 1">2FA is set!</p>
+            <Button :disabled="this.$store.getters.get2fa.status === 1" :label="'Click here to generate and set 2FA'" :clickon="show2FaModal" />
+            <p v-if="this.$store.getters.get2fa.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
             <basic-modal
               @close="closeModal"

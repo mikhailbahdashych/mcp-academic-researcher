@@ -17,14 +17,13 @@ export default {
     ctx.commit('set2fa', { secret, qr, status: null })
   },
 
-  async fetchSet2fa(ctx, value) {
-    ctx.commit('setSecurityCodeError', await set2fa(value))
+  async fetchCheck2fa(ctx, value) {
+    const { status } = await verify2fa(value)
+    ctx.commit('set2fa', { secret: null, qr: null, status })
   },
 
-  async fetchCheck2fa(ctx, value) {
-    const response = await verify2fa(value)
-    console.log('response', response)
-    ctx.commit('set2fa', { value: response.status, key: 'status' })
+  async fetchSet2fa(ctx, value) {
+    ctx.commit('setSecurityCodeError', await set2fa(value))
   },
 
   async fetchChangePassword(ctx, value) {
