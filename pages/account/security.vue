@@ -52,7 +52,7 @@
         </div>
         <div class="security-container">
           <div class="inner-block">
-            <h1>test</h1>
+
           </div>
         </div>
         <div class="security-container">
@@ -172,6 +172,7 @@ export default {
     },
     closeModal() {
       Object.keys(this.showModal).forEach(item => { this.showModal[item] = false })
+      this.$store.dispatch('fetch2fa', { qr: null, status: null, secret: null })
     },
     show2FaModal() {
       this.showModal.ga = true

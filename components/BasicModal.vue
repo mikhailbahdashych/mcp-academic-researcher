@@ -2,7 +2,7 @@
   <div class="settings-modal-container">
     <div class="settings-modal-wrapper">
       <div class="modal-header">
-        <button style="margin-left: 500px" @click="$emit('close')">Close</button>
+        <img src="../assets/img/back_2.svg" alt="Back" @click="$emit('close')">
         <h3>{{header}}</h3>
       </div>
       <p class="modal-description">{{description}}</p>
@@ -15,7 +15,7 @@
 export default {
   name: "BasicModal",
   props: {
-  header: String,
+    header: String,
     description: String,
     onClose: Boolean
 },
