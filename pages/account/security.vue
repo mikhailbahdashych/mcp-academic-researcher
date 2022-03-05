@@ -7,15 +7,14 @@
       <div class="account-containers">
         <div class="security-container">
           <div class="inner-block">
-            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button :label="'Click to generate 2FA'" :clickon="generate2fa" />
-            <img :src="securityToken.qr" alt="2fa">
-            <Input :title="'Code'" :type="'text'" v-model="securityCode" />
-            <Button :label="'Set 2FA'" :clickon="set2fa" />
-            <p v-if="securityToken.status === 1">2fa setted</p>
-            <p v-else>2fa not setted</p>
+            <p>Change email</p>
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityCurrentEmail" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityNewEmail" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityNewEmailRepeat" />
+            <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>
+
         <div class="security-container">
           <div class="inner-block">
             <p>Change your password</p>
@@ -29,17 +28,34 @@
       <div class="account-containers">
         <div class="security-container">
           <div class="inner-block">
-            <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityCurrentEmail" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityNewEmail" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityNewEmailRepeat" />
-            <Button :label="'Change email'" :clickon="changeEmail" />
-            <Button :label="'Send email'" :clickon="sendEmailMessage" />
+            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
+            <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />
+            <p v-if="securityToken.status === 1">2FA is set!</p>
+            <p v-else>You have not set 2FA for now!</p>
+<!--            <img :src="securityToken.qr" alt="2fa">-->
+<!--            <Input :title="'Code'" :type="'text'" v-model="securityCode" />-->
+<!--            <Button :label="'Set 2FA'" :clickon="set2fa" />-->
+            <p v-if="securityToken.status === 1">2fa setted</p>
+            <p v-else>2fa not setted</p>
+          </div>
+        </div>
+        <div class="security-container">
+          <div class="inner-block">
+            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
+            <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />
+            <p v-if="securityToken.status === 1">2FA is set!</p>
+            <p v-else>You have not set 2FA for now!</p>
+            <!--            <img :src="securityToken.qr" alt="2fa">-->
+            <!--            <Input :title="'Code'" :type="'text'" v-model="securityCode" />-->
+            <!--            <Button :label="'Set 2FA'" :clickon="set2fa" />-->
+            <p v-if="securityToken.status === 1">2fa setted</p>
+            <p v-else>2fa not setted</p>
           </div>
         </div>
         <div class="security-container">
           <div class="inner-block">
             <p>Close account</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam animi at dolores doloribus earum eius, omnis pariatur quos tempore velit! Aspernatur dolores fugit incidunt iure iusto nobis perferendis praesentium, repudiandae? Accusantium adipisci corporis dolorem doloribus error fugit, harum ipsam iure minima mollitia, pariatur placeat praesentium quae quas, quisquam rem vel?</p>
             <Button :label="'Close account'" :clickon="closeAccount" />
           </div>
         </div>
@@ -50,7 +66,6 @@
 </template>
 
 <script>
-import { sendEmail } from "~/api";
 import { verifyUserToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
 import Input from "~/components/Input";
@@ -128,9 +143,6 @@ export default {
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
-    async sendEmailMessage() {
-      await sendEmail({message: 'Here is some test message for email'})
-    },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityCode,
