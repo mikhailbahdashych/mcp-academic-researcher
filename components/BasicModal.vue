@@ -1,27 +1,24 @@
 <template>
-  <div>
-    <button @click="showModal = true">Show Modal</button>
-    <transition name="fade" appear>
-      <div class="modal-overlay" v-if="showModal" @click="showModal = false"></div>
-    </transition>
-    <transition name="slide" appear>
-      <div class="modal" v-if="showModal">
-        <h1>Lorem Ipsum</h1>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque fuga, neque odio perferendis quas soluta temporibus? Adipisci laboriosam necessitatibus odio.</p>
-        <button class="close-modal" @click="showModal = false">Close</button>
+  <div class="settings-modal-container">
+    <div class="settings-modal-wrapper">
+      <div class="modal-header">
+        <button style="margin-left: 500px" @click="$emit('close')">Close</button>
+        <h3>{{header}}</h3>
       </div>
-    </transition>
+      <p class="modal-description">{{description}}</p>
+      <slot/>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "BasicModal",
-  data() {
-    return {
-      showModal: false
-    }
-  },
+  props: {
+  header: String,
+    description: String,
+    onClose: Boolean
+},
 }
 </script>
 
