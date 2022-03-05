@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { register, sendEmail } from "~/api";
+import {register, sendEmail, verifyToken} from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
@@ -121,6 +121,11 @@ export default {
   },
   destroyed() {
     this.$store.commit('setDefaultValues')
+  },
+  async mounted() {
+    await verifyToken({ token: localStorage.getItem('token') }).then(async (res) => {
+      if (res.status === 1) await this.$router.push({path: '/account'})
+    })
   },
   methods: {
     redirect(path) {

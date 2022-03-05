@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { login } from "~/api";
+import { login, verifyToken } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import Input from "~/components/Input";
@@ -118,7 +118,10 @@ export default {
   destroyed() {
     this.$store.commit('setLoginDefaultValues')
   },
-  mounted() {
+  async mounted() {
+    await verifyToken({ token: localStorage.getItem('token') }).then(async (res) => {
+      if (res.status === 1) await this.$router.push({path: '/account'})
+    })
     this.chooseLogin('email')
   },
   methods: {
