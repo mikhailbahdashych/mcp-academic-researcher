@@ -29,50 +29,34 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />
+            <Button :label="'Click here to generate and set 2FA'" :clickon="show2FaModal" />
             <p v-if="securityToken.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
+            {{securityToken}}
             <basic-modal
               @close="closeModal"
-              v-if="show2faModal"
-              header="Closing account"
-              description="We are very sorry to see you go. In order to permanently delete your account, please enter your password in the field below"
+              v-if="showModal.ga"
+              header="Generating 2FA"
+              description="We strongly recommend you to 2FA. This will increase the security of you account.
+              To start, click the button below."
             >
-              <h4>Test</h4>
-              <p>Here is some test modal text</p>
+              <Button :label="'Generate 2FA'" :clickon="generate2fa" />
+              {{securityToken}}
+              <img :src="securityToken.qr" alt="2fa">
             </basic-modal>
-<!--            <settings-modal @close="closeModal" v-if="showModal.closingAccount" header="Closing account"-->
-<!--                            description="We are very sorry to see you go. In order to permanently delete your account, please enter your password in the field below">-->
-<!--              <h4>Current password</h4>-->
-<!--              <input-password-->
-<!--                name="closingAccountPassword"-->
-<!--                v-model="closingAccount.password"-->
-<!--                placeholder="Your current password"-->
-<!--                v-validate="'required|'"-->
-<!--              >-->
-<!--              </input-password>-->
-<!--              <div v-if="modalError" class="closing-accounts-error"><p>{{ modalError }}</p></div>-->
-<!--              <base-button-->
-<!--                white-->
-<!--                style="width: 150px;"-->
-<!--                @click.native="closeAccount"-->
-<!--              >-->
-<!--                Close account-->
-<!--              </base-button>-->
-<!--            </settings-modal>-->
           </div>
         </div>
         <div class="security-container">
           <div class="inner-block">
-            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />
-            <p v-if="securityToken.status === 1">2FA is set!</p>
-            <p v-else>You have not set 2FA for now!</p>
+<!--            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>-->
+<!--            <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />-->
+<!--            <p v-if="securityToken.status === 1">2FA is set!</p>-->
+<!--            <p v-else>You have not set 2FA for now!</p>-->
             <!--            <img :src="securityToken.qr" alt="2fa">-->
             <!--            <Input :title="'Code'" :type="'text'" v-model="securityCode" />-->
             <!--            <Button :label="'Set 2FA'" :clickon="set2fa" />-->
-            <p v-if="securityToken.status === 1">2fa setted</p>
-            <p v-else>2fa not setted</p>
+<!--            <p v-if="securityToken.status === 1">2fa setted</p>-->
+<!--            <p v-else>2fa not setted</p>-->
           </div>
         </div>
         <div class="security-container">
@@ -169,7 +153,14 @@ export default {
   },
   data() {
     return {
-      show2faModal: false
+      showModal: {
+        ga: false,
+        sms: false,
+        closingAccount: false,
+        changeEmail: false,
+        changeEmailSuccess: false,
+        deactivate2fa: false
+      },
     }
   },
   methods: {
@@ -181,13 +172,16 @@ export default {
       })
     },
     closeModal() {
-      this.show2faModal = false
+      Object.keys(this.showModal).forEach(item => { this.showModal[item] = false })
+    },
+    show2FaModal() {
+      this.showModal.ga = true
     },
     generate2fa() {
-      this.show2faModal = true
-      // this.securityToken = node2fa.generateSecret({
-      //   name: 'Bot crypto trader', account: 'dupa@dupa.com'
-      // })
+      this.securityToken = node2fa.generateSecret({
+        name: 'Bot crypto trader', account: 'dupa@dupa.com'
+      })
+      console.log(this.securityToken)
     },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {

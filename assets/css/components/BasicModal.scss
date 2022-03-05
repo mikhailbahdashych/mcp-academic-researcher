@@ -8,7 +8,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #3C2889CC 0 0 no-repeat padding-box;
+  background: rgba(#000, 0.5) 0 0 no-repeat padding-box;
   .settings-modal-wrapper {
     width: 500px;
     @media screen and (max-width: 520px) {
@@ -40,13 +40,11 @@
 
       h3 {
         position: absolute;
-        font: normal normal bold 15px/20px Poppins;
         color: #333333;
       }
     }
 
     .modal-description {
-      font: normal normal medium 12px/16px Barlow;
       letter-spacing: 0;
       color: #000000BF;
       width: 85%;
@@ -55,7 +53,6 @@
     }
 
     h4 {
-      font: normal normal medium 12px/24px Poppins;
       color: #575757;
       font-size: 14px;
     }
