@@ -13,8 +13,8 @@ export default {
   fetchSecurityNewEmailRepeat(ctx, value) { ctx.commit('setSecurityNewEmailRepeat', value) },
 
   fetchGenerate2fa(ctx, value) {
-    const { qr } = node2fa.generateSecret({ name: value.name, account: value.email })
-    ctx.commit('set2fa', { qr, status: null })
+    const { qr, secret } = node2fa.generateSecret({ name: value.name, account: value.email })
+    ctx.commit('set2fa', { secret, qr, status: null })
   },
 
   async fetchSet2fa(ctx, value) {
@@ -23,6 +23,7 @@ export default {
 
   async fetchCheck2fa(ctx, value) {
     const response = await verify2fa(value)
+    console.log('response', response)
     ctx.commit('set2fa', { value: response.status, key: 'status' })
   },
 

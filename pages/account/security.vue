@@ -40,7 +40,10 @@
               To start, click the button below."
             >
               <Button :label="'Generate 2FA'" :clickon="generate2fa" />
+
               <img :src="this.$store.getters.get2fa.qr" alt="2fa">
+              <Input :title="'Code'" :type="'text'" v-model="securityCode" />
+              <Button :label="'Confirm 2FA'" :clickon="set2fa" />
             </basic-modal>
           </div>
         </div>
@@ -68,7 +71,6 @@ import Input from "~/components/Input";
 import Button from "~/components/Button";
 import AccountHeader from "~/components/AccountHeader";
 import BasicModal from "~/components/BasicModal";
-import * as node2fa from "node-2fa";
 export default {
   name: "security",
   components: {
@@ -157,18 +159,18 @@ export default {
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityCode,
-        token: this.twofa,
+        token: this.twofa.secret,
         jwt: localStorage.getItem('token')
       })
+    },
+    generate2fa() {
+      this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', email: 'asdasd' })
     },
     closeModal() {
       Object.keys(this.showModal).forEach(item => { this.showModal[item] = false })
     },
     show2FaModal() {
       this.showModal.ga = true
-    },
-    generate2fa() {
-      this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', email: 'asdasd' })
     },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
