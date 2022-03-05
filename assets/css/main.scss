@@ -1,4 +1,4 @@
-@import "basics.scss";
+@import "basics";
 
 body {
   margin: 0;
@@ -24,7 +24,7 @@ body {
     color: $maincolor;
   }
   &.error {
-    color: red
+    color: $error
   }
 }
 

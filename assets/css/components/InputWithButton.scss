@@ -16,10 +16,10 @@
     transition: 0.3s;
     margin-right: 15px;
     &.error {
-      border: 0.5px solid red;
+      border: 0.5px solid $error;
     }
     &.error:focus {
-      border: 0.5px solid red;
+      border: 0.5px solid $error;
     }
   }
   .input-button {

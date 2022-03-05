@@ -15,10 +15,10 @@
     transition: 0.3s;
     color: white;
     &.error {
-      border: 0.5px solid red;
+      border: 0.5px solid $error;
     }
     &.error:focus {
-      border: 0.5px solid red;
+      border: 0.5px solid $error;
     }
   }
   .basic-input:focus {
