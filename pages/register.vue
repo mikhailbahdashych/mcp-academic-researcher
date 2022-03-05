@@ -20,6 +20,15 @@
         <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
+
+<!--          <div v-for="rule in passwordRulesList">-->
+<!--            <p>-->
+<!--              {{ rule.text }}-->
+<!--              <span v-if="passwordRulesList.eightChars" style="color: green">OK</span>-->
+<!--              <span v-else style="color: red">NOT OK</span>-->
+<!--            </p>-->
+<!--          </div>-->
+
           <p>
             Password length should be more than 8 characters
             <span v-if="passwordRulesList.eightChars" style="color: green">OK</span>
