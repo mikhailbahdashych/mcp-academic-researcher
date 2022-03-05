@@ -8,23 +8,13 @@ export default {
   setTac(state, value) { state.tac = value },
   setPasswordError(state, value) { state.passwordError[value.key] = value.value },
   setPasswordRulesList(state, value) {
-
     Object.entries(value).forEach(item => {
       state.passwordRulesList.forEach(rule => {
         Object.entries(rule).forEach(x => {
-          if (item[0] === x[0]) {
-            rule[item[0]] = item[1]
-          }
+          if (item[0] === x[0]) rule[item[0]] = item[1]
         })
       })
     })
-
-    // Object.entries(value).forEach(item => {
-    //   state.passwordRulesList.forEach(rule => {
-    //
-    //   })
-    // })
-    // state.passwordRulesList = value
   },
   setDefaultValues(state) {
     state.email = null
