@@ -32,11 +32,6 @@
             <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />
             <p v-if="securityToken.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
-<!--            <img :src="securityToken.qr" alt="2fa">-->
-<!--            <Input :title="'Code'" :type="'text'" v-model="securityCode" />-->
-<!--            <Button :label="'Set 2FA'" :clickon="set2fa" />-->
-            <p v-if="securityToken.status === 1">2fa setted</p>
-            <p v-else>2fa not setted</p>
           </div>
         </div>
         <div class="security-container">

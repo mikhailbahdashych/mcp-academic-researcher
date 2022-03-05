@@ -5,18 +5,16 @@ body {
 }
 
 .account-container {
-  width: 80%;
+  width: 75%;
   margin: 50px auto 0;
-  p {
-    color: white;
-  }
+  p { color: white; }
   .account-containers {
     display: flex;
     justify-content: space-between;
     .security-container {
       margin: 15px;
       width: 50%;
-      height: 500px;
+      height: 420px;
       border: 0.5px solid rgba(#fff, 0.5);
       border-radius: 15px;
     }
