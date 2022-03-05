@@ -30,6 +30,11 @@
   .basic-input-wide {
     width: 500px;
   }
+  .on-white {
+    border: 0.5px solid $backgroundcolor;
+    background-color: rgba(#fff, 0.5);
+    color: black;
+  }
   .margin-bottom-10 { margin-bottom: 10px }
   .margin-bottom-20 { margin-bottom: 20px }
   .margin-bottom-30 { margin-bottom: 30px }

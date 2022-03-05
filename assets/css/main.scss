@@ -29,6 +29,9 @@ body {
   &.error {
     color: $error
   }
+  &.on-white-paragraph {
+    color: black;
+  }
 }
 
 .vertical-line {

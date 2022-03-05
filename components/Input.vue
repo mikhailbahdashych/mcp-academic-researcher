@@ -1,6 +1,6 @@
 <template>
   <div class="basic-input-outer" :style="styles">
-    <p class="paragraph-small">{{ title }}</p>
+    <p :class="`paragraph-small ${titleClass}`">{{ title }}</p>
     <input
       ref="name"
       class="basic-input"
@@ -65,6 +65,10 @@ export default {
     oneerror: {
       type: Boolean,
       default: false
+    },
+    titleClass: {
+      type: String,
+      default: ''
     }
   },
   watch: {

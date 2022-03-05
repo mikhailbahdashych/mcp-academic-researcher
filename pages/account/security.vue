@@ -36,19 +36,23 @@
               @close="closeModal"
               v-if="showModal.ga"
               header="Generating 2FA"
-              description="We strongly recommend you to 2FA. This will increase the security of you account.
-              To start, click the button below."
+              description="We strongly recommend you to 2FA.
+              This will increase the security of you account.
+              Before it, you should download Google Authenticator application.
+              Once it's done, click the button below to start."
             >
-              <Button :label="'Generate 2FA'" :clickon="generate2fa" />
-
-              <img :src="this.$store.getters.get2fa.qr" alt="2fa">
-              <Input :title="'Code'" :type="'text'" v-model="securityCode" />
-              <Button :label="'Confirm 2FA'" :clickon="set2fa" />
+              <Button v-if="!this.$store.getters.get2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
+              <img v-if="this.$store.getters.get2fa.qr" :src="this.$store.getters.get2fa.qr" alt="2fa">
+              <div v-if="this.$store.getters.get2fa.qr">
+                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code here'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityCode" />
+                <Button :label="'Confirm 2FA'" :clickon="set2fa" />
+              </div>
             </basic-modal>
           </div>
         </div>
         <div class="security-container">
           <div class="inner-block">
+            <h1>test</h1>
           </div>
         </div>
         <div class="security-container">
