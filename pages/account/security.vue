@@ -30,7 +30,7 @@
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
             <Button :label="'Click here to generate and set 2FA'" :clickon="show2FaModal" />
-            <p v-if="securityToken.status === 1">2FA is set!</p>
+            <p v-if="twofa.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
             <basic-modal
               @close="closeModal"
@@ -40,22 +40,12 @@
               To start, click the button below."
             >
               <Button :label="'Generate 2FA'" :clickon="generate2fa" />
-              {{this.$store.getters.getSecurityToken}}
-              <img :src="this.$store.getters.getSecurityToken.qr" alt="2fa">
+              <img :src="this.$store.getters.get2fa.qr" alt="2fa">
             </basic-modal>
           </div>
         </div>
         <div class="security-container">
           <div class="inner-block">
-<!--            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>-->
-<!--            <Button :label="'Click here to generate and set 2FA'" :clickon="generate2fa" />-->
-<!--            <p v-if="securityToken.status === 1">2FA is set!</p>-->
-<!--            <p v-else>You have not set 2FA for now!</p>-->
-            <!--            <img :src="securityToken.qr" alt="2fa">-->
-            <!--            <Input :title="'Code'" :type="'text'" v-model="securityCode" />-->
-            <!--            <Button :label="'Set 2FA'" :clickon="set2fa" />-->
-<!--            <p v-if="securityToken.status === 1">2fa setted</p>-->
-<!--            <p v-else>2fa not setted</p>-->
           </div>
         </div>
         <div class="security-container">
@@ -111,8 +101,8 @@ export default {
       get() { return this.$store.getters.getSecurityCode },
       set(value) { this.$store.commit('setSecurityCode', value) }
     },
-    securityToken: {
-      get() { return this.$store.getters.getSecurityToken },
+    twofa: {
+      get() { return this.$store.getters.get2fa },
       set(value) { this.$store.commit('set2fa', value) }
     },
     securityCurrentPassword: {
@@ -167,7 +157,7 @@ export default {
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityCode,
-        token: this.securityToken,
+        token: this.twofa,
         jwt: localStorage.getItem('token')
       })
     },

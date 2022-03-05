@@ -5,7 +5,7 @@ import mutations from "./mutations";
 const state = () => ({
   securityCode: null,
   securityCodeError: null,
-  securityToken: { qr: null, status: null },
+  twofa: { qr: null, status: null },
   securityCurrentPassword: null,
   securityNewPassword: null,
   securityNewPasswordRepeat: null,

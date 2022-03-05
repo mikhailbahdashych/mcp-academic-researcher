@@ -1,7 +1,7 @@
 export default {
   setSecurityCode(state, value) { state.securityCode = value },
   setSecurityCodeError(state, value) { state.securityCodeError = value },
-  set2fa(state, value) { state.securityToken = value },
+  set2fa(state, value) { state.twofa = value },
   setSecurityCurrentPassword(state, value) { state.securityCurrentPassword = value },
   setSecurityNewPassword(state, value) { state.securityNewPassword = value },
   setSecurityNewPasswordRepeat(state, value) { state.securityNewPasswordRepeat = value },
@@ -11,7 +11,7 @@ export default {
   setSecurityDefaultValues(state) {
     state.securityCode = null
     state.securityCodeError = null
-    state.securityToken = { qr: null, status: null }
+    state.twofa = { qr: null, status: null }
     state.securityTwofaStatus = {}
     state.securityCurrentPassword = null
     state.securityNewPassword = null
