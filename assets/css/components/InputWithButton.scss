@@ -1,3 +1,5 @@
+@import "../basics";
+
 .main-class {
   display: flex;
   width: 100%;
@@ -6,7 +8,7 @@
     border-radius: 7.5px;
     outline: none;
     border: 0.5px solid rgba(0,0,0,0);
-    background-color: rgba(#333, 0.075);
+    background-color: rgba(#000, 0.5);
     padding: 0 0 0 16px;
     height: 48px;
     font-size: 16px;
@@ -24,7 +26,7 @@
     width: 20%;
   }
   .basic-input-button:focus {
-    border: 0.5px solid lightgreen;
+    border: 0.5px solid $maincolor;
   }
   .basic-input-box {
     width: calc(100% - 15px);

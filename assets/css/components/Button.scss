@@ -1,3 +1,5 @@
+@import "../basics";
+
 .basic-button-outer {
   .basic-button {
     width: 100%;
@@ -5,10 +7,10 @@
     border-radius: 7.5px;
     border: none;
     cursor: pointer;
-    background-color: lightgreen;
+    background-color: $maincolor;
   }
   .basic-button:disabled {
-    background-color: #cccccc;
+    background-color: rgba($maincolor, 0.5);
     cursor: auto;
   }
 }
