@@ -71,9 +71,16 @@ export default {
       'fetchEmailFocusLogin',
       'fetchPhoneFocusLogin'
     ]),
-    // @TODO FIX VALIDATORS
-    loginEmail() { this.loginEmail.loginEmailError = !validateEmail(this.loginEmail.email) },
-    loginPassword() { this.loginPassword.loginPasswordError = !validatePasswordLength(this.loginPassword.password) }
+    'loginEmail.email': {
+      handler: function () {
+        this.loginEmail.loginEmailError = !validateEmail(this.loginEmail.email)
+      }
+    },
+    'loginPassword.password': {
+      handler: function () {
+        this.loginPassword.loginPasswordError = !validatePasswordLength(this.loginPassword.password)
+      }
+    },
   },
   computed: {
     loginEmail: {
