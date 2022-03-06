@@ -7,16 +7,14 @@ export default {
   fetchSecurityEmail(ctx, value) { ctx.commit('setSecurityEmail', value) },
   fetchSecurityShowModal(ctx, value) { ctx.commit('setSecurityShowModal', value) },
 
-  // @TODO TO FIX
   fetchGenerate2fa(ctx, { name, account }) {
     const { qr, secret } = node2fa.generateSecret({ name, account })
-    ctx.commit('setSecurity2fa', { secret, qr, status: null })
+    ctx.commit('setSecurity2fa', { secret, qr })
   },
 
-  // @TODO TO FIX
   async fetchCheck2fa(ctx, value) {
     const { status } = await verify2fa(value)
-    ctx.commit('setSecurity2fa', { secret: null, qr: null, status })
+    ctx.commit('setSecurity2fa', { status })
   },
 
   async fetchSet2fa(ctx, value) { ctx.commit('setSecurity2fa', await set2fa(value)) },
