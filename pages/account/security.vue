@@ -192,7 +192,6 @@ export default {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
     closeModal() {
-      // @TODO DO SOME REFACTOR HERE
       Object.keys(this.showModal).forEach((key) => (this.showModal[key] = false))
     },
     showActivate2faModal() { this.showModal.ga = true },
