@@ -29,8 +29,8 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button v-if="this.$store.getters.get2fa.status === 1" :label="'Disable 2FA'" :clickon="disable2fa" />
-            <Button v-else :label="'Click here to generate and set 2FA'" :clickon="show2FaModal" />
+            <Button v-if="this.$store.getters.get2fa.status === 1" :label="'Disable 2FA'" :clickon="showDisable2faModal" />
+            <Button v-else :label="'Click here to generate and set 2FA'" :clickon="showActivate2faModal" />
             <p v-if="this.$store.getters.get2fa.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
             <basic-modal
@@ -45,14 +45,19 @@
               <Button v-if="!this.$store.getters.get2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
               <img v-if="this.$store.getters.get2fa.qr" :src="this.$store.getters.get2fa.qr" alt="2fa">
               <div v-if="this.$store.getters.get2fa.qr">
-                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code here'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityCode" />
+                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityCode" />
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
               </div>
             </basic-modal>
             <basic-modal
               @close="closeModal"
+              v-if="showModal.disable2fa"
+              header="Disabling 2FA"
+              description="Are you sure you want to do this?
+              If you are, provide code below."
             >
-
+              <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'"  />
+              <Button :label="'Disable 2FA'" :clickon="deactivate2fa" />
             </basic-modal>
           </div>
         </div>
@@ -173,7 +178,7 @@ export default {
         jwt: localStorage.getItem('token')
       })
     },
-    async disable2fa() {
+    async deactivate2fa() {
 
     },
     generate2fa() {
@@ -181,12 +186,10 @@ export default {
     },
     closeModal() {
       // @TODO DO SOME REFACTOR HERE
-      Object.keys(this.showModal).forEach(item => { this.showModal[item] = false })
-      this.$store.dispatch('fetch2fa', { qr: null, status: null, secret: null })
+      Object.keys(this.showModal).forEach((key) => (this.showModal[key] = false))
     },
-    show2FaModal() {
-      this.showModal.ga = true
-    },
+    showActivate2faModal() { this.showModal.ga = true },
+    showDisable2faModal() { this.showModal.disable2fa = true },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityCurrentPassword,

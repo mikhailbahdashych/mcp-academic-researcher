@@ -1,4 +1,4 @@
-import { set2fa, verify2fa, changePassword, changeEmail, closeAccount } from "~/api";
+import { set2fa, verify2fa, changePassword, changeEmail, closeAccount, disable2fa } from "~/api";
 import * as node2fa from 'node-2fa';
 
 export default {
