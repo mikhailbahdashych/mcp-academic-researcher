@@ -62,8 +62,14 @@
               description="Are you sure you want to do this?
               If you are, provide code below."
             >
-              <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'"  />
+              <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
               <Button :label="'Disable 2FA'" :clickon="deactivate2fa" />
+              <div v-if="this.$store.getters.getSecurity2fa.status === -3">
+                <p class="paragraph-small medium on-white-paragraph">Successfully deactivated!</p>
+              </div>
+              <div v-else-if="this.$store.getters.getSecurity2fa.status === -4">
+                <p class="paragraph-small medium error">Wrong code!</p>
+              </div>
             </basic-modal>
           </div>
         </div>
@@ -155,7 +161,8 @@ export default {
     },
     async deactivate2fa() {
       await this.$store.dispatch('fetchDisable2fa', {
-
+        code: this.securityTwofa.code,
+        jwt: localStorage.getItem('token')
       })
     },
     generate2fa() {

@@ -21,6 +21,7 @@ export default {
 
   async fetchDisable2fa(ctx, value) {
     const { status } = await disable2fa(value)
+    ctx.commit('setSecurity2fa', { status })
   },
 
   async fetchChangePassword(ctx, value) {
