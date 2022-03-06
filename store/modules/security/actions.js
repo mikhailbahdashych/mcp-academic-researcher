@@ -11,6 +11,7 @@ export default {
   fetchSecurityCurrentEmail(ctx, value) { ctx.commit('setSecurityCurrentEmail', value) },
   fetchSecurityNewEmail(ctx, value) { ctx.commit('setSecurityNewEmail', value) },
   fetchSecurityNewEmailRepeat(ctx, value) { ctx.commit('setSecurityNewEmailRepeat', value) },
+  fetchSecurityShowModal(ctx, value) { ctx.commit('setSecurityShowModal', value) },
 
   fetchGenerate2fa(ctx, { name, account }) {
     const { qr, secret } = node2fa.generateSecret({ name, account })

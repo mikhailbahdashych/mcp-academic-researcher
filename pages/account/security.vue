@@ -34,7 +34,7 @@
             <p v-if="this.$store.getters.getSecurity2fa.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
             <basic-modal
-              @close="closeModal"
+              @close="closeModal('ga')"
               v-if="securityShowModal.ga"
               header="Generating 2FA"
               description="We strongly recommend you to 2FA.
@@ -56,7 +56,7 @@
               </div>
             </basic-modal>
             <basic-modal
-              @close="closeModal"
+              @close="closeModal('disable2fa')"
               v-if="securityShowModal.disable2fa"
               header="Disabling 2FA"
               description="Are you sure you want to do this?
@@ -117,7 +117,8 @@ export default {
       'fetchChangeEmail',
       'fetchCloseAccount',
       'fetchGenerate2fa',
-      'fetchDisable2fa'
+      'fetchDisable2fa',
+      'fetchSecurityShowModal'
     ])
   },
   computed: {
@@ -156,6 +157,10 @@ export default {
     securityCodeError: {
       get() { return this.$store.getters.getSecurityCodeError },
       set(value) { this.$store.commit('setSecurityCodeError', value) }
+    },
+    securityShowModal: {
+      get() { return this.$store.getters.getSecurityShowModal },
+      set(value) { this.$store.commit('setSecurityShowModal', value) }
     }
   },
   destroyed() {
@@ -179,11 +184,15 @@ export default {
     generate2fa() {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
-    closeModal() {
-      Object.keys(this.securityShowModal).forEach((key) => (this.securityShowModal[key] = false))
+
+    // fetchSecurityShowModal
+    closeModal(modal) {
+      this.$store.dispatch('fetchSecurityShowModal', {[modal]: false})
+      // Object.keys(this.securityShowModal).forEach((key) => (this.securityShowModal[key] = false))
     },
     showActivate2faModal() { this.securityShowModal.ga = true },
     showDisable2faModal() { this.securityShowModal.disable2fa = true },
+
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityCurrentPassword,

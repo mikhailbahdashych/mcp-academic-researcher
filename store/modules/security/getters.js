@@ -8,4 +8,5 @@ export default {
   getSecurityCurrentEmail: state => state.securityCurrentEmail,
   getSecurityNewEmail: state => state.securityNewEmail,
   getSecurityNewEmailRepeat: state => state.securityNewEmailRepeat,
+  getSecurityShowModal: state => state.securityShowModal
 }
