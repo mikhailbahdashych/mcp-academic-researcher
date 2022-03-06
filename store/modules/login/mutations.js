@@ -22,4 +22,30 @@ export default {
     }
     state.loginError = false
   },
+
+  setEmailFocusLogin(state) {
+    state.loginEmail = {
+      email: null,
+      loginWithEmail: true,
+      emailFocus: true,
+      loginEmailError: false,
+    }
+    state.loginPhone = {
+      phoneFocus: false,
+      phone: null,
+    }
+  },
+
+  setPhoneFocusLogin(state) {
+    state.loginEmail = {
+      email: null,
+      loginWithEmail: false,
+      emailFocus: false,
+      loginEmailError: false,
+    }
+    state.loginPhone = {
+      phoneFocus: true,
+      phone: null,
+    }
+  }
 }

@@ -23,23 +23,23 @@
 
         <Input
           :additional-class="'basic-input-wide'"
-          :oneerror="loginEmailError"
-          :style="[!loginWithEmail ? {'display': 'none'} : {'': ''}]"
-          :focus="emailFocus"
+          :oneerror="loginEmail.loginEmailError"
+          :style="[!loginEmail.loginWithEmail ? {'display': 'none'} : {'': ''}]"
+          :focus="loginEmail.emailFocus"
           :title="'Email'"
           :type="'email'"
-          v-model="loginEmail"
+          v-model="loginEmail.email"
         />
         <Input
           :additional-class="'basic-input-wide'"
-          :style="[loginWithEmail ? {'display': 'none'} : {'': ''}]"
-          :focus="phoneFocus"
+          :style="[loginEmail.loginWithEmail ? {'display': 'none'} : {'': ''}]"
+          :focus="loginPhone.phoneFocus"
           :title="'Phone number'"
           :type="'email'"
-          v-model="loginPhone"
+          v-model="loginPhone.phone"
         />
 
-        <Input :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword" />
+        <Input :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
         <p v-if="loginError === -1" class="paragraph-small error">Wrong credentials!</p>
         <Button :label="'Log In'" :clickon="login" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
@@ -67,15 +67,13 @@ export default {
       'fetchLoginEmail',
       'fetchLoginPhone',
       'fetchLoginPassword',
-      'fetchLoginWithEmail',
-      'fetchEmailFocus',
-      'fetchPhoneFocus',
-      'fetchLoginEmailError',
-      'fetchLoginPasswordError',
-      'fetchLoginError'
+      'fetchLoginError',
+      'fetchEmailFocusLogin',
+      'fetchPhoneFocusLogin'
     ]),
-    loginEmail() { this.loginEmailError = !validateEmail(this.loginEmail) },
-    loginPassword() { this.loginPasswordError = !validatePasswordLength(this.loginPassword) }
+    // @TODO FIX VALIDATORS
+    loginEmail() { this.loginEmail.loginEmailError = !validateEmail(this.loginEmail.email) },
+    loginPassword() { this.loginPassword.loginPasswordError = !validatePasswordLength(this.loginPassword.password) }
   },
   computed: {
     loginEmail: {
@@ -90,30 +88,10 @@ export default {
       get() { return this.$store.getters.getLoginPassword },
       set(value) { this.$store.commit('setLoginPassword', value) }
     },
-    loginWithEmail: {
-      get() { return this.$store.getters.getLoginWithEmail },
-      set(value) { this.$store.commit('setLoginWithEmail', value) }
-    },
-    emailFocus: {
-      get() { return this.$store.getters.getEmailFocus },
-      set(value) { this.$store.commit('setEmailFocus', value) }
-    },
-    phoneFocus: {
-      get() { return this.$store.getters.getPhoneFocus },
-      set(value) { this.$store.commit('setPhoneFocus', value) }
-    },
-    loginEmailError: {
-      get() { return this.$store.getters.getLoginEmailError },
-      set(value) { this.$store.commit('setLoginEmailError', value) }
-    },
     loginError: {
       get() { return this.$store.getters.getLoginError },
       set(value) { this.$store.commit('setLoginError', value) }
     },
-    loginPasswordError: {
-      get() { return this.$store.getters.getLoginPasswordError },
-      set(value) { this.$store.commit('setLoginPasswordError', value) }
-    }
   },
   destroyed() {
     this.$store.commit('setLoginDefaultValues')
@@ -127,43 +105,34 @@ export default {
   methods: {
     async login() {
       if (
-        (this.loginEmail || this.loginPhone) &&
-        (!this.loginEmailError && !this.loginPasswordError)
+        (this.loginEmail.email || this.loginPhone.phone) &&
+        (!this.loginEmail.loginEmailError && !this.loginPassword.loginPasswordError)
       ) {
         await login({
-          email: this.loginEmail,
-          phone: this.loginPhone,
-          password: this.loginPassword
+          email: this.loginEmail.email,
+          phone: this.loginPhone.phone,
+          password: this.loginPassword.password
         }).then(async (token) => {
           if (token.status === -1) {
             this.$store.commit('setLoginError', -1)
           } else {
             localStorage.setItem('token', token)
-            this.$store.commit('setLoginPassword', null)
-            this.$store.commit('setLoginEmail', null)
+            this.$store.commit('setLoginPassword', { password: null })
+            this.$store.commit('setLoginEmail', { email: null })
             await this.$router.push({path: '/account'})
           }
         })
       } else {
-        this.loginEmailError = true
-        this.loginPasswordError = true
+        this.loginEmail.loginEmailError = true
+        this.loginPassword.loginPasswordError = true
       }
     },
     redirect(path) {
-      this.$router.push({ path: path })
+      this.$router.push({ path })
     },
     chooseLogin(option) {
-      if (option === 'email') {
-        this.loginWithEmail = true
-        this.emailFocus = true
-        this.phoneFocus = false
-        this.loginPhone = null
-      } else {
-        this.loginWithEmail = false
-        this.emailFocus = false
-        this.phoneFocus = true
-        this.loginEmail = null
-      }
+      if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')
+      else this.$store.dispatch('fetchPhoneFocusLogin')
     }
   }
 }
