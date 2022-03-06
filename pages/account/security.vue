@@ -177,7 +177,7 @@ export default {
 
     },
     generate2fa() {
-      this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', email: 'asdasd' })
+      this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
     closeModal() {
       // @TODO DO SOME REFACTOR HERE
