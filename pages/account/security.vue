@@ -29,10 +29,10 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button v-if="this.$store.getters.getSecurity2fa.status === 1" :label="'Disable 2FA'" :clickon="showDisable2faModal" />
-            <Button v-else :label="'Click here to generate and set 2FA'" :clickon="showActivate2faModal" />
+            <Button v-if="this.$store.getters.getSecurity2fa.status === 1" :label="'Disable 2FA'" @show="showModal('disable2fa')" />
+            <Button v-else :label="'Click here to generate and set 2FA'" @show="showModal('ga')" />
             <p v-if="this.$store.getters.getSecurity2fa.status === 1">2FA is set!</p>
-            <p v-else>You have not set 2FA for now!</p>
+            <p v-else>You have not set 2FA for now!</p>x
             <basic-modal
               @close="closeModal('ga')"
               v-if="securityShowModal.ga"
@@ -185,13 +185,11 @@ export default {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
 
-    // fetchSecurityShowModal
-    closeModal(modal) {
-      this.$store.dispatch('fetchSecurityShowModal', {[modal]: false})
-      // Object.keys(this.securityShowModal).forEach((key) => (this.securityShowModal[key] = false))
-    },
-    showActivate2faModal() { this.securityShowModal.ga = true },
-    showDisable2faModal() { this.securityShowModal.disable2fa = true },
+    closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
+    showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
+
+    // showActivate2faModal() { this.securityShowModal.ga = true },
+    // showDisable2faModal() { this.securityShowModal.disable2fa = true },
 
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {

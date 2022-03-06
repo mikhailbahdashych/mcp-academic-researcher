@@ -1,13 +1,27 @@
 <template>
   <div @click="clickon" class="basic-button-outer">
-    <button :disabled="disabled" class="basic-button">{{ label }}</button>
+    <button @click="$emit('show')" :disabled="disabled" class="basic-button">{{ label }}</button>
   </div>
 </template>
 
 <script>
 export default {
   name: "Button",
-  props: ['label', 'clickon', 'disabled']
+  // props: ['label', 'clickon', 'disabled']
+  props: {
+    label: {
+      type: String,
+      default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
+    },
+    clickon: {
+      type: Function,
+      default: () => {}
+    }
+  }
 }
 </script>
 
