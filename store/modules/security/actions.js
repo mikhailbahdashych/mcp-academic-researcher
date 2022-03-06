@@ -2,9 +2,9 @@ import { set2fa, verify2fa, changePassword, changeEmail, closeAccount, disable2f
 import * as node2fa from 'node-2fa';
 
 export default {
-  fetchTwofaCode(ctx, value) { ctx.commit('setTwofaCode', value) },
+  fetchSecurityTwofaCode(ctx, value) { ctx.commit('setSecurityTwofaCode', value) },
   fetchSecurityCodeError(ctx, value) { ctx.commit('setSecurityCodeError', value) },
-  fetch2fa(ctx, value) { ctx.commit('set2fa', value) },
+  fetchSecurity2fa(ctx, value) { ctx.commit('setSecurity2fa', value) },
   fetchSecurityCurrentPassword(ctx, value) { ctx.commit('setSecurityCurrentPassword', value) },
   fetchSecurityNewPassword(ctx, value) { ctx.commit('setSecurityNewPassword', value) },
   fetchSecurityNewPasswordRepeat(ctx, value) { ctx.commit('setSecurityNewPasswordRepeat', value) },
@@ -14,12 +14,12 @@ export default {
 
   fetchGenerate2fa(ctx, { name, account }) {
     const { qr, secret } = node2fa.generateSecret({ name, account })
-    ctx.commit('set2fa', { secret, qr, status: null })
+    ctx.commit('setSecurity2fa', { secret, qr, status: null })
   },
 
   async fetchCheck2fa(ctx, value) {
     const { status } = await verify2fa(value)
-    ctx.commit('set2fa', { secret: null, qr: null, status })
+    ctx.commit('setSecurity2fa', { secret: null, qr: null, status })
   },
 
   async fetchSet2fa(ctx, value) {

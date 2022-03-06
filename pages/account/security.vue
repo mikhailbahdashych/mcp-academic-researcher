@@ -29,23 +29,23 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button v-if="this.$store.getters.get2fa.status === 1" :label="'Disable 2FA'" :clickon="showDisable2faModal" />
+            <Button v-if="this.$store.getters.getSecurity2fa.status === 1" :label="'Disable 2FA'" :clickon="showDisable2faModal" />
             <Button v-else :label="'Click here to generate and set 2FA'" :clickon="showActivate2faModal" />
-            <p v-if="this.$store.getters.get2fa.status === 1">2FA is set!</p>
+            <p v-if="this.$store.getters.getSecurity2fa.status === 1">2FA is set!</p>
             <p v-else>You have not set 2FA for now!</p>
             <basic-modal
               @close="closeModal"
-              v-if="showModal.ga"
+              v-if="securityShowModal.ga"
               header="Generating 2FA"
               description="We strongly recommend you to 2FA.
               This will increase the security of you account.
               Before it, you should download Google Authenticator application.
               Once it's done, click the button below to start."
             >
-              <Button v-if="!this.$store.getters.get2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
-              <img v-if="this.$store.getters.get2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)" :src="this.$store.getters.get2fa.qr" alt="2fa">
-              <div v-if="this.$store.getters.get2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)">
-                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="twofaCode" />
+              <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
+              <img v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
+              <div v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)">
+                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofaCode" />
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
               </div>
               <div v-else-if="this.$store.getters.getSecurityCodeError.status === 1">
@@ -57,7 +57,7 @@
             </basic-modal>
             <basic-modal
               @close="closeModal"
-              v-if="showModal.disable2fa"
+              v-if="securityShowModal.disable2fa"
               header="Disabling 2FA"
               description="Are you sure you want to do this?
               If you are, provide code below."
@@ -102,8 +102,8 @@ export default {
   },
   watch: {
     ...mapActions([
-      'fetchTwofaCode',
-      'fetch2fa',
+      'fetchSecurityTwofaCode',
+      'fetchSecurity2fa',
       'fetchSecurityCurrentPassword',
       'fetchSecurityNewPassword',
       'fetchSecurityNewPasswordRepeat',
@@ -121,12 +121,12 @@ export default {
     ])
   },
   computed: {
-    twofaCode: {
+    securityTwofaCode: {
       get() { return this.$store.getters.getTwofaCode },
-      set(value) { this.$store.commit('setTwofaCode', value) }
+      set(value) { this.$store.commit('setSecurityTwofaCode', value) }
     },
-    twofa: {
-      get() { return this.$store.getters.get2fa },
+    securityTwofa: {
+      get() { return this.$store.getters.getSecurity2fa },
       set(value) { this.$store.commit('set2fa', value) }
     },
     securityCurrentPassword: {
@@ -165,23 +165,11 @@ export default {
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
-  data() {
-    return {
-      showModal: {
-        ga: false,
-        sms: false,
-        closingAccount: false,
-        changeEmail: false,
-        changeEmailSuccess: false,
-        disable2fa: false
-      },
-    }
-  },
   methods: {
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
-        code: this.twofaCode,
-        token: this.twofa.secret,
+        code: this.securityTwofaCode,
+        token: this.securityTwofa.secret,
         jwt: localStorage.getItem('token')
       })
     },
@@ -192,10 +180,10 @@ export default {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
     closeModal() {
-      Object.keys(this.showModal).forEach((key) => (this.showModal[key] = false))
+      Object.keys(this.securityShowModal).forEach((key) => (this.securityShowModal[key] = false))
     },
-    showActivate2faModal() { this.showModal.ga = true },
-    showDisable2faModal() { this.showModal.disable2fa = true },
+    showActivate2faModal() { this.securityShowModal.ga = true },
+    showDisable2faModal() { this.securityShowModal.disable2fa = true },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityCurrentPassword,

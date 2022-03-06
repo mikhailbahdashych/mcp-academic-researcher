@@ -1,7 +1,7 @@
 export default {
-  getTwofaCode: state => state.twofaCode,
+  getTwofaCode: state => state.securityTwofaCode,
   getSecurityCodeError: state => state.securityCodeError,
-  get2fa: state => state.twofa,
+  getSecurity2fa: state => state.securityTwofa,
   getSecurityCurrentPassword: state => state.securityCurrentPassword,
   getSecurityNewPassword: state => state.securityNewPassword,
   getSecurityNewPasswordRepeat: state => state.securityNewPasswordRepeat,
