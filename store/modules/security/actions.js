@@ -27,24 +27,24 @@ export default {
   },
 
   async fetchChangePassword(ctx, value) {
-    const response = await changePassword(value)
-    if (response.status === 1) {
+    const { status } = await changePassword(value)
+    if (status === 1) {
       localStorage.removeItem('token')
       await this.$router.push({ path: '/' })
     }
   },
 
   async fetchChangeEmail(ctx, value) {
-    const response = await changeEmail(value)
-    if (response.status === 1) {
+    const { status } = await changeEmail(value)
+    if (status === 1) {
       localStorage.removeItem('token')
       await this.$router.push({ path: '/' })
     }
   },
 
   async fetchCloseAccount(ctx, value) {
-    const response = await closeAccount(value)
-    if (response.status === 1) {
+    const { status } = await closeAccount(value)
+    if (status === 1) {
       localStorage.removeItem('token')
       await this.$router.push({ path: '/' })
     }
