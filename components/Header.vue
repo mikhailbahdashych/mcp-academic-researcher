@@ -16,7 +16,7 @@
       <input class="header-middle-search" />
     </div>
 
-    <div class="header-side" v-if="this.$store.getters.getToken !== 1">
+    <div class="header-side" v-if="!token">
       <div class="user-nav" @click="redirect('/login')">
         <div class="user-nav-button">
           Log in
@@ -48,6 +48,14 @@
 <script>
 export default {
   name: "Header",
+  data() {
+    return {
+      token: null
+    }
+  },
+  mounted() {
+    this.checkToken()
+  },
   methods: {
     redirect(path) {
       this.$router.push({ path: path })
@@ -56,6 +64,9 @@ export default {
       localStorage.removeItem('token')
       this.$store.commit('setToken', -1)
       this.$router.push({ path: '/' })
+    },
+    checkToken() {
+      this.token = !!localStorage.getItem('token');
     }
   }
 }
