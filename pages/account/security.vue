@@ -8,9 +8,9 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityCurrentEmail" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityNewEmail" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityNewEmailRepeat" />
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" />
             <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>
@@ -18,9 +18,9 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change your password</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityCurrentPassword" />
-            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityNewPassword" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityNewPasswordRepeat" />
+            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityPassword.currentPassword" />
+            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityPassword.newPassword" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityPassword.newPasswordRepeat" />
             <Button :label="'Change password'" :clickon="changePassword" />
           </div>
         </div>
@@ -32,7 +32,7 @@
             <Button v-if="this.$store.getters.getSecurity2fa.status === 1" :label="'Disable 2FA'" @show="showModal('disable2fa')" />
             <Button v-else :label="'Click here to generate and set 2FA'" @show="showModal('ga')" />
             <p v-if="this.$store.getters.getSecurity2fa.status === 1">2FA is set!</p>
-            <p v-else>You have not set 2FA for now!</p>x
+            <p v-else>You have not set 2FA for now!</p>
             <basic-modal
               @close="closeModal('ga')"
               v-if="securityShowModal.ga"
@@ -103,12 +103,10 @@ export default {
   watch: {
     ...mapActions([
       'fetchSecurity2fa',
-      'fetchSecurityCurrentPassword',
-      'fetchSecurityNewPassword',
-      'fetchSecurityNewPasswordRepeat',
-      'fetchSecurityCurrentEmail',
-      'fetchSecurityNewEmail',
-      'fetchSecurityNewEmailRepeat',
+      'fetchSecurityPassword',
+      'fetchSecurityEmail',
+      'fetchSecurityShowModal',
+
       'fetchSet2fa',
       'fetchCheck2fa',
       'fetchChangePassword',
@@ -116,7 +114,6 @@ export default {
       'fetchCloseAccount',
       'fetchGenerate2fa',
       'fetchDisable2fa',
-      'fetchSecurityShowModal'
     ])
   },
   computed: {
@@ -124,29 +121,13 @@ export default {
       get() { return this.$store.getters.getSecurity2fa },
       set(value) { this.$store.commit('set2fa', value) }
     },
-    securityCurrentPassword: {
-      get() { return this.$store.getters.getSecurityCurrentPassword },
-      set(value) { this.$store.commit('setSecurityCurrentPassword', value) }
+    securityPassword: {
+      get() { return this.$store.getters.getSecurityPassword },
+      set(value) { this.$store.commit('setSecurityPassword', value) }
     },
-    securityNewPassword: {
-      get() { return this.$store.getters.getSecurityNewPassword },
-      set(value) { this.$store.commit('setSecurityNewPassword', value) }
-    },
-    securityNewPasswordRepeat: {
-      get() { return this.$store.getters.getSecurityNewPasswordRepeat },
-      set(value) { this.$store.commit('setSecurityNewPasswordRepeat', value) }
-    },
-    securityCurrentEmail: {
-      get() { return this.$store.getters.getSecurityCurrentEmail },
-      set(value) { this.$store.commit('setSecurityCurrentEmail', value) }
-    },
-    securityNewEmail: {
-      get() { return this.$store.getters.getSecurityNewEmail },
-      set(value) { this.$store.commit('setSecurityNewEmail', value) }
-    },
-    securityNewEmailRepeat: {
-      get() { return this.$store.getters.getSecurityNewEmailRepeat },
-      set(value) { this.$store.commit('setSecurityNewEmailRepeat', value) }
+    securityEmail: {
+      get() { return this.$store.getters.getSecurityEmail },
+      set(value) { this.$store.commit('setSecurityEmail', value) }
     },
     securityCodeError: {
       get() { return this.$store.getters.getSecurity2fa },
@@ -182,17 +163,17 @@ export default {
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
-        currentPassword: this.securityCurrentPassword,
-        newPassword: this.securityNewPassword,
-        newPasswordRepeat: this.securityNewPasswordRepeat,
+        currentPassword: this.securityPassword.currentPassword,
+        newPassword: this.securityPassword.newPassword,
+        newPasswordRepeat: this.securityPassword.newPasswordRepeat,
         token: localStorage.getItem('token')
       })
     },
     async changeEmail() {
       await this.$store.dispatch('fetchChangeEmail', {
-        currentEmail: this.securityCurrentEmail,
-        newEmail: this.securityNewEmail,
-        newEmailRepeat: this.securityNewEmailRepeat,
+        currentEmail: this.securityEmail.currentEmail,
+        newEmail: this.securityEmail.newEmail,
+        newEmailRepeat: this.securityEmail.newEmailRepeat,
         token: localStorage.getItem('token')
       })
     },

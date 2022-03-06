@@ -3,12 +3,8 @@ import * as node2fa from 'node-2fa';
 
 export default {
   fetchSecurity2fa(ctx, value) { ctx.commit('setSecurity2fa', value) },
-  fetchSecurityCurrentPassword(ctx, value) { ctx.commit('setSecurityCurrentPassword', value) },
-  fetchSecurityNewPassword(ctx, value) { ctx.commit('setSecurityNewPassword', value) },
-  fetchSecurityNewPasswordRepeat(ctx, value) { ctx.commit('setSecurityNewPasswordRepeat', value) },
-  fetchSecurityCurrentEmail(ctx, value) { ctx.commit('setSecurityCurrentEmail', value) },
-  fetchSecurityNewEmail(ctx, value) { ctx.commit('setSecurityNewEmail', value) },
-  fetchSecurityNewEmailRepeat(ctx, value) { ctx.commit('setSecurityNewEmailRepeat', value) },
+  fetchSecurityPassword(ctx, value) { ctx.commit('setSecurityPassword', value) },
+  fetchSecurityEmail(ctx, value) { ctx.commit('setSecurityEmail', value) },
   fetchSecurityShowModal(ctx, value) { ctx.commit('setSecurityShowModal', value) },
 
   // @TODO TO FIX

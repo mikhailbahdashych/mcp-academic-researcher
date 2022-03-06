@@ -1,10 +1,6 @@
 export default {
   getSecurity2fa: state => state.securityTwofa,
-  getSecurityCurrentPassword: state => state.securityCurrentPassword,
-  getSecurityNewPassword: state => state.securityNewPassword,
-  getSecurityNewPasswordRepeat: state => state.securityNewPasswordRepeat,
-  getSecurityCurrentEmail: state => state.securityCurrentEmail,
-  getSecurityNewEmail: state => state.securityNewEmail,
-  getSecurityNewEmailRepeat: state => state.securityNewEmailRepeat,
+  getSecurityPassword: state => state.securityPassword,
+  getSecurityEmail: state => state.securityEmail,
   getSecurityShowModal: state => state.securityShowModal
 }

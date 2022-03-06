@@ -4,12 +4,16 @@ import mutations from "./mutations";
 
 const state = () => ({
   securityTwofa: { code: null, qr: null, status: null, secret: null },
-  securityCurrentPassword: null,
-  securityNewPassword: null,
-  securityNewPasswordRepeat: null,
-  securityCurrentEmail: null,
-  securityNewEmail: null,
-  securityNewEmailRepeat: null,
+  securityPassword: {
+    currentPassword: null,
+    newPassword: null,
+    newPasswordRepeat: null
+  },
+  securityEmail: {
+    currentEmail: null,
+    newEmail: null,
+    newEmailRepeat: null
+  },
   securityShowModal: {
     ga: false,
     sms: false,
