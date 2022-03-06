@@ -1,12 +1,14 @@
+import { setParser } from "~/helpers/frontValidators";
+
 export default {
-  setEmail(state, value) { state.email = value },
-  setPassword(state, value) { state.password = value },
-  setPasswordRepeat(state, value) { state.passwordRepeat = value },
+  setEmail(state, value) { setParser(state, 'email', value) },
+  setPassword(state, value) { setParser(state, 'password', value) },
+
   setStatus(state, value) { state.status = value },
   setError(state, value) { state.error = value },
-  setEmailError(state, value) { state.emailError = value },
   setTac(state, value) { state.tac = value },
-  setPasswordError(state, value) { state.passwordError[value.key] = value.value },
+
+  setPasswordError(state, value) { setParser(state, 'passwordError', value) },
   setPasswordRulesList(state, value) {
     Object.entries(value).forEach(item => {
       state.passwordRulesList.forEach(rule => {
@@ -17,12 +19,16 @@ export default {
     })
   },
   setDefaultValues(state) {
-    state.email = null
-    state.password = null
-    state.passwordRepeat = null
+    state.email = {
+      email: null,
+      emailError: false
+    }
+    state.password = {
+      password: null,
+      passwordRepeat: null,
+    }
     state.status = null
     state.tac = false
-    state.emailError = false
     state.error = false
     state.passwordError = {
       passwordMismatch: false,

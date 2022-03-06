@@ -14,9 +14,9 @@
     <div class="login-inputs">
       <div v-if="status !== 1" class="login-inputs-container">
         <h1>Sign up</h1>
-        <Input :additional-class="'basic-input-wide'" :oneerror="emailError" :title="'Email'" :type="'text'" v-model="email" />
-        <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password" />
-        <Input :additional-class="'basic-input-wide margin-bottom-10'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" v-model="passwordRepeat" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="email.emailError" :title="'Email'" :type="'text'" v-model="email.email" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password.password" />
+        <Input :additional-class="'basic-input-wide margin-bottom-10'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" v-model="password.passwordRepeat" />
         <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
@@ -66,20 +66,28 @@ export default {
       'fetchTac',
       'fetchError',
       'fetchStatus',
-      'fetchPasswordRepeat',
       'fetchPassword',
       'fetchEmail',
-      'fetchEmailError',
       'fetchPasswordError',
       'fetchPasswordRulesList'
     ]),
-    password() { this.validPassword() },
-    passwordRepeat() { this.validPassword() },
-    email() {
-      if (!validateEmail(this.email)) this.emailError = true
-      else if (validateEmail(this.email) === 1) this.emailError = false
-      else this.emailError = false
-    }
+    'password.password': {
+      handler: function () {
+        this.validPassword()
+      }
+    },
+    'password.passwordRepeat': {
+      handler: function () {
+        this.validPassword()
+      }
+    },
+    'email.email': {
+      handler: function () {
+        if (!validateEmail(this.email.email)) this.email.emailError = true
+        else if (validateEmail(this.email.email) === 1) this.email.emailError = false
+        else this.email.emailError = false
+      }
+    },
   },
   computed: {
     error: {
@@ -94,10 +102,6 @@ export default {
       get() { return this.$store.getters.getPassword },
       set(value) { this.$store.commit('setPassword', value) }
     },
-    passwordRepeat: {
-      get() { return this.$store.getters.getPasswordRepeat },
-      set(value) { this.$store.commit('setPasswordRepeat', value) }
-    },
     status: {
       get() { return this.$store.getters.getStatus },
       set(value) { this.$store.commit('setStatus', value) }
@@ -109,10 +113,6 @@ export default {
     passwordError: {
       get() { return this.$store.getters.getPasswordError },
       set(value) { this.$store.commit('setPasswordError', value) }
-    },
-    emailError: {
-      get() { return this.$store.getters.getEmailError },
-      set(value) { this.$store.commit('setEmailError', value) }
     },
     passwordRulesList: {
       get() { return this.$store.getters.getPasswordRulesList },
@@ -133,16 +133,16 @@ export default {
     },
     validFields() {
       return this.tac &&
-      !this.emailError &&
-      this.email && this.password && this.passwordRepeat &&
+      !this.email.emailError &&
+      this.email.email && this.password.password && this.password.passwordRepeat &&
       (!this.passwordError.passwordMismatch && !this.passwordError.passwordRequirement && !this.passwordError.passwordRules)
     },
     validPassword() {
-      this.$store.commit('setPasswordRulesList', validatePasswordRules(this.password))
-      this.passwordError.passwordMismatch = !!((this.password && this.passwordRepeat) && (this.password !== this.passwordRepeat));
-      this.passwordError.passwordRequirement = !this.password || !this.passwordRepeat;
-      this.passwordError.passwordRules = !!(!validatePassword(this.password) || !validatePassword(this.passwordRepeat));
-      if (!this.password && !this.passwordRepeat) {
+      this.$store.commit('setPasswordRulesList', validatePasswordRules(this.password.password))
+      this.passwordError.passwordMismatch = !!((this.password.password && this.password.passwordRepeat) && (this.password.password !== this.password.passwordRepeat));
+      this.passwordError.passwordRequirement = !this.password.password || !this.password.passwordRepeat;
+      this.passwordError.passwordRules = !!(!validatePassword(this.password.password) || !validatePassword(this.password.passwordRepeat));
+      if (!this.password.password && !this.password.passwordRepeat) {
         this.passwordError.passwordMismatch = false
         this.passwordError.passwordRequirement = false
         this.passwordError.passwordRules = false
@@ -151,10 +151,10 @@ export default {
     async register() {
       if (this.validFields()) {
         await register({
-          email: this.email,
-          password: this.password
+          email: this.email.email,
+          password: this.password.password
         }).then(async () => {
-          await sendEmail({ type: 'reg', to: this.email }).then((res) => {
+          await sendEmail({ type: 'reg', to: this.email.email }).then((res) => {
             if (res.status === 1) {
               this.$store.commit('setStatus', 1)
             }

@@ -3,13 +3,20 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const state = () => ({
-  email: null,
-  password: null,
-  passwordRepeat: null,
+  email: {
+    email: null,
+    emailError: false,
+  },
+
+  password: {
+    password: null,
+    passwordRepeat: null,
+  },
+
   status: null,
   tac: false,
-  emailError: false,
   error: false,
+
   passwordError: {
     passwordMismatch: false,
     passwordRequirement: false,
