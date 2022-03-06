@@ -43,15 +43,15 @@
               Once it's done, click the button below to start."
             >
               <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
-              <img v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
-              <div v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)">
-                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofaCode" />
+              <img v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurity2fa.status === null || this.$store.getters.getSecurity2fa.status === -1)" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
+              <div v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurity2fa.status === null || this.$store.getters.getSecurity2fa.status === -1)">
+                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
               </div>
-              <div v-else-if="this.$store.getters.getSecurityCodeError.status === 1">
+              <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">
                 <p class="paragraph-small medium on-white-paragraph">2FA set successfully</p>
               </div>
-              <div v-if="this.$store.getters.getSecurityCodeError.status === -1">
+              <div v-if="this.$store.getters.getSecurity2fa.status === -1">
                 <p class="paragraph-small medium error">Wrong code!</p>
               </div>
             </basic-modal>
@@ -102,7 +102,6 @@ export default {
   },
   watch: {
     ...mapActions([
-      'fetchSecurityTwofaCode',
       'fetchSecurity2fa',
       'fetchSecurityCurrentPassword',
       'fetchSecurityNewPassword',
@@ -110,7 +109,6 @@ export default {
       'fetchSecurityCurrentEmail',
       'fetchSecurityNewEmail',
       'fetchSecurityNewEmailRepeat',
-      'fetchSecurityCodeError',
       'fetchSet2fa',
       'fetchCheck2fa',
       'fetchChangePassword',
@@ -122,10 +120,6 @@ export default {
     ])
   },
   computed: {
-    securityTwofaCode: {
-      get() { return this.$store.getters.getTwofaCode },
-      set(value) { this.$store.commit('setSecurityTwofaCode', value) }
-    },
     securityTwofa: {
       get() { return this.$store.getters.getSecurity2fa },
       set(value) { this.$store.commit('set2fa', value) }
@@ -155,7 +149,7 @@ export default {
       set(value) { this.$store.commit('setSecurityNewEmailRepeat', value) }
     },
     securityCodeError: {
-      get() { return this.$store.getters.getSecurityCodeError },
+      get() { return this.$store.getters.getSecurity2fa },
       set(value) { this.$store.commit('setSecurityCodeError', value) }
     },
     securityShowModal: {
@@ -173,7 +167,7 @@ export default {
   methods: {
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
-        code: this.securityTwofaCode,
+        code: this.securityTwofa.code,
         token: this.securityTwofa.secret,
         jwt: localStorage.getItem('token')
       })

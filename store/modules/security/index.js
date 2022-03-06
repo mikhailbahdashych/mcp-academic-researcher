@@ -3,10 +3,7 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const state = () => ({
-  securityTwofaCode: null,
-  securityCodeError: { status: null },
-  // @TODO DO SOME REFACTOR HERE
-  securityTwofa: { qr: null, status: null, secret: null },
+  securityTwofa: { code: null, qr: null, status: null, secret: null },
   securityCurrentPassword: null,
   securityNewPassword: null,
   securityNewPasswordRepeat: null,
