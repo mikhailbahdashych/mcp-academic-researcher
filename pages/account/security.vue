@@ -43,15 +43,14 @@
               Once it's done, click the button below to start."
             >
               <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
-              <img v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurity2fa.status === null || this.$store.getters.getSecurity2fa.status === -1)" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
-              <div v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurity2fa.status === null || this.$store.getters.getSecurity2fa.status === -1)">
+              <img v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurity2fa.status === null || this.$store.getters.getSecurity2fa.status === -2 || this.$store.getters.getSecurity2fa.status === -1)" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
+              <div v-if="this.$store.getters.getSecurity2fa.qr && (this.$store.getters.getSecurity2fa.status === null || this.$store.getters.getSecurity2fa.status === -2 || this.$store.getters.getSecurity2fa.status === -1)">
                 <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
               </div>
               <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">
                 <p class="paragraph-small medium on-white-paragraph">2FA set successfully</p>
               </div>
-              {{ this.$store.getters.getSecurity2fa }}
               <div v-if="this.$store.getters.getSecurity2fa.status === -1">
                 <p class="paragraph-small medium error">Wrong code!</p>
               </div>
