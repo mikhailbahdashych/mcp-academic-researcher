@@ -49,6 +49,11 @@
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
               </div>
             </basic-modal>
+            <basic-modal
+              @close="closeModal"
+            >
+
+            </basic-modal>
           </div>
         </div>
         <div class="security-container">
@@ -156,7 +161,7 @@ export default {
         closingAccount: false,
         changeEmail: false,
         changeEmailSuccess: false,
-        deactivate2fa: false
+        disable2fa: false
       },
     }
   },
@@ -175,6 +180,7 @@ export default {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', email: 'asdasd' })
     },
     closeModal() {
+      // @TODO DO SOME REFACTOR HERE
       Object.keys(this.showModal).forEach(item => { this.showModal[item] = false })
       this.$store.dispatch('fetch2fa', { qr: null, status: null, secret: null })
     },
