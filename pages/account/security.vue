@@ -29,10 +29,13 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-            <Button v-if="this.$store.getters.getSecurity2fa.status === 1" :label="'Disable 2FA'" @show="showModal('disable2fa')" />
-            <Button v-else :label="'Click here to generate and set 2FA'" @show="showModal('ga')" />
-            <p v-if="this.$store.getters.getSecurity2fa.status === 1">2FA is set!</p>
-            <p v-else>You have not set 2FA for now!</p>
+
+            <Button v-if="[1, -4].includes(this.$store.getters.getSecurity2fa.status)" :label="'Disable 2FA'" @show="showModal('disable2fa')" />
+            <Button v-else-if="this.$store.getters.getSecurity2fa.status !== -4" :label="'Click here to generate and set 2FA'" @show="showModal('ga')" />
+
+            <p v-if="[1, -4].includes(this.$store.getters.getSecurity2fa.status)">2FA is set!</p>
+            <p v-else-if="this.$store.getters.getSecurity2fa.status !== -4">You have not set 2FA for now!</p>
+
             <basic-modal
               @close="closeModal('ga')"
               v-if="securityShowModal.ga"
@@ -75,7 +78,7 @@
         </div>
         <div class="security-container">
           <div class="inner-block">
-
+            <p>Phone verification</p>
           </div>
         </div>
         <div class="security-container">
