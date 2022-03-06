@@ -2,7 +2,7 @@ import { set2fa, verify2fa, changePassword, changeEmail, closeAccount, disable2f
 import * as node2fa from 'node-2fa';
 
 export default {
-  fetchSecurityCode(ctx, value) { ctx.commit('setSecurityCode', value) },
+  fetchTwofaCode(ctx, value) { ctx.commit('setTwofaCode', value) },
   fetchSecurityCodeError(ctx, value) { ctx.commit('setSecurityCodeError', value) },
   fetch2fa(ctx, value) { ctx.commit('set2fa', value) },
   fetchSecurityCurrentPassword(ctx, value) { ctx.commit('setSecurityCurrentPassword', value) },

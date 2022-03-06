@@ -1,5 +1,5 @@
 export default {
-  setSecurityCode(state, value) { state.securityCode = value },
+  setTwofaCode(state, value) { state.twofaCode = value },
   setSecurityCodeError(state, value) { state.securityCodeError = value },
   set2fa(state, value) { state.twofa = value },
   setSecurityCurrentPassword(state, value) { state.securityCurrentPassword = value },
@@ -9,8 +9,8 @@ export default {
   setSecurityNewEmail(state, value) { state.securityNewEmail = value },
   setSecurityNewEmailRepeat(state, value) { state.securityNewEmailRepeat = value },
   setSecurityDefaultValues(state) {
-    state.securityCode = null
-    state.securityCodeError = null
+    state.twofaCode = null
+    state.securityCodeError = { status: null }
     state.twofa = { qr: null, status: null, secret: null }
     state.securityTwofaStatus = {}
     state.securityCurrentPassword = null

@@ -45,7 +45,7 @@
               <Button v-if="!this.$store.getters.get2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
               <img v-if="this.$store.getters.get2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)" :src="this.$store.getters.get2fa.qr" alt="2fa">
               <div v-if="this.$store.getters.get2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)">
-                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityCode" />
+                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="twofaCode" />
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
               </div>
               <div v-else-if="this.$store.getters.getSecurityCodeError.status === 1">
@@ -102,7 +102,7 @@ export default {
   },
   watch: {
     ...mapActions([
-      'fetchSecurityCode',
+      'fetchTwofaCode',
       'fetch2fa',
       'fetchSecurityCurrentPassword',
       'fetchSecurityNewPassword',
@@ -121,9 +121,9 @@ export default {
     ])
   },
   computed: {
-    securityCode: {
-      get() { return this.$store.getters.getSecurityCode },
-      set(value) { this.$store.commit('setSecurityCode', value) }
+    twofaCode: {
+      get() { return this.$store.getters.getTwofaCode },
+      set(value) { this.$store.commit('setTwofaCode', value) }
     },
     twofa: {
       get() { return this.$store.getters.get2fa },
@@ -180,7 +180,7 @@ export default {
   methods: {
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
-        code: this.securityCode,
+        code: this.twofaCode,
         token: this.twofa.secret,
         jwt: localStorage.getItem('token')
       })

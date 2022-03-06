@@ -3,7 +3,7 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const state = () => ({
-  securityCode: null,
+  twofaCode: null,
   securityCodeError: { status: null },
   twofa: { qr: null, status: null, secret: null },
   securityCurrentPassword: null,
