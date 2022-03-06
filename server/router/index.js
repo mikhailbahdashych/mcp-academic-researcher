@@ -73,6 +73,15 @@ router.post('/set-2fa', async (req, res) => {
   }
 })
 
+router.post('/disable-2fa', async (req, res) => {
+  try {
+    const data = await api.post('/disable-2fa', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 router.post('/verify-2fa', async (req, res) => {
   try {
     const data = await api.post('/verify-2fa', req.body)

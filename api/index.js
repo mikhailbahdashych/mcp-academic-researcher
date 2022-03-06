@@ -84,6 +84,15 @@ export const set2fa = async (payload) => {
   }
 }
 
+export const disable2fa = async (payload) => {
+  try {
+    const { data } = await api.post('/disable-2fa', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
+
 export const verify2fa = async (payload) => {
   try {
     const { data } = await api.post('/verify-2fa', payload)
