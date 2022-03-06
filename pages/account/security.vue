@@ -184,13 +184,8 @@ export default {
     generate2fa() {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
-
     closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
-
-    // showActivate2faModal() { this.securityShowModal.ga = true },
-    // showDisable2faModal() { this.securityShowModal.disable2fa = true },
-
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityCurrentPassword,
