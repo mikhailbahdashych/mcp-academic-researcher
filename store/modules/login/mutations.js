@@ -1,22 +1,25 @@
+import { setParser } from "~/helpers/frontValidators";
+
 export default {
-  setLoginEmail(state, value) { state.loginEmail = value },
-  setLoginPhone(state, value) { state.loginPhone = value },
-  setLoginPassword(state, value) { state.loginPassword = value },
-  setLoginWithEmail(state, value) { state.loginWithEmail = value },
-  setEmailFocus(state, value) { state.emailFocus = value },
-  setPhoneFocus(state, value) { state.phoneFocus = value },
-  setLoginPasswordError(state, value) { state.loginPasswordError = value },
-  setLoginEmailError(state, value) { state.loginEmailError = value },
+  setLoginEmail(state, value) { setParser(state, 'loginEmail', value) },
+  setLoginPhone(state, value) { setParser(state, 'loginPhone', value) },
+  setLoginPassword(state, value) { setParser(state, 'loginPassword', value) },
   setLoginError(state, value) { state.loginError = value },
   setLoginDefaultValues(state) {
-    state.loginEmail = null
-    state.loginPhone = null
-    state.loginPassword = null
-    state.loginWithEmail = null
-    state.emailFocus = false
-    state.phoneFocus = false
-    state.loginPasswordError = false
-    state.loginEmailError = false
+    state.loginEmail = {
+      email: null,
+      loginWithEmail: null,
+      emailFocus: false,
+      loginEmailError: false,
+    }
+    state.loginPhone = {
+      phoneFocus: false,
+      phone: null,
+    }
+    state.loginPassword = {
+      loginPasswordError: false,
+      password: null,
+    }
     state.loginError = false
   },
 }

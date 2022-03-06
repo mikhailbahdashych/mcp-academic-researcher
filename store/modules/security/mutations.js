@@ -1,10 +1,4 @@
-const setParser = (state, statename, value) => {
-  Object.entries(value).forEach(item => {
-    Object.entries(state[statename]).forEach(modal => {
-      if (item[0] === modal[0]) state[statename][item[0]] = item[1]
-    })
-  })
-}
+import { setParser } from "~/helpers/frontValidators";
 
 export default {
   setSecurity2fa(state, value) { setParser(state, 'securityTwofa', value) },

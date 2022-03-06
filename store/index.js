@@ -9,19 +9,15 @@ const createStore = () => {
     namespaced: true,
     state: {
       loading: false,
-      token: null
     },
     actions: {
       fetchLoading(ctx, value) { ctx.commit('setLoading', value) },
-      fetchToken(ctx, value) { ctx.commit('setToken', value) }
     },
     mutations: {
       setLoading(state, value) { state.loading = value },
-      setToken(state, value) { state.token = value }
     },
     getters: {
       getLoading: state => state.loading,
-      getToken: state => state.token
     },
     modules: {
       register,

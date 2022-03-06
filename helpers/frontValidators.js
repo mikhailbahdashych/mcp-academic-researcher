@@ -53,3 +53,11 @@ export const validatePasswordRules = (password) => {
   }
   return legitPassword
 }
+
+export const setParser = (state, statename, value) => {
+  Object.entries(value).forEach(item => {
+    Object.entries(state[statename]).forEach(modal => {
+      if (item[0] === modal[0]) state[statename][item[0]] = item[1]
+    })
+  })
+}

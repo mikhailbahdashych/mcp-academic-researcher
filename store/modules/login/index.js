@@ -3,14 +3,20 @@ import getters from "./getters";
 import mutations from "./mutations";
 
 const state = () => ({
-  loginEmail: null,
-  loginPhone: null,
-  loginPassword: null,
-  loginWithEmail: null,
-  emailFocus: false,
-  phoneFocus: false,
-  loginPasswordError: false,
-  loginEmailError: false,
+  loginEmail: {
+    email: null,
+    loginWithEmail: null,
+    emailFocus: false,
+    loginEmailError: false,
+  },
+  loginPassword: {
+    loginPasswordError: false,
+    password: null,
+  },
+  loginPhone: {
+    phoneFocus: false,
+    phone: null,
+  },
   loginError: false
 })
 
