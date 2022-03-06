@@ -1,18 +1,46 @@
+import { setParser } from "~/helpers/frontValidators";
+
 export default {
-  setResetPasswordEmail(state, value) { state.resetPasswordEmail = value },
-  setResetPasswordPhone(state, value) { state.resetPasswordPhone = value },
+  setResetPasswordEmail(state, value) { setParser(state, 'resetPasswordEmail', value) },
+  setResetPasswordPhone(state, value) { setParser(state, 'resetPasswordPhone', value
+  ) },
   setResetPasswordCode(state, value) { state.resetPasswordCode = value },
-  setResetPasswordEmailError(state, value) { state.resetPasswordEmailError = value },
-  setResetPasswordEmailFocus(state, value) { state.resetPasswordEmailFocus = value },
-  setResetPasswordPhoneFocus(state, value) { state.resetPasswordPhoneFocus = value },
   setResetPasswordLoginWithEmail(state, value) { state.resetPasswordLoginWithEmail = value },
   setResetPasswordDefaultValues(state) {
-    state.resetPasswordEmail = null
-    state.resetPasswordPhone = null
+    state.resetPasswordEmail = {
+      email: null,
+      emailError: false,
+      emailFocus: false
+    }
+    state.resetPasswordPhone = {
+      phone: null,
+      phoneFocus: false,
+    }
     state.resetPasswordCode = null
-    state.resetPasswordEmailError = false
-    state.resetPasswordEmailFocus = false
-    state.resetPasswordPhoneFocus = false
     state.resetPasswordLoginWithEmail = false
+  },
+  setResetPasswordEmailFocusLogin(state) {
+    state.resetPasswordLoginWithEmail = true
+    state.resetPasswordEmail = {
+      email: null,
+      emailError: false,
+      emailFocus: true
+    }
+    state.resetPasswordPhone = {
+      phone: null,
+      phoneFocus: false,
+    }
+  },
+  setResetPasswordPhoneFocusLogin(state) {
+    state.resetPasswordLoginWithEmail = false
+    state.resetPasswordEmail = {
+      email: null,
+      emailError: false,
+      emailFocus: false
+    }
+    state.resetPasswordPhone = {
+      phone: null,
+      phoneFocus: true,
+    }
   }
 }
