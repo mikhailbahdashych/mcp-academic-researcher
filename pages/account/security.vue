@@ -51,7 +51,7 @@
               <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">
                 <p class="paragraph-small medium on-white-paragraph">2FA set successfully</p>
               </div>
-              <div v-if="this.$store.getters.getSecurity2fa.status === -1">
+              <div v-if="this.$store.getters.getSecurity2fa.status === null">
                 <p class="paragraph-small medium error">Wrong code!</p>
               </div>
             </basic-modal>
