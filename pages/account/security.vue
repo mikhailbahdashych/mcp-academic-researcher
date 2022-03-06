@@ -43,10 +43,16 @@
               Once it's done, click the button below to start."
             >
               <Button v-if="!this.$store.getters.get2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
-              <img v-if="this.$store.getters.get2fa.qr" :src="this.$store.getters.get2fa.qr" alt="2fa">
-              <div v-if="this.$store.getters.get2fa.qr">
+              <img v-if="this.$store.getters.get2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)" :src="this.$store.getters.get2fa.qr" alt="2fa">
+              <div v-if="this.$store.getters.get2fa.qr && (this.$store.getters.getSecurityCodeError.status === null || this.$store.getters.getSecurityCodeError.status === -1)">
                 <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityCode" />
                 <Button :label="'Confirm 2FA'" :clickon="set2fa" />
+              </div>
+              <div v-else-if="this.$store.getters.getSecurityCodeError.status === 1">
+                <p class="paragraph-small medium on-white-paragraph">2FA set successfully</p>
+              </div>
+              <div v-if="this.$store.getters.getSecurityCodeError.status === -1">
+                <p class="paragraph-small medium error">Wrong code!</p>
               </div>
             </basic-modal>
             <basic-modal
@@ -110,7 +116,8 @@ export default {
       'fetchChangePassword',
       'fetchChangeEmail',
       'fetchCloseAccount',
-      'fetchGenerate2fa'
+      'fetchGenerate2fa',
+      'fetchDisable2fa'
     ])
   },
   computed: {

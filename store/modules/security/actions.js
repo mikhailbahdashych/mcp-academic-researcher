@@ -26,6 +26,10 @@ export default {
     ctx.commit('setSecurityCodeError', await set2fa(value))
   },
 
+  async fetchDisable2fa(ctx, value) {
+
+  },
+
   async fetchChangePassword(ctx, value) {
     const { status } = await changePassword(value)
     if (status === 1) {

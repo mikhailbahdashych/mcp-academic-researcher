@@ -11,7 +11,7 @@ export default {
   setSecurityDefaultValues(state) {
     state.securityCode = null
     state.securityCodeError = null
-    state.twofa = { qr: null, status: null }
+    state.twofa = { qr: null, status: null, secret: null }
     state.securityTwofaStatus = {}
     state.securityCurrentPassword = null
     state.securityNewPassword = null
