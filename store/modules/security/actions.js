@@ -19,10 +19,10 @@ export default {
     ctx.commit('setSecurity2fa', { secret: null, qr: null, status })
   },
 
-  async fetchSet2fa(ctx, value) {ctx.commit('setSecurity2fa', await set2fa(value)) },
+  async fetchSet2fa(ctx, value) { ctx.commit('setSecurity2fa', await set2fa(value)) },
 
   async fetchDisable2fa(ctx, value) {
-
+    const { status } = await disable2fa(value)
   },
 
   async fetchChangePassword(ctx, value) {
