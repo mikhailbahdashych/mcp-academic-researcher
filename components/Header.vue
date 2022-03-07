@@ -46,12 +46,10 @@
 </template>
 
 <script>
-import Button from "~/components/Button";
 import Input from "~/components/Input";
 export default {
   name: "Header",
   components: {
-    Button,
     Input
   },
   data() {
