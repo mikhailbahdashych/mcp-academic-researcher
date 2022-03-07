@@ -1,10 +1,10 @@
 <template>
   <div class="account-header">
     <div class="account-header-inner">
-      <div v-for="item in accountHeaderItems" class="account-header-item-block">
-        <h3 :style="[item.active ? {'color': 'red'} : {'': ''}]" class="account-header-item" @click="redirect(item.route)">
+      <div v-for="item in accountHeaderItems" class="account-header-item-block" :class="[item.active ? 'active' : '']">
+        <h4 :class="[item.active ? 'active' : '']" class="account-header-item" @click="redirect(item.route)">
           {{item.title}}
-        </h3>
+        </h4>
       </div>
     </div>
   </div>
@@ -19,6 +19,7 @@ export default {
         { title: 'My account', route: '/account', active: false },
         { title: 'Settings', route: '/account/settings', active: false },
         { title: 'Security', route: '/account/security', active: false },
+        { title: 'Referral panel', route: '/account/referral', active: false }
       ]
     }
   },
