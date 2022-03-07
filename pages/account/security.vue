@@ -143,12 +143,10 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
     window.removeEventListener("scroll", this.handleScroll);
   },
-  created() {
-    window.addEventListener("scroll", this.handleScroll);
-  },
   async mounted() {
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
+    window.addEventListener("scroll", this.handleScroll);
   },
   methods: {
     async set2fa() {
