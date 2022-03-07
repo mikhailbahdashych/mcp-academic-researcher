@@ -2,9 +2,9 @@
   <div class="account-header">
     <div class="account-header-inner">
       <div v-for="item in accountHeaderItems" class="account-header-item-block" :class="[item.active ? 'active' : '']">
-        <h4 :class="[item.active ? 'active' : '']" class="account-header-item" @click="redirect(item.route)">
+        <p :class="[item.active ? 'active' : '']" class="account-header-item" @click="redirect(item.route)">
           {{item.title}}
-        </h4>
+        </p>
       </div>
     </div>
   </div>

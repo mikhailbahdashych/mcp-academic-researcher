@@ -1,7 +1,9 @@
 <template>
   <div>
     <Header />
-    <AccountHeader />
+    <div id="navbar">
+      <AccountHeader />
+    </div>
     <div class="account-container">
       <h1>Here is security subpage</h1>
       <div class="account-containers">
@@ -139,6 +141,10 @@ export default {
   },
   destroyed() {
     this.$store.commit('setSecurityDefaultValues')
+    window.removeEventListener("scroll", this.handleScroll);
+  },
+  created() {
+    window.addEventListener("scroll", this.handleScroll);
   },
   async mounted() {
     await verifyUserToken(this.$router)
@@ -181,7 +187,19 @@ export default {
     },
     async closeAccount() {
       await this.$store.dispatch('fetchCloseAccount', { token: localStorage.getItem('token') })
-    }
+    },
+    handleScroll() {
+      let prevScrollpos = window.pageYOffset;
+      window.onscroll = function() {
+        const currentScrollPos = window.pageYOffset;
+        if (prevScrollpos > currentScrollPos) {
+          document.getElementById("navbar").style.top = "-120px";
+        } else {
+          document.getElementById("navbar").style.top = "0";
+        }
+        prevScrollpos = currentScrollPos;
+      }
+    },
   }
 }
 </script>
