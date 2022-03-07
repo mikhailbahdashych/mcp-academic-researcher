@@ -46,8 +46,12 @@
 </template>
 
 <script>
+import Button from "~/components/Button";
 export default {
   name: "Header",
+  components: {
+    Button
+  },
   data() {
     return {
       token: null

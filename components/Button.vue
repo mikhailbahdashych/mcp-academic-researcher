@@ -7,7 +7,6 @@
 <script>
 export default {
   name: "Button",
-  // props: ['label', 'clickon', 'disabled']
   props: {
     label: {
       type: String,
