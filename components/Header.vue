@@ -6,9 +6,34 @@
         LOGO
       </div>
       <div class="header-nav">
-        <div class="header-nav-menu">Nav menu 1</div>
-        <div class="header-nav-menu">Nav menu 2</div>
-        <div class="header-nav-menu">Nav menu 3</div>
+
+        <div class="dropdown">
+          <div class="header-nav-menu">Nav menu 1</div>
+          <div class="dropdown-content">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <div class="header-nav-menu">Nav menu 2</div>
+          <div class="dropdown-content">
+            <a href="#">Link 4</a>
+            <a href="#">Link 5</a>
+            <a href="#">Link 6</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <div class="header-nav-menu">Nav menu 3</div>
+          <div class="dropdown-content">
+            <a href="#">Link 7</a>
+            <a href="#">Link 8</a>
+            <a href="#">Link 9</a>
+          </div>
+        </div>
+
       </div>
     </div>
 
