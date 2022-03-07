@@ -35,13 +35,17 @@
     }
     .header-nav {
       width: 75%;
-      height: 50px;
       display: flex;
       justify-content: space-between;
       color: white;
       .header-nav-menu {
-        padding: 25px 0 15px 0;
+        padding: 25px 5px 15px 5px;
         cursor: pointer;
+        transition: 0.2s;
+      }
+      .header-nav-menu:hover {
+        background-color: rgba(#fff, 0.5);
+        border-radius: 7px;
       }
       .dropdown-content {
         display: none;
