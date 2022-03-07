@@ -105,12 +105,13 @@ export default {
   },
   methods: {
     redirect(path) {
-      this.$router.push({ path: path })
+      this.$router.push({ path })
     },
     logout() {
       localStorage.removeItem('token')
       this.$store.commit('setToken', -1)
       this.$router.push({ path: '/' })
+      window.location.reload()
     },
     checkToken() {
       this.token = !!localStorage.getItem('token');
