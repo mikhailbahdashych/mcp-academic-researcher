@@ -89,12 +89,8 @@
 </template>
 
 <script>
-import Input from "~/components/Input";
 export default {
   name: "Header",
-  components: {
-    Input
-  },
   data() {
     return {
       token: null

@@ -97,18 +97,8 @@
 <script>
 import { verifyUserToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
-import Input from "~/components/Input";
-import Button from "~/components/Button";
-import AccountHeader from "~/components/AccountHeader";
-import BasicModal from "~/components/BasicModal";
 export default {
   name: "security",
-  components: {
-    Input,
-    Button,
-    AccountHeader,
-    BasicModal
-  },
   watch: {
     ...mapActions([
       'fetchSecurity2fa',

@@ -13,7 +13,6 @@
     border-bottom: 0.5px solid white;
     .account-header-item-block {
       height: calc(100% - 15px);
-      transition: 0.2s;
       padding-top: 15px;
       margin: 0 auto;
       &.active {
@@ -23,7 +22,6 @@
         cursor: pointer;
         margin: 0;
         color: rgba(#fff, 0.5);
-        transition: 0.2s;
         &.active {
           color: white;
         }

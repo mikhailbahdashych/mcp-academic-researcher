@@ -6,8 +6,6 @@
 </template>
 
 <script>
-// @TODO CHECK OUT THIS STAFF
-// import AccountHeader from "~/components/AccountHeader";
 export default {
   name: "referral"
 }

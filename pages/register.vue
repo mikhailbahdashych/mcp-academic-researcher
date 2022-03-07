@@ -51,16 +51,8 @@
 import {register, sendEmail, verifyToken} from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
-import Input from "~/components/Input";
-import Button from "~/components/Button";
-import Checkbox from "~/components/Checkbox";
 export default {
   name: "register",
-  components: {
-    Input,
-    Button,
-    Checkbox
-  },
   watch: {
     ...mapActions([
       'fetchTac',

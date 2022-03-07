@@ -53,16 +53,8 @@
 import { resetPassword } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail } from "~/helpers/frontValidators";
-import Input from "~/components/Input";
-import InputWithButton from "~/components/InputWithButton";
-import Button from "~/components/Button";
 export default {
   name: "reset-password",
-  components: {
-    Input,
-    InputWithButton,
-    Button
-  },
   watch: {
     ...mapActions([
       'fetchResetPasswordEmail',

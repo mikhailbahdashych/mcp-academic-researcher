@@ -19,12 +19,8 @@
 </template>
 
 <script>
-import Button from "~/components/Button";
 export default {
   name: "InputWithButton",
-  components: {
-    Button
-  },
   props: {
     title: {
       type: String,

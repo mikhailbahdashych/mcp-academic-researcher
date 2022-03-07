@@ -54,14 +54,8 @@
 import { login, verifyToken } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
-import Input from "~/components/Input";
-import Button from "~/components/Button";
 export default {
   name: "login",
-  components: {
-    Input,
-    Button
-  },
   watch: {
     ...mapActions([
       'fetchLoginEmail',
