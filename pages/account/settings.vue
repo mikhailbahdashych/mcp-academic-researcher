@@ -2,6 +2,7 @@
   <div>
     <Header />
     <AccountHeader />
+    <div class="account-container"></div>
   </div>
 </template>
 
