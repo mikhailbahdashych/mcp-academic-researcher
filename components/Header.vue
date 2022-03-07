@@ -13,7 +13,7 @@
     </div>
 
     <div class="header-middle">
-      <input class="header-middle-search" />
+      <Input :additional-class="'search-bar'" />
     </div>
 
     <div class="header-side" v-if="!token">
@@ -47,10 +47,12 @@
 
 <script>
 import Button from "~/components/Button";
+import Input from "~/components/Input";
 export default {
   name: "Header",
   components: {
-    Button
+    Button,
+    Input
   },
   data() {
     return {
