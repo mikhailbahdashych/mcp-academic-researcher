@@ -10,27 +10,45 @@
         <div class="dropdown">
           <div class="header-nav-menu">Nav menu 1</div>
           <div class="dropdown-content">
-            <a href="#">Link 1</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, quasi?</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur itaque maxime nihil possimus quam quis.</span>
+            </div>
           </div>
         </div>
 
         <div class="dropdown">
           <div class="header-nav-menu">Nav menu 2</div>
           <div class="dropdown-content">
-            <a href="#">Link 4</a>
-            <a href="#">Link 5</a>
-            <a href="#">Link 6</a>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, quasi?</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur itaque maxime nihil possimus quam quis.</span>
+            </div>
           </div>
         </div>
 
         <div class="dropdown">
           <div class="header-nav-menu">Nav menu 3</div>
           <div class="dropdown-content">
-            <a href="#">Link 7</a>
-            <a href="#">Link 8</a>
-            <a href="#">Link 9</a>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, quasi?</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur itaque maxime nihil possimus quam quis.</span>
+            </div>
           </div>
         </div>
 

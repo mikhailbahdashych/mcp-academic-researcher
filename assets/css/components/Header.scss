@@ -41,6 +41,7 @@
       color: white;
       .header-nav-menu {
         padding: 25px 0 15px 0;
+        cursor: pointer;
       }
       .dropdown-content {
         display: none;
@@ -51,15 +52,20 @@
         box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
         border-radius: 7px;
         z-index: 1;
-        a {
-          color: white;
-          padding: 12px 18px;
-          text-decoration: none;
-          display: block;
+        .dropdown-item {
+          margin: 12px;
+          .item {
+            color: white;
+            padding: 12px 18px;
+            text-decoration: none;
+            display: block;
+            transition: 0.2s;
+            cursor: pointer;
+          }
         }
       }
-      .dropdown-content a:hover {background-color: #6b6b6b;}
-      .dropdown:hover .dropdown-content {display: block;}
+      .item:hover { background-color: rgba(#6b6b6b, 0.5); border-radius: 7px }
+      .dropdown:hover .dropdown-content { display: block; }
     }
     .user-nav {
       color: rgb(0, 20, 42);
