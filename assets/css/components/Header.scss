@@ -39,14 +39,18 @@
       justify-content: space-between;
       color: white;
       .header-nav-menu {
-        margin-top: 5px;
-        padding: 15px 5px 15px 5px;
+        margin-top: 10px;
+        padding: 10px 5px 10px 5px;
         cursor: pointer;
         transition: 0.2s;
+        border-radius: 7px;
+        width: 100px;
+        text-align: center;
+        border: 0.5px solid rgba(#fff, 0.5);
       }
       .header-nav-menu:hover {
-        background-color: rgba(#fff, 0.5);
-        border-radius: 7px;
+        transform: scale(1.03);
+        box-shadow: 0 0 5px $maincolor;
       }
       .dropdown-content {
         display: none;
