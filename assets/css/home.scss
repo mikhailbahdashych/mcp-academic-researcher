@@ -1,6 +1,6 @@
 @import "main";
 
-.main {
+.main-background {
   background: url("assets/video/bg.gif") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
@@ -18,8 +18,33 @@
 .main-content {
   position: absolute;
   width: 100%;
-  background-color: $backgroundcolorthird;
+  background-color: $backgroundcolorsecond;
   height: 700px;
   border-radius: 25px 25px 0 0;
   top: 70vh;
+}
+
+.main-texts-box {
+  position: absolute;
+  width: 60%;
+  min-width: 500px;
+  height: 700px;
+  top: 60px;
+  right: 0;
+  text-align: center;
+  .title {
+    color: white;
+    font-weight: 100;
+    font-size: 42px;
+    &.small-title { font-size: 28px; }
+    &.small-content { font-size: 18px; }
+  }
+  .main-welcome {
+    height: 30%;
+    margin-top: 100px;
+  }
+  .main-start-box {
+    width: 50%;
+    margin: 0 auto;
+  }
 }
