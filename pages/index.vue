@@ -1,7 +1,9 @@
 <template>
   <div>
     <Header />
-    <div class="main-background" />
+    <div class="main-background">
+      <div style="width: 100%; height: 50px; background-color: green; position: absolute; bottom: 0"></div>
+    </div>
     <div class="main-texts-box">
       <div class="main-welcome">
         <h1 class="title">THE FUTURE IS HERE. THE FUTURE IS NOW.</h1>
