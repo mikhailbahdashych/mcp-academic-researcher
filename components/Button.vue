@@ -1,6 +1,13 @@
 <template>
   <div @click="clickon" class="basic-button-outer">
-    <button @click="$emit('show')" :disabled="disabled" class="basic-button">{{ label }}</button>
+    <button
+      @click="$emit('show')"
+      :disabled="disabled"
+      class="basic-button"
+      :class="[onhover ? 'on-hover' : '']"
+    >
+      {{ label }}
+    </button>
   </div>
 </template>
 
@@ -19,6 +26,10 @@ export default {
     clickon: {
       type: Function,
       default: () => {}
+    },
+    onhover: {
+      type: Boolean,
+      default: false
     }
   }
 }
@@ -26,4 +37,9 @@ export default {
 
 <style lang="scss">
 @import "../assets/css/components/Button";
+.on-hover {}
+.on-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px $maincolor;
+}
 </style>

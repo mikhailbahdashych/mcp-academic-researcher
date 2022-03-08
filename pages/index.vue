@@ -10,7 +10,7 @@
       </div>
       <div class="main-start-box">
         <h1 class="title small-title">Start now</h1>
-        <Button :label="'Start now'" />
+        <Button :label="'Start now'" :onhover="true" />
       </div>
     </div>
     <div class="main-content">
