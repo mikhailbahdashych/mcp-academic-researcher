@@ -41,7 +41,7 @@
           v-model="resetPasswordPhone.phone"
         />
 
-        <Input :title="'Verification code'" :additional-class="'margin-bottom-30 basic-input-wide'" />
+        <Input @keyup.enter.native="resetPassword" :title="'Verification code'" :additional-class="'margin-bottom-30 basic-input-wide'" />
         <Button :label="'Submit'" :clickon="resetPassword" />
       </div>
     </div>

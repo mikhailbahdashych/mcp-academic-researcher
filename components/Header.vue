@@ -56,7 +56,7 @@
     </div>
 
     <div class="header-middle">
-      <Input :additional-class="'search-bar'" />
+      <Input @keyup.enter.native="() => {}" :additional-class="'search-bar'" />
     </div>
 
     <div class="header-side" v-if="!token">
