@@ -3,7 +3,7 @@
 
     <div class="header-side">
       <div class="header-logo" @click="redirect('/')">
-        LOGO
+        CTD
       </div>
       <div class="header-nav">
 
