@@ -8,7 +8,27 @@
       <div class="header-nav">
 
         <div class="dropdown">
-          <div class="header-nav-menu">Nav menu 1</div>
+
+          <div class="header-nav-menu">Markets <i class="arrow down" /></div>
+
+          <div class="dropdown-content">
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, quasi?</span>
+            </div>
+            <div class="dropdown-item">
+              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur itaque maxime nihil possimus quam quis.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="dropdown">
+
+          <div class="header-nav-menu">asd <i class="arrow down" /></div>
+
           <div class="dropdown-content">
             <div class="dropdown-item">
               <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
@@ -23,22 +43,9 @@
         </div>
 
         <div class="dropdown">
-          <div class="header-nav-menu">Nav menu 2</div>
-          <div class="dropdown-content">
-            <div class="dropdown-item">
-              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
-            </div>
-            <div class="dropdown-item">
-              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, quasi?</span>
-            </div>
-            <div class="dropdown-item">
-              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur itaque maxime nihil possimus quam quis.</span>
-            </div>
-          </div>
-        </div>
 
-        <div class="dropdown">
-          <div class="header-nav-menu">Nav menu 3</div>
+          <div class="header-nav-menu">asd <i class="arrow down" /></div>
+
           <div class="dropdown-content">
             <div class="dropdown-item">
               <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
