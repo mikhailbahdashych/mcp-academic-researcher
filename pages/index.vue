@@ -2,12 +2,7 @@
   <div>
     <Header />
 
-<!--    <video autoplay muted loop class="main-background">-->
-<!--      <source :src="require('@/assets/video/bg.webm')" type="video/webm">-->
-<!--    </video>-->
-    <div>
-      <img src="../assets/img/ai.svg" alt="">
-    </div>
+    <img src="../assets/img/ai.svg" alt="AI" class="bg-image">
     <div class="main-texts-box">
       <div class="main-welcome">
         <h1 class="title">THE FUTURE IS HERE. THE FUTURE IS NOW.</h1>
@@ -20,10 +15,7 @@
       </div>
     </div>
 
-    <div class="main-content">
-      <h1>test</h1>
-      <Footer/>
-    </div>
+    <div class="main-content"></div>
 
   </div>
 </template>
