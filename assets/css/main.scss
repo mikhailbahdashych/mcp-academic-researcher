@@ -67,22 +67,22 @@ h1 {
   margin-left: 2px;
 }
 
-.right {
+.arrow-right {
   transform: rotate(-45deg);
   --webkit-transform: rotate(-45deg);
 }
 
-.left {
+.arrow-left {
   transform: rotate(135deg);
   --webkit-transform: rotate(135deg);
 }
 
-.up {
+.arrow-up {
   transform: rotate(-135deg);
   --webkit-transform: rotate(-135deg);
 }
 
-.down {
+.arrow-down {
   transform: rotate(45deg);
   --webkit-transform: rotate(45deg);
 }
