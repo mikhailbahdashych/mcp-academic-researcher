@@ -1,12 +1,17 @@
 <template>
-  <div :class="[bright ? 'footer' : 'footer bright']">
+  <div :class="[bright ? 'footer bright' : 'footer']">
   </div>
 </template>
 
 <script>
 export default {
-  props: ['bright'],
-  name: "Footer"
+  name: "Footer",
+  props: {
+    bright: {
+      type: Boolean,
+      default: false
+    }
+  }
 }
 </script>
 

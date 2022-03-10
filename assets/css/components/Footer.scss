@@ -6,4 +6,7 @@
   background-color: $backgroundcolor;
   bottom: 0;
   position: relative;
+  &.bright {
+    background-color: $backgroundcolorsecond;
+  }
 }

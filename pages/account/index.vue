@@ -5,6 +5,7 @@
     <div class="account-container">
 
     </div>
+    <Footer :bright="true" />
   </div>
 </template>
 

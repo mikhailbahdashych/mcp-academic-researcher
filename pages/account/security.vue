@@ -93,7 +93,7 @@
       </div>
 
     </div>
-    <Footer />
+    <Footer :bright="true" />
   </div>
 </template>
 
