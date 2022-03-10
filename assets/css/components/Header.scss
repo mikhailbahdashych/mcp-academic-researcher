@@ -36,7 +36,6 @@
     .header-nav {
       width: 75%;
       display: flex;
-      justify-content: space-between;
       color: white;
 
       .header-nav-menu {
@@ -46,6 +45,9 @@
         line-height: 60px;
         width: 100px;
         text-align: center;
+        .nav-menu {
+          margin: 0 auto;
+        }
       }
       .header-nav-menu:hover {
         background-color: rgba(#fff, 0.3);

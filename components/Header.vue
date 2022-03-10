@@ -9,7 +9,9 @@
 
         <div class="dropdown">
 
-          <div class="header-nav-menu">Markets <i class="arrow down" /></div>
+          <div class="header-nav-menu">
+            <p class="nav-menu">Markets <i class="arrow down" /></p>
+          </div>
 
           <div class="dropdown-content">
             <div class="dropdown-item">
@@ -27,7 +29,9 @@
 
         <div class="dropdown">
 
-          <div class="header-nav-menu">asd <i class="arrow down" /></div>
+          <div class="header-nav-menu">
+            <span>asd <i class="arrow down" /></span>
+          </div>
 
           <div class="dropdown-content">
             <div class="dropdown-item">
@@ -44,7 +48,9 @@
 
         <div class="dropdown">
 
-          <div class="header-nav-menu">asd <i class="arrow down" /></div>
+          <div class="header-nav-menu">
+            <span>asd <i class="arrow down" /></span>
+          </div>
 
           <div class="dropdown-content">
             <div class="dropdown-item">
