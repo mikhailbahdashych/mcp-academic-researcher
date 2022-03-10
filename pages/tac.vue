@@ -1,5 +1,10 @@
 <template>
-  <div></div>
+  <div>
+    <Header />
+    <div class="home-base"></div>
+    <div class="home-content"></div>
+    <Footer />
+  </div>
 </template>
 
 <script>
@@ -8,6 +13,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+@import "../assets/css/home";
 </style>
