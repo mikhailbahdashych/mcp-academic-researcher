@@ -14,6 +14,8 @@
       height: 420px;
       border: 0.5px solid rgba(#fff, 0.5);
       border-radius: 15px;
+      &.small { height: 100% }
+      &.danger { border:  1px solid rgba($error, 0.5)}
     }
   }
 }

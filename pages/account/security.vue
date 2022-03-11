@@ -5,30 +5,11 @@
       <AccountHeader />
     </div>
     <div class="account-container">
-      <h1>Here is security subpage</h1>
-      <div class="account-containers">
-        <div class="security-container">
-          <div class="inner-block">
-            <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" />
-            <Button :label="'Change email'" :clickon="changeEmail" />
-          </div>
-        </div>
+      <h1>Account information</h1>
 
-        <div class="security-container">
-          <div class="inner-block">
-            <p>Change your password</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityPassword.currentPassword" />
-            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityPassword.newPassword" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityPassword.newPasswordRepeat" />
-            <Button :label="'Change password'" :clickon="changePassword" />
-          </div>
-        </div>
-      </div>
+      <h1>Two-Factor Authentication</h1>
       <div class="account-containers">
-        <div class="security-container">
+        <div class="security-container small">
           <div class="inner-block">
             <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
 
@@ -78,15 +59,42 @@
             </basic-modal>
           </div>
         </div>
-        <div class="security-container">
+        <div class="security-container small">
           <div class="inner-block">
             <p>Phone verification</p>
           </div>
         </div>
+      </div>
+
+      <h1>Login credentials</h1>
+      <div class="account-containers">
         <div class="security-container">
           <div class="inner-block">
+            <p>Change email</p>
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" />
+            <Button :label="'Change email'" :clickon="changeEmail" />
+          </div>
+        </div>
+
+        <div class="security-container">
+          <div class="inner-block">
+            <p>Change your password</p>
+            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityPassword.currentPassword" />
+            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityPassword.newPassword" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityPassword.newPasswordRepeat" />
+            <Button :label="'Change password'" :clickon="changePassword" />
+          </div>
+        </div>
+      </div>
+
+      <h1>Danger zone</h1>
+      <div class="account-containers">
+        <div class="security-container danger small">
+          <div class="inner-block">
             <p>Close account</p>
-            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam animi at dolores doloribus earum eius, omnis pariatur quos tempore velit! Aspernatur dolores fugit incidunt iure iusto nobis perferendis praesentium, repudiandae? Accusantium adipisci corporis dolorem doloribus error fugit, harum ipsam iure minima mollitia, pariatur placeat praesentium quae quas, quisquam rem vel?</p>
+            <p>We are so sorry to see that, but if you want to, click the button below.</p>
             <Button :label="'Close account'" :clickon="closeAccount" />
           </div>
         </div>

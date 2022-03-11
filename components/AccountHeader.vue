@@ -18,7 +18,7 @@ export default {
       accountHeaderItems: [
         { title: 'My account', route: '/account', active: false },
         { title: 'Settings', route: '/account/settings', active: false },
-        { title: 'Security', route: '/account/security', active: false },
+        { title: 'Account & Security', route: '/account/security', active: false },
         { title: 'Referral panel', route: '/account/referral', active: false }
       ]
     }
