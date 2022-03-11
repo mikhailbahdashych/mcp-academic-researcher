@@ -150,12 +150,10 @@ export default {
   },
   destroyed() {
     this.$store.commit('setSecurityDefaultValues')
-    window.removeEventListener("scroll", this.handleScroll);
   },
   async mounted() {
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
-    window.addEventListener("scroll", this.handleScroll);
   },
   methods: {
     async set2fa() {
@@ -194,19 +192,7 @@ export default {
     },
     async closeAccount() {
       await this.$store.dispatch('fetchCloseAccount', { token: localStorage.getItem('token') })
-    },
-    handleScroll() {
-      let prevScrollpos = window.pageYOffset;
-      window.onscroll = function() {
-        const currentScrollPos = window.pageYOffset;
-        if (prevScrollpos > currentScrollPos) {
-          document.getElementById("navbar").style.top = "-120px";
-        } else {
-          document.getElementById("navbar").style.top = "0";
-        }
-        prevScrollpos = currentScrollPos;
-      }
-    },
+    }
   }
 }
 </script>
