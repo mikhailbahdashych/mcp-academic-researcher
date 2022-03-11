@@ -104,7 +104,12 @@
 <script>
 export default {
   name: "Header",
-  props: ['dark'],
+  props: {
+    dark: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       token: null
