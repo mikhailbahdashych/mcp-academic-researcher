@@ -13,7 +13,9 @@ const state = () => ({
     currentEmail: null,
     newEmail: null,
     newEmailRepeat: null,
-    emailError: false
+    currentEmailError: false,
+    newEmailError: false,
+    newEmailRepeatError: false
   },
   securityShowModal: {
     ga: false,

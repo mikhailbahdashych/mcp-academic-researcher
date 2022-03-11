@@ -79,9 +79,9 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.emailError" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" :oneerror="securityEmail.emailError" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" :oneerror="securityEmail.emailError" />
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.currentEmailError" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" :oneerror="securityEmail.newEmailError" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" :oneerror="securityEmail.newEmailRepeatError" />
             <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>
@@ -143,23 +143,23 @@ export default {
     ]),
     'securityEmail.currentEmail': {
       handler: function () {
-        if (!validateEmail(this.securityEmail.currentEmail)) this.securityEmail.emailError = true
-        else if (validateEmail(this.securityEmail.currentEmail) === 1) this.securityEmail.emailError = false
-        else this.securityEmail.emailError = false
+        if (!validateEmail(this.securityEmail.currentEmail)) this.securityEmail.currentEmailError = true
+        else if (validateEmail(this.securityEmail.currentEmail) === 1) this.securityEmail.currentEmailError = false
+        else this.securityEmail.currentEmailError = false
       }
     },
     'securityEmail.newEmail': {
       handler: function () {
-        if (!validateEmail(this.securityEmail.newEmail)) this.securityEmail.emailError = true
-        else if (validateEmail(this.securityEmail.newEmail) === 1) this.securityEmail.emailError = false
-        else this.securityEmail.emailError = false
+        if (!validateEmail(this.securityEmail.newEmail)) this.securityEmail.newEmailError = true
+        else if (validateEmail(this.securityEmail.newEmail) === 1) this.securityEmail.newEmailError = false
+        else this.securityEmail.newEmailError = false
       }
     },
     'securityEmail.newEmailRepeat': {
       handler: function () {
-        if (!validateEmail(this.securityEmail.newEmailRepeat)) this.securityEmail.emailError = true
-        else if (validateEmail(this.securityEmail.newEmailRepeat) === 1) this.securityEmail.emailError = false
-        else this.securityEmail.emailError = false
+        if (!validateEmail(this.securityEmail.newEmailRepeat)) this.securityEmail.newEmailRepeatError = true
+        else if (validateEmail(this.securityEmail.newEmailRepeat) === 1) this.securityEmail.newEmailRepeatError = false
+        else this.securityEmail.newEmailRepeatError = false
       }
     },
   },
