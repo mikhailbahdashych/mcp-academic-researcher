@@ -62,6 +62,14 @@
         <div class="security-container small">
           <div class="inner-block">
             <p>Phone verification</p>
+            <Button :label="'Click here to verify mobile phone'" @show="showModal('sms')" />
+            <basic-modal
+              @close="closeModal('sms')"
+              v-if="securityShowModal.sms"
+              header="Verify mobile phone"
+              description="Here is some text text."
+            >
+            </basic-modal>
           </div>
         </div>
       </div>
