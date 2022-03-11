@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header />
+    <Header :dark="scrollPosition < 640" />
 
     <div class="home-base">
       <img src="../assets/img/ai.svg" alt="AI">
@@ -27,6 +27,17 @@
 <script>
 export default {
   name: 'IndexPage',
+  data() {
+    return {
+      scrollPosition: null
+    }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.updateScroll)
+  },
+  methods: {
+    updateScroll() { this.scrollPosition = window.scrollY }
+  }
 }
 </script>
 

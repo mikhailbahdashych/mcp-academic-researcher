@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div :class="dark ? 'header' : 'header dark'">
 
     <div class="header-side">
       <div class="header-logo" @click="redirect('/')">
@@ -104,6 +104,7 @@
 <script>
 export default {
   name: "Header",
+  props: ['dark'],
   data() {
     return {
       token: null

@@ -9,6 +9,7 @@
   justify-content: space-between;
   position: fixed;
   z-index: 99;
+  transition: 0.2s;
 
   .header-middle {
     width: 20%;
@@ -109,5 +110,8 @@
         }
       }
     }
+  }
+  &.dark {
+    background-color: $backgroundcolor;
   }
 }
