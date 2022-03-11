@@ -103,7 +103,14 @@
           <div class="inner-block">
             <p>Close account</p>
             <p>We are so sorry to see that, but if you want to, click the button below.</p>
-            <Button :label="'Close account'" :clickon="closeAccount" />
+            <Button :label="'Close account'" @show="showModal('closingAccount')" />
+            <basic-modal
+              @close="closeModal('closingAccount')"
+              v-if="securityShowModal.closingAccount"
+              header="Close account"
+              description="Are you sure you want to close account? You won't be able to restore your data!"
+            >
+            </basic-modal>
           </div>
         </div>
       </div>
