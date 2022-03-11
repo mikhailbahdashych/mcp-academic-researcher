@@ -22,7 +22,7 @@
             <basic-modal
               @close="closeModal('ga')"
               v-if="securityShowModal.ga"
-              header="Generating 2FA"
+              header="Activate 2FA"
               description="We strongly recommend you to 2FA.
               This will increase the security of you account.
               Before it, you should download Google Authenticator application.
@@ -44,7 +44,7 @@
             <basic-modal
               @close="closeModal('disable2fa')"
               v-if="securityShowModal.disable2fa"
-              header="Disabling 2FA"
+              header="Disable 2FA"
               description="Are you sure you want to do this?
               If you are, provide code below."
             >
@@ -86,9 +86,10 @@
             <basic-modal
               @close="closeModal('changeEmail')"
               v-if="securityShowModal.changeEmail"
-              header="Changing email"
+              header="Change email"
               description="Be careful! You are able to change email only one time."
             >
+              <Button :label="'Change email'" :clickon="changeEmail" />
             </basic-modal>
           </div>
         </div>
@@ -103,9 +104,10 @@
             <basic-modal
               @close="closeModal('changePassword')"
               v-if="securityShowModal.changePassword"
-              header="Changing password"
+              header="Change password"
               description="Are you sure you want to change password?"
             >
+              <Button :label="'Change password'" :clickon="changePassword" />
             </basic-modal>
           </div>
         </div>
@@ -124,6 +126,7 @@
               header="Close account"
               description="Are you sure you want to close account? You won't be able to restore your data!"
             >
+              <Button :label="'Close account'" :clickon="closeAccount" />
             </basic-modal>
           </div>
         </div>
@@ -207,6 +210,8 @@ export default {
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
+    closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
+    showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityTwofa.code,
@@ -223,8 +228,6 @@ export default {
     generate2fa() {
       this.$store.dispatch('fetchGenerate2fa', { name: 'asdas', account: 'asdasd' })
     },
-    closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
-    showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityPassword.currentPassword,
