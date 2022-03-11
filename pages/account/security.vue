@@ -82,7 +82,14 @@
             <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.currentEmailError" />
             <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" :oneerror="securityEmail.newEmailError" />
             <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" :oneerror="securityEmail.newEmailRepeatError" />
-            <Button :label="'Change email'" :clickon="changeEmail" />
+            <Button :label="'Change email'" @show="showModal('changeEmail')" />
+            <basic-modal
+              @close="closeModal('changeEmail')"
+              v-if="securityShowModal.changeEmail"
+              header="Changing email"
+              description="Be careful! You are able to change email only one time."
+            >
+            </basic-modal>
           </div>
         </div>
 
@@ -92,7 +99,14 @@
             <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityPassword.currentPassword" />
             <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityPassword.newPassword" />
             <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityPassword.newPasswordRepeat" />
-            <Button :label="'Change password'" :clickon="changePassword" />
+            <Button :label="'Change password'" @show="showModal('changePassword')" />
+            <basic-modal
+              @close="closeModal('changePassword')"
+              v-if="securityShowModal.changePassword"
+              header="Changing password"
+              description="Are you sure you want to change password?"
+            >
+            </basic-modal>
           </div>
         </div>
       </div>

@@ -21,7 +21,8 @@ const state = () => ({
     ga: false,
     sms: false,
     closingAccount: false,
-    // changeEmail: false,
+    changeEmail: false,
+    changePassword: false,
     // changeEmailSuccess: false,
     disable2fa: false
   },
