@@ -79,9 +79,9 @@
         <div class="security-container">
           <div class="inner-block">
             <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" />
+            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.emailError" />
+            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" :oneerror="securityEmail.emailError" />
+            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" :oneerror="securityEmail.emailError" />
             <Button :label="'Change email'" :clickon="changeEmail" />
           </div>
         </div>
@@ -122,6 +122,7 @@
 
 <script>
 import { verifyUserToken } from "~/helpers/auth";
+import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
 export default {
   name: "security",
@@ -139,7 +140,28 @@ export default {
       'fetchCloseAccount',
       'fetchGenerate2fa',
       'fetchDisable2fa',
-    ])
+    ]),
+    'securityEmail.currentEmail': {
+      handler: function () {
+        if (!validateEmail(this.securityEmail.currentEmail)) this.securityEmail.emailError = true
+        else if (validateEmail(this.securityEmail.currentEmail) === 1) this.securityEmail.emailError = false
+        else this.securityEmail.emailError = false
+      }
+    },
+    'securityEmail.newEmail': {
+      handler: function () {
+        if (!validateEmail(this.securityEmail.newEmail)) this.securityEmail.emailError = true
+        else if (validateEmail(this.securityEmail.newEmail) === 1) this.securityEmail.emailError = false
+        else this.securityEmail.emailError = false
+      }
+    },
+    'securityEmail.newEmailRepeat': {
+      handler: function () {
+        if (!validateEmail(this.securityEmail.newEmailRepeat)) this.securityEmail.emailError = true
+        else if (validateEmail(this.securityEmail.newEmailRepeat) === 1) this.securityEmail.emailError = false
+        else this.securityEmail.emailError = false
+      }
+    },
   },
   computed: {
     securityTwofa: {

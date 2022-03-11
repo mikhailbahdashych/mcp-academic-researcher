@@ -12,7 +12,8 @@ const state = () => ({
   securityEmail: {
     currentEmail: null,
     newEmail: null,
-    newEmailRepeat: null
+    newEmailRepeat: null,
+    emailError: false
   },
   securityShowModal: {
     ga: false,
