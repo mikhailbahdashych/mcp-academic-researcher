@@ -23,7 +23,6 @@ const state = () => ({
     closingAccount: false,
     changeEmail: false,
     changePassword: false,
-    // changeEmailSuccess: false,
     disable2fa: false
   },
 })
