@@ -118,7 +118,7 @@ export default {
         if (res.status) this.$store.commit('setLoginError', -1)
 
         localStorage.setItem('token', res)
-        this.$store.commit('setEmailStore', this.loginEmail.email)
+        localStorage.setItem('email', this.loginEmail.email)
         this.$store.commit('setLoginPassword', { password: null })
         this.$store.commit('setLoginEmail', { email: null })
         await this.$router.push({path: '/account'})

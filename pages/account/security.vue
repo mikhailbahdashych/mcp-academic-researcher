@@ -6,7 +6,7 @@
     </div>
     <div class="account-container">
       <h1>Account information</h1>
-      <p>Your email: {{ this.$store.getters.getEmailStore }}</p>
+      <p>Your email: {{ email }}</p>
 
       <h1>Two-Factor Authentication</h1>
       <div class="account-containers">
@@ -146,8 +146,6 @@ export default {
   name: "security",
   watch: {
     ...mapActions([
-      'fetchEmailStore',
-
       'fetchSecurity2fa',
       'fetchSecurityPassword',
       'fetchSecurityEmail',
@@ -183,11 +181,12 @@ export default {
       }
     },
   },
+  data() {
+    return {
+      email: null,
+    }
+  },
   computed: {
-    emailStore: {
-      get() { return this.$store.getters.getEmailStore },
-      set(value) { this.$store.commit('setEmailStore', value) }
-    },
     securityTwofa: {
       get() { return this.$store.getters.getSecurity2fa },
       set(value) { this.$store.commit('set2fa', value) }
@@ -213,6 +212,7 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
+    this.email = localStorage.getItem('email')
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
@@ -233,7 +233,7 @@ export default {
       })
     },
     generate2fa() {
-      this.$store.dispatch('fetchGenerate2fa', { name: 'CTD', account: this.$store.getters.getEmailStore })
+      this.$store.dispatch('fetchGenerate2fa', { name: 'CTD', account: localStorage.getItem('email') })
     },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
