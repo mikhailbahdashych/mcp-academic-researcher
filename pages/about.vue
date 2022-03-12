@@ -5,11 +5,7 @@
     <div class="home-base">
       <div class="home-text-box center">
         <div class="home-welcome">
-          <h1 class="title large">FAQ</h1>
-          <h1 class="title small-title">
-            If you haven't found answer on your question, feel free to
-            <span class="pointer link" @click="redirect('/contact')">contact</span>.
-          </h1>
+          <h1 class="title large">About Us</h1>
         </div>
       </div>
     </div>
@@ -22,16 +18,11 @@
 
 <script>
 export default {
-  name: "faq",
+  name: "about",
   data() {
     return {
 
     }
-  },
-  methods: {
-    redirect(path) {
-      this.$router.push({ path })
-    },
   }
 }
 </script>

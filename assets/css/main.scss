@@ -21,18 +21,19 @@ body {
   &.right {
     float: right;
   }
-  &.pointer {
-    cursor: pointer;
-  }
-  &.link {
-    color: $maincolor;
-  }
-  &.error {
-    color: $error
-  }
-  &.on-white-paragraph {
-    color: black;
-  }
+}
+
+.error {
+  color: $error
+}
+.on-white-paragraph {
+  color: black;
+}
+.pointer {
+  cursor: pointer;
+}
+.link {
+  color: $maincolor;
 }
 
 .vertical-line {
