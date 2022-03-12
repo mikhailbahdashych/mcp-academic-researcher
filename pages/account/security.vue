@@ -5,10 +5,8 @@
       <AccountHeader />
     </div>
     <div class="account-container">
-      {{ // @TODO Shouldn't be here }}
-      {{ // @TODO Do it like pop-up panels with pop-up windows }}
       <h1>Account information</h1>
-      <p>Your email: {{ email }}</p>
+      <p>Your email: {{ hideEmail() }}</p>
 
       <h1>Two-Factor Authentication</h1>
       <div class="account-containers">
@@ -145,6 +143,8 @@ import { verifyUserToken } from "~/helpers/auth";
 import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
 export default {
+  // @TODO Shouldn't be here
+  // @TODO Do it like pop-up panels with pop-up windows
   name: "security",
   watch: {
     ...mapActions([
@@ -183,11 +183,6 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      email: null,
-    }
-  },
   computed: {
     securityTwofa: {
       get() { return this.$store.getters.getSecurity2fa },
@@ -214,13 +209,16 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
-    this.email = localStorage.getItem('email')
+    this.hideEmail()
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
     closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
+    hideEmail() {
+      return localStorage.getItem('email')
+    },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityTwofa.code,
