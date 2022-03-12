@@ -1,16 +1,12 @@
 @import "../basics";
 
 .panel {
-  width: 350px;
-  height: 200px;
-  background-color: #3F3250;
-  border-radius: 15px;
+  width: 200px;
+  height: 100px;
+  background: #FFB6C1;
   transition: 0.2s;
-  cursor: pointer;
-  position: relative;
 }
 
 .panel:hover {
-  top: -15px;
-  transition: 0.2s;
+  transform: translateY(-15px);
 }

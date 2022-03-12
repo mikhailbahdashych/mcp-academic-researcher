@@ -6,7 +6,6 @@
     </div>
     <div class="account-container">
       <h1>Account information</h1>
-      <Panel />
       <p>Your email: {{ this.securityEmail.email }}</p>
 
       <h1>Two-Factor Authentication</h1>

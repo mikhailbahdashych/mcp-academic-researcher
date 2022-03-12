@@ -18,6 +18,7 @@
     </div>
 
     <div class="home-content">
+      <Panel />
     </div>
     <Footer/>
 
