@@ -1,1 +1,17 @@
 @import "../basics";
+
+.basic-textarea-outer {
+  .basic-textarea {
+    min-width: 500px;
+    min-height: 300px;
+    border-radius: 5px;
+    outline: none;
+    border: 1px solid rgba(#fff, 0.5);
+    background-color: rgba(#000, 0.5);
+    color: white;
+    font-family: "Inter", sans-serif;
+    font-weight: 300;
+    font-size: 18px;
+    resize: none;
+  }
+}

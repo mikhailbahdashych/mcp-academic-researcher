@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <textarea></textarea>
+  <div class="basic-textarea-outer">
+    <textarea class="basic-textarea" />
   </div>
 </template>
 
