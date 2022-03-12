@@ -1,8 +1,9 @@
 @import "../basics";
 
 .panel {
-  width: 200px;
-  height: 100px;
+  width: 350px;
+  height: 200px;
+  cursor: pointer;
   background: #FFB6C1;
   transition: 0.2s;
 }

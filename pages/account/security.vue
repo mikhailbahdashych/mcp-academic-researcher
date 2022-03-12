@@ -78,21 +78,23 @@
       <h1>Login credentials</h1>
       <div class="account-containers">
         <div class="security-container">
-          <div class="inner-block">
-            <p>Change email</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.currentEmailError" />
-            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" :oneerror="securityEmail.newEmailError" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" :oneerror="securityEmail.newEmailRepeatError" />
-            <Button :label="'Change email'" @show="showModal('changeEmail')" />
-            <basic-modal
-              @close="closeModal('changeEmail')"
-              v-if="securityShowModal.changeEmail"
-              header="Change email"
-              description="Be careful! You are able to change email only one time."
-            >
-              <Button :label="'Change email'" :clickon="changeEmail" />
-            </basic-modal>
-          </div>
+          <Panel />
+
+<!--          <div class="inner-block">-->
+<!--            <p>Change email</p>-->
+<!--            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.currentEmailError" />-->
+<!--            <Input :additional-class="'basic-input-box'" :title="'New email'" :type="'email'" v-model="securityEmail.newEmail" :oneerror="securityEmail.newEmailError" />-->
+<!--            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new email'" :type="'email'" v-model="securityEmail.newEmailRepeat" :oneerror="securityEmail.newEmailRepeatError" />-->
+<!--            <Button :label="'Change email'" @show="showModal('changeEmail')" />-->
+<!--            <basic-modal-->
+<!--              @close="closeModal('changeEmail')"-->
+<!--              v-if="securityShowModal.changeEmail"-->
+<!--              header="Change email"-->
+<!--              description="Be careful! You are able to change email only one time."-->
+<!--            >-->
+<!--              <Button :label="'Change email'" :clickon="changeEmail" />-->
+<!--            </basic-modal>-->
+<!--          </div>-->
         </div>
 
         <div class="security-container">
