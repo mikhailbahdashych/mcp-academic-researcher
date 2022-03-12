@@ -25,19 +25,10 @@
 </template>
 
 <script>
+import { darkHeader } from "~/mixins/darkHeader";
 export default {
   name: 'IndexPage',
-  data() {
-    return {
-      scrollPosition: null
-    }
-  },
-  mounted() {
-    window.addEventListener('scroll', this.updateScroll)
-  },
-  methods: {
-    updateScroll() { this.scrollPosition = window.scrollY }
-  }
+  mixins: [ darkHeader ]
 }
 </script>
 
