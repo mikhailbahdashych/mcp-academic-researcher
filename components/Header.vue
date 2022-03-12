@@ -30,26 +30,7 @@
         <div class="dropdown">
 
           <div class="header-nav-menu">
-            <span>asd <i class="arrow arrow-down" /></span>
-          </div>
-
-          <div class="dropdown-content">
-            <div class="dropdown-item">
-              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium adipisci corporis cupiditate deserunt dolores illo neque possimus quos veritatis voluptates.</span>
-            </div>
-            <div class="dropdown-item">
-              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eum, quasi?</span>
-            </div>
-            <div class="dropdown-item">
-              <span class="item">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Consequatur itaque maxime nihil possimus quam quis.</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="dropdown">
-
-          <div class="header-nav-menu">
-            <span>asd <i class="arrow arrow-down" /></span>
+            <span>More <i class="arrow arrow-down" /></span>
           </div>
 
           <div class="dropdown-content">
@@ -112,7 +93,14 @@ export default {
   },
   data() {
     return {
-      token: null
+      token: null,
+      moreNav: [
+        { title: 'Contact', route: '/contact' },
+        { title: 'Terms and Conditions', route: '/tac' },
+        { title: 'About', route: '/about' },
+        { title: 'Blog', route: '/blog' },
+        { title: 'FAQ', route: '/faq' },
+      ]
     }
   },
   mounted() {

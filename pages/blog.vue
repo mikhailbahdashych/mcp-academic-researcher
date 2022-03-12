@@ -5,28 +5,25 @@
     <div class="home-base">
       <div class="home-text-box center">
         <div class="home-welcome">
-          <h1 class="title large">Contact</h1>
-          <h1 class="title small-title">Wanna become a partner? Found a bug? Have a question? Or just wanna have a small talk?</h1>
-          <h1 class="title small-title">Here you go!</h1>
+          <h1 class="title large">Blog</h1>
+          <h1 class="title small-title">Welcome to blog! Here you will found news about modern crypto world.</h1>
         </div>
       </div>
     </div>
 
     <div class="home-content">
       <div class="home-content-box">
-        <Input :title="'Label'" />
       </div>
     </div>
 
-    <Footer />
   </div>
 </template>
 
 <script>
 import { darkHeader } from "~/mixins/darkHeader";
 export default {
-  name: "contact",
-  mixins: [ darkHeader ],
+  name: "blog",
+  mixins: [darkHeader ]
 }
 </script>
 
