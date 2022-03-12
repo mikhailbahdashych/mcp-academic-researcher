@@ -11,15 +11,22 @@
   .footer-block {
     margin: 0 auto;
     width: 60%;
+    p { margin: 0; }
+    .footer-item {
+      text-align: center;
+      height: 100%;
+      width: 50%;
+      padding-top: 25px;
+    }
     &.up {
       height: 80%;
       border-bottom: 0.5px solid rgba(#fff, 0.5);
+      display: flex;
     }
     &.down {
-      padding-top: 25px;
       height: 20%;
       text-align: center;
-      p { margin: 0; }
+      p { padding-top: 25px }
     }
   }
 }
