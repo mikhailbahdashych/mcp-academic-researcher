@@ -39,8 +39,8 @@
         <Button :label="'Sign up'" :clickon="register" :disabled="!validFields()" />
       </div>
       <div class="login-inputs-container" v-else>
-        <h2>Conformation email has been sent.</h2>
-        <p>Please, follow the instruction in the email to complete registration process.</p>
+        <h1>Conformation email has been sent.</h1>
+        <p class="paragraph-small medium">Please, follow the instruction in the email to complete registration process.</p>
       </div>
     </div>
 
