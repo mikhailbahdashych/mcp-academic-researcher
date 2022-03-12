@@ -233,7 +233,7 @@ export default {
       })
     },
     generate2fa() {
-      this.$store.dispatch('fetchGenerate2fa', { name: 'CTD', account: 'asdasd' })
+      this.$store.dispatch('fetchGenerate2fa', { name: 'CTD', account: this.$store.getters.getEmailStore })
     },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
