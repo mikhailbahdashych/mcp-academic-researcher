@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Header />
+    <Header :dark="scrollPosition < 640" />
 
     <div class="home-base">
       <div class="home-text-box center">
@@ -26,8 +26,10 @@
 </template>
 
 <script>
+import { darkHeader } from "~/mixins/darkHeader";
 export default {
   name: "faq",
+  mixins: [ darkHeader ],
   data() {
     return {
       questions: [
