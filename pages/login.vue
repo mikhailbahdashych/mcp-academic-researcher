@@ -39,9 +39,9 @@
           v-model="loginPhone.phone"
         />
 
-        <Input @keyup.enter.native="login" :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
+        <Input @keyup.enter.native="logIn" :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
         <p v-if="loginError === -1" class="paragraph-small error">Wrong credentials!</p>
-        <Button :label="'Log In'" :clickon="login" />
+        <Button :label="'Log In'" :clickon="logIn" />
         <p class="paragraph-small right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
       </div>
@@ -104,24 +104,25 @@ export default {
     this.chooseLogin('email')
   },
   methods: {
-    async login() {
+    async logIn() {
       if (
         (this.loginEmail.email || this.loginPhone.phone) &&
         (!this.loginEmail.loginEmailError && !this.loginPassword.loginPasswordError)
       ) {
-        await login({
+        const res = await login({
           email: this.loginEmail.email,
           phone: this.loginPhone.phone,
           password: this.loginPassword.password
-        }).then(async (token) => {
-          if (token.status === -1) this.$store.commit('setLoginError', -1)
-
-          localStorage.setItem('token', token)
-          this.$store.commit('setEmailStore', this.loginEmail.email)
-          this.$store.commit('setLoginPassword', { password: null })
-          this.$store.commit('setLoginEmail', { email: null })
-          await this.$router.push({path: '/account'})
         })
+
+        if (res.status) this.$store.commit('setLoginError', -1)
+
+        localStorage.setItem('token', res)
+        this.$store.commit('setEmailStore', this.loginEmail.email)
+        this.$store.commit('setLoginPassword', { password: null })
+        this.$store.commit('setLoginEmail', { email: null })
+        await this.$router.push({path: '/account'})
+
       } else {
         this.loginEmail.loginEmailError = true
         this.loginPassword.loginPasswordError = true
