@@ -6,6 +6,7 @@
     </div>
     <div class="account-container">
       <h1>Account information</h1>
+      <Panel />
       <p>Your email: {{ this.securityEmail.email }}</p>
 
       <h1>Two-Factor Authentication</h1>
@@ -143,7 +144,7 @@ import { verifyUserToken } from "~/helpers/auth";
 import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
 export default {
-  // @TODO Shouldn't be here
+  // @TODO Shouldn't be here (9 line)
   // @TODO Do it like pop-up panels with pop-up windows
   name: "security",
   watch: {
