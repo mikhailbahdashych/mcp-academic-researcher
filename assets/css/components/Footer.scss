@@ -5,8 +5,21 @@
   height: 350px;
   background-color: $backgroundcolor;
   bottom: 0;
-  position: relative;
   &.bright {
     background-color: $backgroundcolorsecond;
+  }
+  .footer-block {
+    margin: 0 auto;
+    width: 60%;
+    &.up {
+      height: 80%;
+      border-bottom: 0.5px solid rgba(#fff, 0.5);
+    }
+    &.down {
+      padding-top: 25px;
+      height: 20%;
+      text-align: center;
+      p { margin: 0; }
+    }
   }
 }
