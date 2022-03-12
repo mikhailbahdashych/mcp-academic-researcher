@@ -5,6 +5,8 @@
       <AccountHeader />
     </div>
     <div class="account-container">
+      {{ // @TODO Shouldn't be here }}
+      {{ // @TODO Do it like pop-up panels with pop-up windows }}
       <h1>Account information</h1>
       <p>Your email: {{ email }}</p>
 

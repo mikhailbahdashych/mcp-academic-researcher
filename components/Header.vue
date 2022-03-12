@@ -91,6 +91,7 @@ export default {
       moreNav: [
         { title: 'Contact', route: '/contact' },
         { title: 'About', route: '/about' },
+        { title: 'Forum', route: '/forum' },
         { title: 'Blog', route: '/blog' },
         { title: 'FAQ', route: '/faq' },
         { title: 'Terms and Conditions', route: '/tac' },
