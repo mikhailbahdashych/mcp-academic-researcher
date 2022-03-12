@@ -114,14 +114,13 @@ export default {
           phone: this.loginPhone.phone,
           password: this.loginPassword.password
         }).then(async (token) => {
-          if (token.status === -1) {
-            this.$store.commit('setLoginError', -1)
-          } else {
-            localStorage.setItem('token', token)
-            this.$store.commit('setLoginPassword', { password: null })
-            this.$store.commit('setLoginEmail', { email: null })
-            await this.$router.push({path: '/account'})
-          }
+          if (token.status === -1) this.$store.commit('setLoginError', -1)
+
+          localStorage.setItem('token', token)
+          this.$store.commit('setEmailStore', this.loginEmail.email)
+          this.$store.commit('setLoginPassword', { password: null })
+          this.$store.commit('setLoginEmail', { email: null })
+          await this.$router.push({path: '/account'})
         })
       } else {
         this.loginEmail.loginEmailError = true
