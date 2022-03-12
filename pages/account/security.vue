@@ -6,7 +6,7 @@
     </div>
     <div class="account-container">
       <h1>Account information</h1>
-      <p>Your email: {{ email }}</p>
+      <p>Your email: {{ this.securityEmail.email }}</p>
 
       <h1>Two-Factor Authentication</h1>
       <div class="account-containers">
@@ -183,11 +183,6 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      email: null
-    }
-  },
   computed: {
     securityTwofa: {
       get() { return this.$store.getters.getSecurity2fa },
@@ -214,18 +209,17 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
-    this.email = localStorage.getItem('email')
-    this.hideEmail()
+    this.hideEmail(localStorage.getItem('email'))
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
     closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
-    hideEmail() {
-      if (this.email) {
-        this.email = this.email.split('@')[0].slice(0, 2) + '**'
-          + '@**.' + this.email.split('.')[this.email.split('.').length - 1]
+    hideEmail(email) {
+      if (email) {
+        this.securityEmail.email = email.split('@')[0].slice(0, 2) + '**'
+          + '@**.' + email.split('.')[email.split('.').length - 1]
       }
     },
     async set2fa() {

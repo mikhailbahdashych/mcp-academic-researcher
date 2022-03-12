@@ -10,6 +10,7 @@ const state = () => ({
     newPasswordRepeat: null
   },
   securityEmail: {
+    email: null,
     currentEmail: null,
     newEmail: null,
     newEmailRepeat: null,
