@@ -79,6 +79,7 @@
       <div class="account-containers">
         <div class="security-container">
           <Panel />
+          <Textarea />
 
 <!--          <div class="inner-block">-->
 <!--            <p>Change email</p>-->
