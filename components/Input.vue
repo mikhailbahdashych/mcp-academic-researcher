@@ -1,6 +1,6 @@
 <template>
   <div class="basic-input-outer" :style="styles">
-    <p :class="`paragraph-small ${titleClass}`">{{ title }}</p>
+    <p :class="`paragraph ${titleClass}`">{{ title }}</p>
     <input
       ref="name"
       class="basic-input"

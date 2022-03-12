@@ -6,8 +6,8 @@
     </div>
 
     <div class="login-header">
-      <p class="paragraph-small right">Already have account?
-        <span class="paragraph-small pointer link" @click="redirect('/login')">Log in!</span>
+      <p class="paragraph right">Already have account?
+        <span class="paragraph pointer link" @click="redirect('/login')">Log in!</span>
       </p>
     </div>
 
@@ -17,8 +17,8 @@
         <Input :additional-class="'basic-input-wide'" :oneerror="email.emailError" :title="'Email'" :type="'text'" v-model="email.email" />
         <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password.password" />
         <Input :additional-class="'basic-input-wide margin-bottom-10'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" v-model="password.passwordRepeat" />
-        <p v-if="passwordError.passwordMismatch" class="paragraph-small error">Passwords have to match!</p>
-        <p v-if="passwordError.passwordRequirement" class="paragraph-small error">Password are requirement!</p>
+        <p v-if="passwordError.passwordMismatch" class="paragraph error">Passwords have to match!</p>
+        <p v-if="passwordError.passwordRequirement" class="paragraph error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
 
           <div v-for="rule in passwordRulesList" style="display: flex;">
@@ -26,8 +26,8 @@
               <p>
                 <span v-if="item[0] === 'text'">{{ item[1] }}</span>
                 <span v-else>
-                  <span class="paragraph-small medium link" v-if="item[1]">OK</span>
-                  <span class="paragraph-small medium error" v-else>NOT OK</span>
+                  <span class="paragraph medium link" v-if="item[1]">OK</span>
+                  <span class="paragraph medium error" v-else>NOT OK</span>
                 </span>
               </p>
             </div>
@@ -35,12 +35,12 @@
         </div>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
-        <p v-if="status === -1" class="paragraph-small error">User with this email already exists!</p>
+        <p v-if="status === -1" class="paragraph error">User with this email already exists!</p>
         <Button :label="'Sign up'" :clickon="register" :disabled="!validFields()" />
       </div>
       <div class="login-inputs-container" v-else>
         <h1>Conformation email has been sent.</h1>
-        <p class="paragraph-small medium">Please, follow the instruction in the email to complete registration process.</p>
+        <p class="paragraph medium">Please, follow the instruction in the email to complete registration process.</p>
       </div>
     </div>
 

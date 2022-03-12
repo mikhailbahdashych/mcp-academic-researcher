@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="paragraph-small">{{ title }}</p>
+    <p class="paragraph">{{ title }}</p>
     <div class="main-class" :class="additionalClass">
       <input
         ref="name"

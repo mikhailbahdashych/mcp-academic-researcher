@@ -11,32 +11,18 @@ body {
   padding: 100px 50px 50px;
 }
 
-.paragraph-small {
+.paragraph {
   font-size: 12px;
   opacity: 0.9;
   color: white;
-  &.medium {
-    font-size: 18px;
-  }
-  &.right {
-    float: right;
-  }
-}
-
-.error {
-  color: $error
-}
-.on-white-paragraph {
-  color: black;
-}
-.pointer {
-  cursor: pointer;
-}
-.link {
-  color: $maincolor;
-}
-.opacity {
-  opacity: 0.5;
+  &.medium { font-size: 18px; }
+  &.right { float: right; }
+  &.error { color: $error; }
+  &.on-white-paragraph { color: black; }
+  &.pointer { cursor: pointer; }
+  &.link { color: $maincolor; }
+  &.opacity { opacity: 0.5; }
+  &.bold { font-weight: 500 }
 }
 
 .vertical-line {

@@ -2,14 +2,14 @@
   <div :class="[bright ? 'footer bright' : 'footer']">
     <div class="footer-block up">
       <div class="footer-item">
-        <p class="paragraph-small medium">About us</p>
+        <p class="paragraph medium bold">About us</p>
       </div>
       <div class="footer-item">
-        <p class="paragraph-small medium">Products and services</p>
+        <p class="paragraph medium bold">Products and services</p>
       </div>
     </div>
     <div class="footer-block down">
-      <p class="paragraph-small opacity">Citadel 2022</p>
+      <p class="paragraph opacity">Citadel 2022 &copy;</p>
     </div>
   </div>
 </template>

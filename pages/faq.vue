@@ -17,7 +17,7 @@
     <div class="home-content">
       <div class="home-content-box" v-for="q in questions" :key="q.title">
         <h3>{{ q.title }}</h3>
-        <p class="paragraph-small medium">{{ q.answer }}</p>
+        <p class="paragraph medium">{{ q.answer }}</p>
       </div>
     </div>
 

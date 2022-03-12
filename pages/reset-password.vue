@@ -6,8 +6,8 @@
     </div>
 
     <div class="login-header">
-      <p class="paragraph-small right">Don't have account yet?
-        <span class="paragraph-small pointer link" @click="redirect('/register')">Register now!</span>
+      <p class="paragraph right">Don't have account yet?
+        <span class="paragraph pointer link" @click="redirect('/register')">Register now!</span>
       </p>
     </div>
 
