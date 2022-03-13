@@ -9,6 +9,7 @@
     margin: 0 auto 20px;
     display: flex;
     border-bottom: 1px solid rgba(#fff, 0.5);
+    &.danger { border-bottom: 1px solid rgba($error, 0.5); }
     .account-container-item-icon {
       width: 120px;
       height: 100%;
@@ -34,17 +35,4 @@
       line-height: 100px;
     }
   }
-  //.account-containers {
-  //  display: flex;
-  //  justify-content: space-between;
-  //  .security-container {
-  //    margin: 15px;
-  //    width: 50%;
-  //    height: 420px;
-  //    border: 0.5px solid rgba(#fff, 0.5);
-  //    border-radius: 15px;
-  //    &.small { height: 100% }
-  //    &.danger { border:  1px solid rgba($error, 0.5)}
-  //  }
-  //}
 }
