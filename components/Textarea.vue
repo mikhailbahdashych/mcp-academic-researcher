@@ -1,9 +1,10 @@
 <template>
   <div class="basic-textarea-outer">
-    <p :class="`paragraph`">{{ title }}</p>
+    <p :class="`paragraph ${titleClass}`">{{ title }}</p>
     <textarea
       class="basic-textarea"
       :disabled="disabled"
+      :class="additionalClass"
       :placeholder="placeholder"
       :name="name"
       :value="innerValue"
@@ -29,6 +30,14 @@ export default {
       default: ''
     },
     name: {
+      type: String,
+      default: ''
+    },
+    additionalClass: {
+      type: String,
+      default: ''
+    },
+    titleClass: {
       type: String,
       default: ''
     }

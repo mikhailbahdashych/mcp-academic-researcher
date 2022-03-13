@@ -45,6 +45,10 @@
     position: relative;
     width: 60%;
     margin: 0 auto;
-    text-align: center;
+    .home-content-fields {
+      height: 100%;
+      width: 50%;
+      margin: 0 auto;
+    }
   }
 }

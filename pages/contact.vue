@@ -14,8 +14,11 @@
 
     <div class="home-content">
       <div class="home-content-box">
-        <Input :title="'Message title'" :additional-class="'basic-input-wide'" />
-        <Textarea />
+        <div class="home-content-fields">
+          <Input :title="'Message title'" :additional-class="'basic-input-box'" />
+          <Textarea :title="'Message'" :additional-class="'basic-textarea-box margin-bottom-20'" />
+          <Button :label="'Send message'" />
+        </div>
       </div>
     </div>
 
