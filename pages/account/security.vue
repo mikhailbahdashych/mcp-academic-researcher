@@ -22,6 +22,75 @@
     </div>
 
     <basic-modal
+      @close="closeModal('changePassword')"
+      v-if="securityShowModal.changePassword"
+      header="Change password"
+      description="Are you sure you want to change password?"
+    >
+      <Input
+        :outer-class="'wide'"
+        :title="'Current password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.currentPassword"
+      />
+      <Input
+        :outer-class="'wide'"
+        :title="'New password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.newPassword"
+      />
+      <Input
+        :outer-class="'wide'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white margin-bottom-20'"
+        :title="'Repeat new password'"
+        :type="'password'"
+        v-model="securityPassword.newPasswordRepeat"
+      />
+      <Button :label="'Change password'" :clickon="changePassword" />
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('changeEmail')"
+      v-if="securityShowModal.changeEmail"
+      header="Change email"
+      description="Be careful! You are able to change email only one time."
+    >
+      <Input
+        :outer-class="'wide'"
+        :type="'email'"
+        :title="'Current email'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :oneerror="securityEmail.currentEmailError"
+        v-model="securityEmail.currentEmail"
+      />
+      <Input
+        :outer-class="'wide'"
+        :type="'email'"
+        :title="'New email'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :oneerror="securityEmail.newEmailError"
+        v-model="securityEmail.newEmail"
+      />
+      <Input
+        :outer-class="'wide'"
+        :type="'email'"
+        :title="'Repeat new email'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white margin-bottom-20'"
+        :oneerror="securityEmail.newEmailRepeatError"
+        v-model="securityEmail.newEmailRepeat"
+      />
+      <Button :label="'Change email'" :clickon="changeEmail" />
+    </basic-modal>
+
+    <basic-modal
       @close="closeModal('ga')"
       v-if="securityShowModal.ga"
       header="Activate 2FA"
@@ -67,48 +136,6 @@
       header="Verify mobile phone"
       description="Here is some text text."
     >
-    </basic-modal>
-
-    <basic-modal
-      @close="closeModal('changeEmail')"
-      v-if="securityShowModal.changeEmail"
-      header="Change email"
-      description="Be careful! You are able to change email only one time."
-    >
-      <Button :label="'Change email'" :clickon="changeEmail" />
-    </basic-modal>
-
-    <basic-modal
-      @close="closeModal('changePassword')"
-      v-if="securityShowModal.changePassword"
-      header="Change password"
-      description="Are you sure you want to change password?"
-    >
-      <Input
-        :outer-class="'wide'"
-        :title="'Current password'"
-        :title-class="'on-white-paragraph'"
-        :additional-class="'on-white'"
-        :type="'password'"
-        v-model="securityPassword.currentPassword"
-      />
-      <Input
-        :outer-class="'wide'"
-        :title="'New password'"
-        :title-class="'on-white-paragraph'"
-        :additional-class="'on-white'"
-        :type="'password'"
-        v-model="securityPassword.newPassword"
-      />
-      <Input
-        :outer-class="'wide'"
-        :title-class="'on-white-paragraph'"
-        :additional-class="'on-white margin-bottom-20'"
-        :title="'Repeat new password'"
-        :type="'password'"
-        v-model="securityPassword.newPasswordRepeat"
-      />
-      <Button :label="'Change password'" :clickon="changePassword" />
     </basic-modal>
 
     <basic-modal
