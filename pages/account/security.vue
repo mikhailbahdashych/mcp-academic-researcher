@@ -7,23 +7,38 @@
       <div class="account-container-item">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
-          <div class="account-container-item-icon-texts title"></div>
-          <div class="account-container-item-icon-texts text"></div>
+
+          <div class="account-container-item-icon-texts title">
+            <p class="paragraph medium bold">Login password</p>
+          </div>
+          <div class="account-container-item-icon-texts text">
+            <p class="paragraph">Used for account login.</p>
+          </div>
+
         </div>
+
         <div class="account-container-item-button">
           <Button :label="'Change password'" />
         </div>
+
       </div>
 
       <div class="account-container-item">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
-          <div class="account-container-item-icon-texts title"></div>
-          <div class="account-container-item-icon-texts text"></div>
+
+          <div class="account-container-item-icon-texts title">
+            <p class="paragraph medium bold">Login email</p>
+          </div>
+          <div class="account-container-item-icon-texts text">
+            <p class="paragraph">Used for account login. Be careful, you are able to change email only one time.</p>
+          </div>
         </div>
+
         <div class="account-container-item-button">
           <Button :label="'Change email'" />
         </div>
+
       </div>
 
     </div>

@@ -6,24 +6,24 @@
   padding-top: 130px;
   p { color: white; }
   .account-container-item {
-    height: 120px;
+    height: 100px;
     margin: 0 auto 20px;
     display: flex;
     border-bottom: 1px solid rgba(#fff, 0.5);
     .account-container-item-icon {
       width: 120px;
-      background-color: #985E6D;
       height: 100%;
     }
     .account-container-item-icon-texts {
       display: block;
-      width: 300px;
+      width: 500px;
+      p { margin: 0; }
       &.title {
-        background-color: #30415D;
         height: 50%;
+        line-height: 50px;
       }
       &.text {
-        background-color: #C0B3A0;
+        line-height: 50px;
         height: 50%;
       }
     }
@@ -32,7 +32,7 @@
       height: 100%;
       margin-left: auto;
       margin-right: 25px;
-      line-height: 120px;
+      line-height: 100px;
     }
   }
   //.account-containers {
