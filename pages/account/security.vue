@@ -16,10 +16,95 @@
           </div>
         </div>
         <div class="account-container-item-button">
-          <Button :label="'Change password'" @show="showModal(item.showModalParam)" />
+          <Button :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
         </div>
       </div>
     </div>
+
+    <basic-modal
+      @close="closeModal('ga')"
+      v-if="securityShowModal.ga"
+      header="Activate 2FA"
+      description="We strongly recommend you to 2FA.
+      This will increase the security of you account.
+      Before it, you should download Google Authenticator application.
+      Once it's done, click the button below to start."
+    >
+      <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
+      <img v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
+      <div v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))">
+        <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
+        <Button :label="'Confirm 2FA'" :clickon="set2fa" />
+      </div>
+      <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">
+        <p class="paragraph medium on-white-paragraph">2FA set successfully</p>
+      </div>
+      <div v-if="this.$store.getters.getSecurity2fa.status === -1">
+        <p class="paragraph medium error">Wrong code!</p>
+      </div>
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('disable2fa')"
+      v-if="securityShowModal.disable2fa"
+      header="Disable 2FA"
+      description="Are you sure you want to do this?
+      If you are, provide code below."
+    >
+      <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="this.$store.getters.getSecurity2fa.status === -3" />
+      <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="this.$store.getters.getSecurity2fa.status === -3" />
+      <div v-if="this.$store.getters.getSecurity2fa.status === -3">
+        <p class="paragraph medium on-white-paragraph">Successfully deactivated!</p>
+      </div>
+      <div v-else-if="this.$store.getters.getSecurity2fa.status === -4">
+        <p class="paragraph medium error">Wrong code!</p>
+      </div>
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('sms')"
+      v-if="securityShowModal.sms"
+      header="Verify mobile phone"
+      description="Here is some text text."
+    >
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('changeEmail')"
+      v-if="securityShowModal.changeEmail"
+      header="Change email"
+      description="Be careful! You are able to change email only one time."
+    >
+      <Button :label="'Change email'" :clickon="changeEmail" />
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('changePassword')"
+      v-if="securityShowModal.changePassword"
+      header="Change password"
+      description="Are you sure you want to change password?"
+    >
+      <Button :label="'Change password'" :clickon="changePassword" />
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('closingAccount')"
+      v-if="securityShowModal.closingAccount"
+      header="Close account"
+      description="Are you sure you want to close account? You won't be able to restore your data!"
+    >
+      <Button :label="'Close account'" :clickon="closeAccount" />
+    </basic-modal>
+
+    <basic-modal
+      @close="closeModal('freezeAccount')"
+      v-if="securityShowModal.freezeAccount"
+      header="Freeze account"
+      description="Are you sure you want to freeze account"
+    >
+      <Button :label="'Freeze account'" :clickon="() => {}" />
+    </basic-modal>
+
     <Footer :bright="true" />
   </div>
 </template>
