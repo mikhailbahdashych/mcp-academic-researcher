@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-input-outer" :style="styles">
+  <div class="basic-input-outer">
     <p :class="`paragraph ${titleClass}`">{{ title }}</p>
     <input
       ref="name"
@@ -43,10 +43,6 @@ export default {
       default: false
     },
     placeholder: {
-      type: String,
-      default: ''
-    },
-    styles: {
       type: String,
       default: ''
     },

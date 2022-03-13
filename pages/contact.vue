@@ -14,7 +14,10 @@
 
     <div class="home-content">
       <div class="home-content-box">
-        <Input :title="'Label'" />
+
+        <Input :title="'Message title'" />
+        <Textarea />
+
       </div>
     </div>
 
