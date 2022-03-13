@@ -109,6 +109,15 @@ router.post('/close-account', async (req, res) => {
   }
 })
 
+router.post('/freeze-account', async (req, res) => {
+  try {
+    const data = await api.post('/freeze-account', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 router.post('/change-email', async (req, res) => {
   try {
     const data = await api.post('/change-email', req.body)

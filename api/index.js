@@ -109,6 +109,15 @@ export const closeAccount = async (payload) => {
   }
 }
 
+export const freezeAccount = async (payload) => {
+  try {
+    const { data } = await api.post('/freeze-account', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
+
 export const changeEmail = async (payload) => {
   try {
     const { data } = await api.post('/change-email', payload)
