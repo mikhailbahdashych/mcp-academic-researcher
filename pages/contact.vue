@@ -14,10 +14,8 @@
 
     <div class="home-content">
       <div class="home-content-box">
-
-        <Input :title="'Message title'" />
+        <Input :title="'Message title'" :additional-class="'basic-input-wide'" />
         <Textarea />
-
       </div>
     </div>
 
