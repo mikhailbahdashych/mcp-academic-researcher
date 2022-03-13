@@ -15,7 +15,11 @@
             <p class="paragraph opacity">{{ item.text }}</p>
           </div>
         </div>
-        <div class="account-container-item-button">
+        <div class="account-container-item-button" v-if="item.title === 'Google Authenticator'">
+          <Button v-if="[1, -4].includes(securityTwofa.status)" :label="`Disable 2FA`" @show="showModal('disable2fa')" />
+          <Button v-else-if="securityTwofa.status !== -4" :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
+        </div>
+        <div class="account-container-item-button" v-else>
           <Button :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
         </div>
       </div>
@@ -139,15 +143,6 @@
     </basic-modal>
 
     <basic-modal
-      @close="closeModal('closingAccount')"
-      v-if="securityShowModal.closingAccount"
-      header="Close account"
-      description="Are you sure you want to close account? You won't be able to restore your data!"
-    >
-      <Button :label="'Close account'" :clickon="closeAccount" />
-    </basic-modal>
-
-    <basic-modal
       @close="closeModal('freezeAccount')"
       v-if="securityShowModal.freezeAccount"
       header="Freeze account"
@@ -156,11 +151,21 @@
       <Button :label="'Freeze account'" :clickon="() => {}" />
     </basic-modal>
 
+    <basic-modal
+      @close="closeModal('closingAccount')"
+      v-if="securityShowModal.closingAccount"
+      header="Close account"
+      description="Are you sure you want to close account? You won't be able to restore your data!"
+    >
+      <Button :label="'Close account'" :clickon="closeAccount" />
+    </basic-modal>
+
     <Footer :bright="true" />
   </div>
 </template>
 
 <script>
+// @TODO Do something with getters (probably)
 import { verifyUserToken } from "~/helpers/auth";
 import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
