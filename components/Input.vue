@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-input-outer">
+  <div class="basic-input-outer" :class="outerClass">
     <p :class="`paragraph ${titleClass}`">{{ title }}</p>
     <input
       ref="name"
@@ -63,6 +63,10 @@ export default {
       default: false
     },
     titleClass: {
+      type: String,
+      default: ''
+    },
+    outerClass: {
       type: String,
       default: ''
     }

@@ -84,6 +84,30 @@
       header="Change password"
       description="Are you sure you want to change password?"
     >
+      <Input
+        :outer-class="'wide'"
+        :title="'Current password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.currentPassword"
+      />
+      <Input
+        :outer-class="'wide'"
+        :title="'New password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.newPassword"
+      />
+      <Input
+        :outer-class="'wide'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white margin-bottom-20'"
+        :title="'Repeat new password'"
+        :type="'password'"
+        v-model="securityPassword.newPasswordRepeat"
+      />
       <Button :label="'Change password'" :clickon="changePassword" />
     </basic-modal>
 
