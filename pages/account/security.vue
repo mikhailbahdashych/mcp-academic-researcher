@@ -9,10 +9,10 @@
         <div class="account-container-item-icon-texts">
 
           <div class="account-container-item-icon-texts title">
-            <p class="paragraph medium bold">Login password</p>
+            <p class="paragraph large bold">Login password</p>
           </div>
           <div class="account-container-item-icon-texts text">
-            <p class="paragraph">Used for account login.</p>
+            <p class="paragraph opacity">Used for account login.</p>
           </div>
 
         </div>
@@ -20,7 +20,6 @@
         <div class="account-container-item-button">
           <Button :label="'Change password'" />
         </div>
-
       </div>
 
       <div class="account-container-item">
@@ -28,17 +27,50 @@
         <div class="account-container-item-icon-texts">
 
           <div class="account-container-item-icon-texts title">
-            <p class="paragraph medium bold">Login email</p>
+            <p class="paragraph large bold">Login email</p>
           </div>
           <div class="account-container-item-icon-texts text">
-            <p class="paragraph">Used for account login. Be careful, you are able to change email only one time.</p>
+            <p class="paragraph opacity">Used for account login. Be careful, you are able to change email only one time.</p>
           </div>
         </div>
 
         <div class="account-container-item-button">
           <Button :label="'Change email'" />
         </div>
+      </div>
 
+      <div class="account-container-item">
+        <div class="account-container-item-icon"></div>
+        <div class="account-container-item-icon-texts">
+
+          <div class="account-container-item-icon-texts title">
+            <p class="paragraph large bold">Google Authenticator</p>
+          </div>
+          <div class="account-container-item-icon-texts text">
+            <p class="paragraph opacity">Used from the verification in account actions, etc. Could be switched to phone verification</p>
+          </div>
+        </div>
+
+        <div class="account-container-item-button">
+          <Button :label="'Set 2FA'" />
+        </div>
+      </div>
+
+      <div class="account-container-item">
+        <div class="account-container-item-icon"></div>
+        <div class="account-container-item-icon-texts">
+
+          <div class="account-container-item-icon-texts title">
+            <p class="paragraph large bold">Phone</p>
+          </div>
+          <div class="account-container-item-icon-texts text">
+            <p class="paragraph opacity">Used from the verification in account actions, etc. Could be switched to Google Authenticator verification</p>
+          </div>
+        </div>
+
+        <div class="account-container-item-button">
+          <Button :label="'Confirm phone'" />
+        </div>
       </div>
 
     </div>

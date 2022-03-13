@@ -6,7 +6,6 @@
   padding-top: 130px;
   p { color: white; }
   .account-container-item {
-    height: 100px;
     margin: 0 auto 20px;
     display: flex;
     border-bottom: 1px solid rgba(#fff, 0.5);
@@ -16,7 +15,7 @@
     }
     .account-container-item-icon-texts {
       display: block;
-      width: 500px;
+      width: 100%;
       p { margin: 0; }
       &.title {
         height: 50%;
