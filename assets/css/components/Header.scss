@@ -19,6 +19,7 @@
       margin: 0 auto;
       border: 1px solid rgba(#fff, 0.5);
       transition: .2s;
+      min-width: 300px;
     }
     .search-bar:focus {
       border: 1px solid $maincolor;
