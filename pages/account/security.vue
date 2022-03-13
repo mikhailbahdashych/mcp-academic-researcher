@@ -6,16 +6,28 @@
     <div class="account-container">
       <div class="account-container-item">
         <div class="account-container-item-icon"></div>
-
         <div class="account-container-item-icon-texts">
           <div class="account-container-item-icon-texts title"></div>
           <div class="account-container-item-icon-texts text"></div>
         </div>
-
-        <div class="account-container-item-button"></div>
-
+        <div class="account-container-item-button">
+          <Button :label="'Change password'" />
+        </div>
       </div>
+
+      <div class="account-container-item">
+        <div class="account-container-item-icon"></div>
+        <div class="account-container-item-icon-texts">
+          <div class="account-container-item-icon-texts title"></div>
+          <div class="account-container-item-icon-texts text"></div>
+        </div>
+        <div class="account-container-item-button">
+          <Button :label="'Change email'" />
+        </div>
+      </div>
+
     </div>
+
 <!--    <div class="account-container">-->
 <!--      <h1>Account information</h1>-->
 <!--      <p>Your email: {{ this.securityEmail.email }}</p>-->
