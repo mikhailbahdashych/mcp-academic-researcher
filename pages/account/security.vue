@@ -1,85 +1,94 @@
 <template>
   <div>
     <Header />
-    <div id="navbar">
-      <AccountHeader />
-    </div>
+    <AccountHeader />
+
     <div class="account-container">
-      <h1>Account information</h1>
-      <p>Your email: {{ this.securityEmail.email }}</p>
+      <div class="account-container-item">
+        <div class="account-container-item-icon"></div>
 
-      <h1>Two-Factor Authentication</h1>
-      <div class="account-containers">
-        <div class="security-container small">
-          <div class="inner-block">
-            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>
-
-            <Button v-if="[1, -4].includes(this.$store.getters.getSecurity2fa.status)" :label="'Disable 2FA'" @show="showModal('disable2fa')" />
-            <Button v-else-if="this.$store.getters.getSecurity2fa.status !== -4" :label="'Click here to generate and set 2FA'" @show="showModal('ga')" />
-
-            <p v-if="[1, -4].includes(this.$store.getters.getSecurity2fa.status)">2FA is set!</p>
-            <p v-else-if="this.$store.getters.getSecurity2fa.status !== -4">You have not set 2FA for now!</p>
-
-            <basic-modal
-              @close="closeModal('ga')"
-              v-if="securityShowModal.ga"
-              header="Activate 2FA"
-              description="We strongly recommend you to 2FA.
-              This will increase the security of you account.
-              Before it, you should download Google Authenticator application.
-              Once it's done, click the button below to start."
-            >
-              <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
-              <img v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
-              <div v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))">
-                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
-                <Button :label="'Confirm 2FA'" :clickon="set2fa" />
-              </div>
-              <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">
-                <p class="paragraph medium on-white-paragraph">2FA set successfully</p>
-              </div>
-              <div v-if="this.$store.getters.getSecurity2fa.status === -1">
-                <p class="paragraph medium error">Wrong code!</p>
-              </div>
-            </basic-modal>
-            <basic-modal
-              @close="closeModal('disable2fa')"
-              v-if="securityShowModal.disable2fa"
-              header="Disable 2FA"
-              description="Are you sure you want to do this?
-              If you are, provide code below."
-            >
-              <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="this.$store.getters.getSecurity2fa.status === -3" />
-              <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="this.$store.getters.getSecurity2fa.status === -3" />
-              <div v-if="this.$store.getters.getSecurity2fa.status === -3">
-                <p class="paragraph medium on-white-paragraph">Successfully deactivated!</p>
-              </div>
-              <div v-else-if="this.$store.getters.getSecurity2fa.status === -4">
-                <p class="paragraph medium error">Wrong code!</p>
-              </div>
-            </basic-modal>
-          </div>
+        <div class="account-container-item-icon-texts">
+          <div class="account-container-item-icon-texts title"></div>
+          <div class="account-container-item-icon-texts text"></div>
         </div>
-        <div class="security-container small">
-          <div class="inner-block">
-            <p>Phone verification</p>
-            <Button :label="'Click here to verify mobile phone'" @show="showModal('sms')" />
-            <basic-modal
-              @close="closeModal('sms')"
-              v-if="securityShowModal.sms"
-              header="Verify mobile phone"
-              description="Here is some text text."
-            >
-            </basic-modal>
-          </div>
-        </div>
+
       </div>
+    </div>
+<!--    <div class="account-container">-->
+<!--      <h1>Account information</h1>-->
+<!--      <p>Your email: {{ this.securityEmail.email }}</p>-->
 
-      <h1>Login credentials</h1>
-      <div class="account-containers">
-        <div class="security-container">
-          <Panel />
+<!--      <h1>Two-Factor Authentication</h1>-->
+<!--      <div class="account-containers">-->
+<!--        <div class="security-container small">-->
+<!--          <div class="inner-block">-->
+<!--            <p>Set two-factor authentication to secure you account. Strongly recommended!</p>-->
 
+<!--            <Button v-if="[1, -4].includes(this.$store.getters.getSecurity2fa.status)" :label="'Disable 2FA'" @show="showModal('disable2fa')" />-->
+<!--            <Button v-else-if="this.$store.getters.getSecurity2fa.status !== -4" :label="'Click here to generate and set 2FA'" @show="showModal('ga')" />-->
+
+<!--            <p v-if="[1, -4].includes(this.$store.getters.getSecurity2fa.status)">2FA is set!</p>-->
+<!--            <p v-else-if="this.$store.getters.getSecurity2fa.status !== -4">You have not set 2FA for now!</p>-->
+
+<!--            <basic-modal-->
+<!--              @close="closeModal('ga')"-->
+<!--              v-if="securityShowModal.ga"-->
+<!--              header="Activate 2FA"-->
+<!--              description="We strongly recommend you to 2FA.-->
+<!--              This will increase the security of you account.-->
+<!--              Before it, you should download Google Authenticator application.-->
+<!--              Once it's done, click the button below to start."-->
+<!--            >-->
+<!--              <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />-->
+<!--              <img v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">-->
+<!--              <div v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))">-->
+<!--                <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />-->
+<!--                <Button :label="'Confirm 2FA'" :clickon="set2fa" />-->
+<!--              </div>-->
+<!--              <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">-->
+<!--                <p class="paragraph medium on-white-paragraph">2FA set successfully</p>-->
+<!--              </div>-->
+<!--              <div v-if="this.$store.getters.getSecurity2fa.status === -1">-->
+<!--                <p class="paragraph medium error">Wrong code!</p>-->
+<!--              </div>-->
+<!--            </basic-modal>-->
+<!--            <basic-modal-->
+<!--              @close="closeModal('disable2fa')"-->
+<!--              v-if="securityShowModal.disable2fa"-->
+<!--              header="Disable 2FA"-->
+<!--              description="Are you sure you want to do this?-->
+<!--              If you are, provide code below."-->
+<!--            >-->
+<!--              <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="this.$store.getters.getSecurity2fa.status === -3" />-->
+<!--              <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="this.$store.getters.getSecurity2fa.status === -3" />-->
+<!--              <div v-if="this.$store.getters.getSecurity2fa.status === -3">-->
+<!--                <p class="paragraph medium on-white-paragraph">Successfully deactivated!</p>-->
+<!--              </div>-->
+<!--              <div v-else-if="this.$store.getters.getSecurity2fa.status === -4">-->
+<!--                <p class="paragraph medium error">Wrong code!</p>-->
+<!--              </div>-->
+<!--            </basic-modal>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--        <div class="security-container small">-->
+<!--          <div class="inner-block">-->
+<!--            <p>Phone verification</p>-->
+<!--            <Button :label="'Click here to verify mobile phone'" @show="showModal('sms')" />-->
+<!--            <basic-modal-->
+<!--              @close="closeModal('sms')"-->
+<!--              v-if="securityShowModal.sms"-->
+<!--              header="Verify mobile phone"-->
+<!--              description="Here is some text text."-->
+<!--            >-->
+<!--            </basic-modal>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+
+<!--      <h1>Login credentials</h1>-->
+<!--      <div class="account-containers">-->
+
+<!--        <div class="security-container">-->
 <!--          <div class="inner-block">-->
 <!--            <p>Change email</p>-->
 <!--            <Input :additional-class="'basic-input-box'" :title="'Current email'" :type="'email'" v-model="securityEmail.currentEmail" :oneerror="securityEmail.currentEmailError" />-->
@@ -95,47 +104,47 @@
 <!--              <Button :label="'Change email'" :clickon="changeEmail" />-->
 <!--            </basic-modal>-->
 <!--          </div>-->
-        </div>
+<!--        </div>-->
 
-        <div class="security-container">
-          <div class="inner-block">
-            <p>Change your password</p>
-            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityPassword.currentPassword" />
-            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityPassword.newPassword" />
-            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityPassword.newPasswordRepeat" />
-            <Button :label="'Change password'" @show="showModal('changePassword')" />
-            <basic-modal
-              @close="closeModal('changePassword')"
-              v-if="securityShowModal.changePassword"
-              header="Change password"
-              description="Are you sure you want to change password?"
-            >
-              <Button :label="'Change password'" :clickon="changePassword" />
-            </basic-modal>
-          </div>
-        </div>
-      </div>
+<!--        <div class="security-container">-->
+<!--          <div class="inner-block">-->
+<!--            <p>Change your password</p>-->
+<!--            <Input :additional-class="'basic-input-box'" :title="'Current password'" :type="'password'" v-model="securityPassword.currentPassword" />-->
+<!--            <Input :additional-class="'basic-input-box'" :title="'New password'" :type="'password'" v-model="securityPassword.newPassword" />-->
+<!--            <Input :additional-class="'basic-input-box margin-bottom-20'" :title="'Repeat new password'" :type="'password'" v-model="securityPassword.newPasswordRepeat" />-->
+<!--            <Button :label="'Change password'" @show="showModal('changePassword')" />-->
+<!--            <basic-modal-->
+<!--              @close="closeModal('changePassword')"-->
+<!--              v-if="securityShowModal.changePassword"-->
+<!--              header="Change password"-->
+<!--              description="Are you sure you want to change password?"-->
+<!--            >-->
+<!--              <Button :label="'Change password'" :clickon="changePassword" />-->
+<!--            </basic-modal>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
 
-      <h1>Danger zone</h1>
-      <div class="account-containers">
-        <div class="security-container danger small">
-          <div class="inner-block">
-            <p>Close account</p>
-            <p>We are so sorry to see that, but if you want to, click the button below.</p>
-            <Button :label="'Close account'" @show="showModal('closingAccount')" />
-            <basic-modal
-              @close="closeModal('closingAccount')"
-              v-if="securityShowModal.closingAccount"
-              header="Close account"
-              description="Are you sure you want to close account? You won't be able to restore your data!"
-            >
-              <Button :label="'Close account'" :clickon="closeAccount" />
-            </basic-modal>
-          </div>
-        </div>
-      </div>
+<!--      <h1>Danger zone</h1>-->
+<!--      <div class="account-containers">-->
+<!--        <div class="security-container danger small">-->
+<!--          <div class="inner-block">-->
+<!--            <p>Close account</p>-->
+<!--            <p>We are so sorry to see that, but if you want to, click the button below.</p>-->
+<!--            <Button :label="'Close account'" @show="showModal('closingAccount')" />-->
+<!--            <basic-modal-->
+<!--              @close="closeModal('closingAccount')"-->
+<!--              v-if="securityShowModal.closingAccount"-->
+<!--              header="Close account"-->
+<!--              description="Are you sure you want to close account? You won't be able to restore your data!"-->
+<!--            >-->
+<!--              <Button :label="'Close account'" :clickon="closeAccount" />-->
+<!--            </basic-modal>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
 
-    </div>
+<!--    </div>-->
     <Footer :bright="true" />
   </div>
 </template>
