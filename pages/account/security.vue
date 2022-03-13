@@ -103,16 +103,16 @@
       Before it, you should download Google Authenticator application.
       Once it's done, click the button below to start."
     >
-      <Button v-if="!this.$store.getters.getSecurity2fa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
-      <img v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))" :src="this.$store.getters.getSecurity2fa.qr" alt="2fa">
-      <div v-if="this.$store.getters.getSecurity2fa.qr && ([null, -1, -2].includes(this.$store.getters.getSecurity2fa.status))">
-        <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
+      <Button v-if="!securityTwofa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
+      <img v-if="securityTwofa.qr && ([null, -1, -2].includes(securityTwofa.status))" :src="securityTwofa.qr" alt="2fa">
+      <div v-if="securityTwofa.qr && ([null, -1, -2].includes(securityTwofa.status))">
+        <Input :title-class="'on-white-paragraph'" :additional-class="'basic-input-box on-white margin-bottom-20'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
         <Button :label="'Confirm 2FA'" :clickon="set2fa" />
       </div>
-      <div v-else-if="this.$store.getters.getSecurity2fa.status === 1">
+      <div v-else-if="securityTwofa.status === 1">
         <p class="paragraph medium on-white-paragraph">2FA set successfully</p>
       </div>
-      <div v-if="this.$store.getters.getSecurity2fa.status === -1">
+      <div v-if="securityTwofa.status === -1">
         <p class="paragraph medium error">Wrong code!</p>
       </div>
     </basic-modal>
@@ -124,12 +124,12 @@
       description="Are you sure you want to do this?
       If you are, provide code below."
     >
-      <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="this.$store.getters.getSecurity2fa.status === -3" />
-      <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="this.$store.getters.getSecurity2fa.status === -3" />
-      <div v-if="this.$store.getters.getSecurity2fa.status === -3">
+      <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="securityTwofa.status === -3" />
+      <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="securityTwofa.status === -3" />
+      <div v-if="securityTwofa.status === -3">
         <p class="paragraph medium on-white-paragraph">Successfully deactivated!</p>
       </div>
-      <div v-else-if="this.$store.getters.getSecurity2fa.status === -4">
+      <div v-else-if="securityTwofa.status === -4">
         <p class="paragraph medium error">Wrong code!</p>
       </div>
     </basic-modal>
@@ -165,7 +165,6 @@
 </template>
 
 <script>
-// @TODO Do something with getters (probably)
 import { verifyUserToken } from "~/helpers/auth";
 import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
@@ -237,19 +236,12 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
-    this.hideEmail(localStorage.getItem('email'))
     await verifyUserToken(this.$router)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
     closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
-    hideEmail(email) {
-      if (email) {
-        this.securityEmail.email = email.split('@')[0].slice(0, 2) + '**'
-          + '@**.' + email.split('.')[email.split('.').length - 1]
-      }
-    },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.securityTwofa.code,
@@ -264,7 +256,7 @@ export default {
       })
     },
     generate2fa() {
-      this.$store.dispatch('fetchGenerate2fa', { name: 'CTD.com', account: this.email })
+      this.$store.dispatch('fetchGenerate2fa', { name: 'CTD.com', account: localStorage.getItem('email') })
     },
     async changePassword() {
       await this.$store.dispatch('fetchChangePassword', {
