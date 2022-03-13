@@ -8,21 +8,17 @@
            v-for="item in securityOptions">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
-
           <div class="account-container-item-icon-texts title">
             <p class="paragraph large bold">{{ item.title }}</p>
           </div>
           <div class="account-container-item-icon-texts text">
             <p class="paragraph opacity">{{ item.text }}</p>
           </div>
-
         </div>
-
         <div class="account-container-item-button">
           <Button :label="'Change password'" @show="showModal(item.showModalParam)" />
         </div>
       </div>
-
     </div>
     <Footer :bright="true" />
   </div>
@@ -71,11 +67,6 @@ export default {
       }
     },
   },
-  data() {
-    return {
-      funcName: 'test'
-    }
-  },
   computed: {
     securityTwofa: {
       get() { return this.$store.getters.getSecurity2fa },
@@ -110,7 +101,6 @@ export default {
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
-    test() { console.log('testtesttest') },
     closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
     hideEmail(email) {
