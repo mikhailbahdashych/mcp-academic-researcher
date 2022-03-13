@@ -12,6 +12,8 @@
           <div class="account-container-item-icon-texts text"></div>
         </div>
 
+        <div class="account-container-item-button"></div>
+
       </div>
     </div>
 <!--    <div class="account-container">-->
@@ -154,8 +156,6 @@ import { verifyUserToken } from "~/helpers/auth";
 import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
 export default {
-  // @TODO Shouldn't be here (9 line)
-  // @TODO Do it like pop-up panels with pop-up windows
   name: "security",
   watch: {
     ...mapActions([
