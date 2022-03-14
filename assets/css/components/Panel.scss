@@ -7,6 +7,15 @@
   transition: .2s;
   border: 0.5px solid rgba(#fff,0.5);
   border-radius: 8px;
+  margin-bottom: 10px;
+  align-items: center;
+  display: flex;
+  .panel-content {
+    margin: 0 auto;
+    width: 70%;
+    height: 60%;
+    background-color: #985E6D;
+  }
 }
 
 .panel:hover {

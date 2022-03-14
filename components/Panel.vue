@@ -1,6 +1,6 @@
 <template>
   <div class="panel">
-
+    <div class="panel-content"></div>
   </div>
 </template>
 

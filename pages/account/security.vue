@@ -8,7 +8,10 @@
            v-for="item in securityOptions">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
-          <div class="account-container-item-icon-texts title">
+          <div class="account-container-item-icon-texts title" v-if="item.title === 'Freeze account' || item.title === 'Close account'">
+            <p class="paragraph large bold error">{{ item.title }}</p>
+          </div>
+          <div class="account-container-item-icon-texts title" v-else>
             <p class="paragraph large bold">{{ item.title }}</p>
           </div>
           <div class="account-container-item-icon-texts text">
