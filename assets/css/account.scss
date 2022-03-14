@@ -20,6 +20,9 @@
       p { margin: 0; }
       height: 50%;
       line-height: 50px;
+      &.text {
+        line-height: 35px;
+      }
     }
     .account-container-item-button {
       width: 200px;

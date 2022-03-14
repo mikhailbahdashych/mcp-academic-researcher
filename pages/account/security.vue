@@ -11,10 +11,10 @@
           <div class="account-container-item-icon-texts" v-if="item.title === 'Freeze account' || item.title === 'Close account'">
             <p class="paragraph large bold error">{{ item.title }}</p>
           </div>
-          <div class="account-container-item-icon-texts" v-else>
+          <div class="account-container-item-icon-texts text" v-else>
             <p class="paragraph large bold">{{ item.title }}</p>
           </div>
-          <div class="account-container-item-icon-texts">
+          <div class="account-container-item-icon-texts text">
             <p class="paragraph opacity">{{ item.text }}</p>
           </div>
         </div>
