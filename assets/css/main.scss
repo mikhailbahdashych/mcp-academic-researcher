@@ -24,6 +24,7 @@ body {
   &.on-white-paragraph { color: black; }
   &.pointer { cursor: pointer; }
   &.link { color: $maincolor; }
+  &.success { color: lightgreen }
   &.opacity { opacity: 0.5; }
   &.bold { font-weight: 500 }
 }

@@ -26,7 +26,7 @@
               <p>
                 <span v-if="item[0] === 'text'">{{ item[1] }}</span>
                 <span v-else>
-                  <span class="paragraph medium link" v-if="item[1]">OK</span>
+                  <span class="paragraph medium success" v-if="item[1]">OK</span>
                   <span class="paragraph medium error" v-else>NOT OK</span>
                 </span>
               </p>
@@ -65,11 +65,13 @@ export default {
     ]),
     'password.password': {
       handler: function () {
+        if (this.password.password === this.password.passwordRepeat) { this.passwordError.passwordMismatch = false }
         this.validPassword()
       }
     },
     'password.passwordRepeat': {
       handler: function () {
+        if (this.password.password === this.password.passwordRepeat) { this.passwordError.passwordMismatch = false }
         this.validPassword()
       }
     },
