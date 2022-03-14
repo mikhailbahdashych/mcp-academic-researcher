@@ -20,21 +20,12 @@
     .panel-icon {
       width: 100px;
       height: 100%;
-      background-color: #30415D;
     }
     .panel-texts {
       display: block;
       width: 150px;
-      height: 100%;
-      background-color: #3F3250;
-      &.title {
-        height: 50%;
-        line-height: 50%;
-      }
-      &.text {
-        height: 50%;
-        line-height: 50%;
-      }
+      p { margin: 0; }
+      line-height: 65px;
     }
   }
 }

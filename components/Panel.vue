@@ -3,10 +3,10 @@
     <div class="panel-content">
       <div class="panel-icon"></div>
       <div class="panel-texts">
-        <div class="panel-texts title">
+        <div class="panel-texts">
           <p class="paragraph opacity">Email</p>
         </div>
-        <div class="panel-texts text">
+        <div class="panel-texts">
           <p class="paragraph opacity">Email</p>
         </div>
       </div>
