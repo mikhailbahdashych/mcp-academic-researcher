@@ -4,7 +4,7 @@
       <div class="panel-icon"></div>
       <div class="panel-texts">
         <div class="panel-texts">
-          <p class="paragraph opacity large">{{ title }}</p>
+          <p class="paragraph large">{{ title }}</p>
         </div>
         <div class="panel-texts text">
           <p class="paragraph opacity">{{ text }}</p>
