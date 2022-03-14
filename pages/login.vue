@@ -40,7 +40,7 @@
         />
 
         <Input @keyup.enter.native="logIn" :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
-        <p v-if="loginError === -1" class="paragraph error">Wrong credentials!</p>
+        <p v-if="loginError === -1" class="paragraph error">Account doesn't exists or wasn't confirmed!</p>
         <Button :label="'Log In'" :clickon="logIn" />
         <p class="paragraph right pointer" @click="redirect('reset-password')">Forgot password?</p>
 
@@ -115,14 +115,16 @@ export default {
           password: this.loginPassword.password
         })
 
-        if (res.status) this.$store.commit('setLoginError', -1)
+        if (res.status === -1) {
+          this.$store.commit('setLoginError', -1)
+          return
+        }
 
         localStorage.setItem('token', res)
         localStorage.setItem('email', this.loginEmail.email)
         this.$store.commit('setLoginPassword', { password: null })
         this.$store.commit('setLoginEmail', { email: null })
         await this.$router.push({path: '/account'})
-
       } else {
         this.loginEmail.loginEmailError = true
         this.loginPassword.loginPasswordError = true
