@@ -4,10 +4,10 @@
       <div class="panel-icon"></div>
       <div class="panel-texts">
         <div class="panel-texts">
-          <p class="paragraph opacity">Email</p>
+          <p class="paragraph opacity">{{ title }}</p>
         </div>
         <div class="panel-texts">
-          <p class="paragraph opacity">Email</p>
+          <p class="paragraph opacity">{{ text }}</p>
         </div>
       </div>
     </div>
@@ -16,7 +16,17 @@
 
 <script>
 export default {
-  name: "Panel"
+  name: "Panel",
+  props: {
+    title: {
+      type: String,
+      default: ''
+    },
+    text: {
+      type: String,
+      default: ''
+    }
+  }
 }
 </script>
 

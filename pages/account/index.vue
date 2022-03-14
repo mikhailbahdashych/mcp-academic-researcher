@@ -5,9 +5,9 @@
     <div class="account-container">
       <h1>Account Information</h1>
       <div class="account-container-info">
-        <Panel />
-        <Panel />
-        <Panel />
+        <Panel :title="'Email'" :text="'Your email'" />
+        <Panel :title="'Phone'" :text="'Your mobile phone'" />
+        <Panel :title="'2FA'" :text="'Your Google Authenticator status'" />
       </div>
     </div>
     <Footer :bright="true" />
