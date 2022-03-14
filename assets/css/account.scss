@@ -18,14 +18,8 @@
       display: block;
       width: 100%;
       p { margin: 0; }
-      &.title {
-        height: 50%;
-        line-height: 50px;
-      }
-      &.text {
-        line-height: 50px;
-        height: 50%;
-      }
+      height: 50%;
+      line-height: 50px;
     }
     .account-container-item-button {
       width: 200px;
