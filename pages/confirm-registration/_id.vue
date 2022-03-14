@@ -9,7 +9,8 @@
       <div class="login-inputs-container">
         <h1 v-if="status === null">Trying to confirm your email</h1>
         <h1 v-else-if="status === 1">Your email was successfully confirmed</h1>
-        <h1 v-else>Something went wrong</h1>
+        <h1 v-else-if="status === -2">The link has expired!</h1>
+        <h1 v-else>Something went wrong :(</h1>
       </div>
     </div>
 
