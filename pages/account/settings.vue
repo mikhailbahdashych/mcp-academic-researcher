@@ -16,7 +16,11 @@
 
         <div class="account-container-item-button">
 <!--          <Button :label="``" />-->
-          <Dropdown/>
+          <Dropdown
+            :default-value="'Test'"
+            :show-content="showDropdown"
+            @show="showDropdownContent"
+          />
         </div>
 
       </div>
@@ -35,11 +39,17 @@ export default {
         { title: 'Language', text: 'Interface language' },
         { title: 'Theme', text: 'Chose dark or light theme' },
         { title: 'Default currency', text: 'Chose default currency for pages, etc.' }
-      ]
+      ],
+      showDropdown: false
     }
   },
   async mounted() {
     await getUserByToken(this.$router, localStorage.getItem('token'))
+  },
+  methods: {
+    showDropdownContent() {
+      this.showDropdown = !this.showDropdown
+    }
   }
 }
 </script>

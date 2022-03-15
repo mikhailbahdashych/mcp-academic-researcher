@@ -1,12 +1,19 @@
 <template>
   <div class="dropdown-menu">
-
+    <p class="paragraph medium" @click="$emit('show')">{{ defaultValue }}</p>
+    <p v-if="showContent">Here is hidden content</p>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Dropdown"
+  name: "Dropdown",
+  props: {
+    defaultValue: String,
+    dropdownItems: Array,
+    showContent: Boolean,
+    onShow: Boolean
+  }
 }
 </script>
 
