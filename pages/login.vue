@@ -52,7 +52,6 @@
 
 <script>
 import { login } from "~/api";
-import { getUserByToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 export default {
@@ -99,9 +98,6 @@ export default {
     this.$store.commit('setLoginDefaultValues')
   },
   async mounted() {
-    await getUserByToken(this.$router, localStorage.getItem('token')).then(async (res) => {
-      if (res.status === 1) await this.$router.push({path: '/account'})
-    })
     this.chooseLogin('email')
   },
   methods: {
