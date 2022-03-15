@@ -55,15 +55,6 @@ export const sendVerificationCode = async (payload) => {
   }
 }
 
-export const verifyToken = async (payload) => {
-  try {
-    const { data } = await api.post('/verify-token', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
 export const getClientByToken = async (token) => {
   try {
     const { data } = await api.post('/client-by-token', token)

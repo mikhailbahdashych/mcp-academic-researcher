@@ -5,7 +5,7 @@
     <div class="account-container">
       <h1>Account Information</h1>
       <div class="account-container-info">
-        <Panel :title="'UUID'" :text="`Your UUID: 123321231`" />
+        <Panel :title="'UUID'" :text="`Your UUID: ${user.personaluuid}`" />
         <Panel :title="'Email'" :text="`Your email: ${user.email}`" />
         <Panel :title="'Phone'" :text="'Your mobile phone'" />
         <Panel :title="'2FA'" :text="'Your Google Authenticator status'" />

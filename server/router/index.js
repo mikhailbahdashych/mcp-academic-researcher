@@ -55,15 +55,6 @@ router.post(`/verification-code`, async (req, res) => {
   }
 })
 
-router.post('/verify-token', async (req, res) => {
-  try {
-    const data = await api.post('/verify-token', req.body)
-    res.json(data.data)
-  } catch (e) {
-    res.status(e.response.status).json(e.response.data)
-  }
-})
-
 router.post('/client-by-token', async (req, res) => {
   try {
     const data = await api.post('/client-by-token', req.body)
