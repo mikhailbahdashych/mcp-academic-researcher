@@ -54,6 +54,7 @@
 import { login } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
+import { getUserByToken } from "@/helpers/auth";
 export default {
   name: "login",
   watch: {
@@ -98,6 +99,7 @@ export default {
     this.$store.commit('setLoginDefaultValues')
   },
   async mounted() {
+    await getUserByToken(this.$router, localStorage.getItem('token'), false, true)
     this.chooseLogin('email')
   },
   methods: {

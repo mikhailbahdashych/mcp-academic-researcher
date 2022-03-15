@@ -119,9 +119,7 @@ export default {
     this.$store.commit('setDefaultValues')
   },
   async mounted() {
-    // await getUserByToken(this.$router, localStorage.getItem('token')).then(async (res) => {
-    //   if (res.status === 1) await this.$router.push({path: '/account'})
-    // })
+    await getUserByToken(this.$router, localStorage.getItem('token'), false, true)
   },
   methods: {
     redirect(path) {
