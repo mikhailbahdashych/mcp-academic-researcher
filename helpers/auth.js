@@ -8,4 +8,5 @@ export const getUserByToken = async (router, token, returnUser = false) => {
   if (!user) return await router.push({ path: '/' })
 
   if (returnUser) return user
+  else return { status: 1 }
 }

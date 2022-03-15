@@ -49,7 +49,8 @@
 </template>
 
 <script>
-import {register, sendEmail, verifyToken} from "~/api";
+import {register, sendEmail} from "~/api";
+import { getUserByToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
 export default {
@@ -118,7 +119,7 @@ export default {
     this.$store.commit('setDefaultValues')
   },
   async mounted() {
-    await verifyToken({ token: localStorage.getItem('token') }).then(async (res) => {
+    await getUserByToken(this.$router, localStorage.getItem('token')).then(async (res) => {
       if (res.status === 1) await this.$router.push({path: '/account'})
     })
   },
