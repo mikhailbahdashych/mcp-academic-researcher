@@ -19,6 +19,7 @@
           <Dropdown
             :default-value="'Test'"
             :show-content="showDropdown"
+            :dropdown-items="['item1', 'item2', 'item3']"
             @show="showDropdownContent"
           />
         </div>

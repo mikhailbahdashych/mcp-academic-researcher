@@ -1,7 +1,13 @@
 <template>
-  <div class="dropdown-menu">
-    <p class="paragraph medium" @click="$emit('show')">{{ defaultValue }}</p>
-    <p v-if="showContent">Here is hidden content</p>
+  <div class="dropdown-menu" @click="$emit('show')">
+    <p class="paragraph medium">{{ defaultValue }}</p>
+
+    <div v-if="showContent" class="dropdown-content-test">
+      <div class="dropdown-item-test" v-for="item in dropdownItems">
+        <span>{{ item }}</span>
+      </div>
+    </div>
+
   </div>
 </template>
 
