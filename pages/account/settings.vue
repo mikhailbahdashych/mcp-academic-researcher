@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import { verifyUserToken } from "~/helpers/auth";
+import { getUserByToken } from "~/helpers/auth";
 export default {
   name: "settings",
   async mounted() {
-    await verifyUserToken(this.$router)
+    await getUserByToken(this.$router, localStorage.getItem('token'))
   }
 }
 </script>

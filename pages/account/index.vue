@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { verifyUserToken, getUserByToken } from "~/helpers/auth";
+import { getUserByToken } from "~/helpers/auth";
 export default {
   name: "account",
   data() {
@@ -25,8 +25,7 @@ export default {
     }
   },
   async mounted() {
-    await verifyUserToken(this.$router)
-    this.user = await getUserByToken(this.$router, localStorage.getItem('token'))
+    this.user = await getUserByToken(this.$router, localStorage.getItem('token'), true)
     this.hideEmail(this.user.email)
   },
   methods: {
