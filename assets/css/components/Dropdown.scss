@@ -12,8 +12,13 @@
     padding-left: 15px;
   }
   .dropdown-content-test {
+    margin-top: 50px;
+    width: 200px;
     position: absolute;
     background-color: $backgroundcolorthird;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    border-radius: 7px;
     z-index: 2;
+    color: white;
   }
 }

@@ -3,6 +3,12 @@
     <Header />
     <AccountHeader />
     <div class="account-container">
+      <Dropdown
+        :default-value="'Test'"
+        :show-content="showDropdown"
+        :dropdown-items="['item1', 'item2', 'item3']"
+        @show="showDropdownContent"
+      />
       <div class="account-container-item" v-for="item in settingsOptions">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
@@ -16,12 +22,6 @@
 
         <div class="account-container-item-button">
 <!--          <Button :label="``" />-->
-          <Dropdown
-            :default-value="'Test'"
-            :show-content="showDropdown"
-            :dropdown-items="['item1', 'item2', 'item3']"
-            @show="showDropdownContent"
-          />
         </div>
 
       </div>
