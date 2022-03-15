@@ -15,7 +15,8 @@
         </div>
 
         <div class="account-container-item-button">
-          <Button :label="``" />
+<!--          <Button :label="``" />-->
+          <Dropdown/>
         </div>
 
       </div>
