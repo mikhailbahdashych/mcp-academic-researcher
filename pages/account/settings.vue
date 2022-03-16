@@ -16,10 +16,10 @@
 
         <div class="account-container-item-button">
           <Dropdown
-            :show-content="item.show"
+            :show-content="item.dropdowndata.show"
             :dropdown-items="item.dropdowndata"
-            @show="item.show = !item.show"
-            @close="item.show = false"
+            @show="item.dropdowndata.show = !item.dropdowndata.show"
+            @close="item.dropdowndata.show = false"
             @pick="pick($event)"
           />
         </div>
@@ -37,14 +37,14 @@ export default {
   data() {
     return {
       settingsOptions: [
-        { title: 'Language', text: 'Interface language', show: false, dropdowndata: {
-          default: 'English', items: ['English', 'Russian', 'Polish']
+        { title: 'Language', text: 'Interface language', dropdowndata: {
+          default: 'English', items: ['English', 'Russian', 'Polish'], show: false
         } },
-        { title: 'Theme', text: 'Chose dark or light theme', show: false, dropdowndata: {
-          default: 'Dark', items: ['Dark', 'Light']
+        { title: 'Theme', text: 'Chose dark or light theme', dropdowndata: {
+          default: 'Dark', items: ['Dark', 'Light'], show: false
         } },
-        { title: 'Default currency', text: 'Chose default currency for pages, etc.', show: false, dropdowndata: {
-          default: 'EUR', items: ['EUR', 'USD']
+        { title: 'Default currency', text: 'Chose default currency for pages, etc.', dropdowndata: {
+          default: 'EUR', items: ['EUR', 'USD'], show: false
         } }
       ],
     }
@@ -55,6 +55,7 @@ export default {
   methods: {
     pick({ item, items }) {
       items.default = item
+      items.show = false
     }
   }
 }
