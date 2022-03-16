@@ -1,7 +1,7 @@
 <template>
   <div>
-    <label class="switch">
-      <input type="checkbox">
+    <label class="switch-box">
+      <input type="checkbox" v-model="check.switch" @click="changeSwitch(check.switch)">
       <span class="slider round"></span>
     </label>
   </div>
@@ -9,7 +9,15 @@
 
 <script>
 export default {
-  name: "Switch"
+  name: "TougleSwitch",
+  props: {
+    check: Object
+  },
+  methods: {
+    changeSwitch(item) {
+      this.$emit('changeSwitch', { item, items: this.check })
+    }
+  }
 }
 </script>
 

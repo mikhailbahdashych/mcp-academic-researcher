@@ -16,16 +16,18 @@
 
         <div class="account-container-item-button">
           <Dropdown
+            v-if="item.dropdowndata"
             :show-content="item.dropdowndata.show"
             :dropdown-items="item.dropdowndata"
             @show="item.dropdowndata.show = !item.dropdowndata.show"
             @close="item.dropdowndata.show = false"
             @pick="pick($event)"
           />
+          <TougleSwitch v-else :check="item" @changeSwitch="changeSwitch($event)" />
         </div>
 
       </div>
-      <TougleSwitch/>
+
     </div>
     <Footer :bright="true" />
   </div>
@@ -46,7 +48,8 @@ export default {
         } },
         { title: 'Default currency', text: 'Chose default currency for pages, etc.', dropdowndata: {
           default: 'EUR', items: ['EUR', 'USD'], show: false
-        } }
+        } },
+        { title: 'Email notifications', text: 'Turn on email notifications to get promotions, news, etc.', switch: false }
       ],
     }
   },
@@ -57,6 +60,9 @@ export default {
     pick({ item, items }) {
       items.default = item
       items.show = false
+    },
+    changeSwitch({ item, items }) {
+      items.switch = item
     }
   }
 }
