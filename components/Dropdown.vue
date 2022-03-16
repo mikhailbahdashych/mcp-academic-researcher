@@ -28,7 +28,7 @@ export default {
       this.$emit('close')
     },
     pick(item) {
-      this.$emit('pick', item)
+      this.$emit('pick', { item, items: this.dropdownItems })
     }
   }
 }

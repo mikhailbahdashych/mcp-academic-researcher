@@ -47,15 +47,14 @@ export default {
           default: 'EUR', items: ['EUR', 'USD']
         } }
       ],
-      showDropdown: false
     }
   },
   async mounted() {
     await getUserByToken(this.$router, localStorage.getItem('token'))
   },
   methods: {
-    pick(item) {
-      console.log(item)
+    pick({ item, items }) {
+      items.default = item
     }
   }
 }
