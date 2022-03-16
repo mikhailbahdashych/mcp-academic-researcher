@@ -1,11 +1,11 @@
 <template>
-  <div class="dropdown-menu" v-click-outside="hide">
+  <div class="dropdown-menu" v-click-outside="close">
     <p class="paragraph medium dropdown-default-value" @click="$emit('show')">
       <span>{{ defaultValue }}</span>
     </p>
     <div v-if="showContent" class="dropdown-menu-content">
       <div v-for="item in dropdownItems">
-        <p class="paragraph medium drop-item">{{ item }}</p>
+        <p class="paragraph medium drop-item" @click="pick(item)">{{ item }}</p>
       </div>
     </div>
   </div>
@@ -25,8 +25,11 @@ export default {
     onShow: Boolean
   },
   methods: {
-    hide() {
+    close() {
       this.$emit('close')
+    },
+    pick(item) {
+      this.$emit('pick', item)
     }
   }
 }

@@ -16,11 +16,12 @@
 
         <div class="account-container-item-button">
           <Dropdown
-            :default-value="`${item.default}`"
+            :default-value="item.default"
             :show-content="item.show"
-            :dropdown-items="['item1', 'item2', 'item3']"
+            :dropdown-items="item.items"
             @show="item.show = !item.show"
             @close="item.show = false"
+            @pick="pick(item)"
           />
         </div>
 
@@ -37,9 +38,9 @@ export default {
   data() {
     return {
       settingsOptions: [
-        { title: 'Language', text: 'Interface language', default: 'English', show: false },
-        { title: 'Theme', text: 'Chose dark or light theme', default: 'Dark', show: false },
-        { title: 'Default currency', text: 'Chose default currency for pages, etc.', default: 'EUR', show: false }
+        { title: 'Language', text: 'Interface language', show: false, default: 'English', items: ['English', 'Russian', 'Polish'] },
+        { title: 'Theme', text: 'Chose dark or light theme', show: false, default: 'Dark', items: ['Dark', 'Light'] },
+        { title: 'Default currency', text: 'Chose default currency for pages, etc.', show: false, default: 'EUR', items: ['EUR', 'USD'] }
       ],
       showDropdown: false
     }
@@ -47,6 +48,11 @@ export default {
   async mounted() {
     await getUserByToken(this.$router, localStorage.getItem('token'))
   },
+  methods: {
+    pick(item) {
+      console.log(item)
+    }
+  }
 }
 </script>
 
