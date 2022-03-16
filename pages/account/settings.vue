@@ -3,13 +3,6 @@
     <Header />
     <AccountHeader />
     <div class="account-container">
-      <Dropdown
-        :default-value="'Test'"
-        :show-content="showDropdown"
-        :dropdown-items="['item1', 'item2', 'item3']"
-        @show="showDropdown = !showDropdown"
-        @close="showDropdown = false"
-      />
       <div class="account-container-item" v-for="item in settingsOptions">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
@@ -22,6 +15,13 @@
         </div>
 
         <div class="account-container-item-button">
+          <Dropdown
+            :default-value="`${item.default}`"
+            :show-content="item.show"
+            :dropdown-items="['item1', 'item2', 'item3']"
+            @show="item.show = !item.show"
+            @close="item.show = false"
+          />
         </div>
 
       </div>
@@ -37,9 +37,9 @@ export default {
   data() {
     return {
       settingsOptions: [
-        { title: 'Language', text: 'Interface language' },
-        { title: 'Theme', text: 'Chose dark or light theme' },
-        { title: 'Default currency', text: 'Chose default currency for pages, etc.' }
+        { title: 'Language', text: 'Interface language', default: 'English', show: false },
+        { title: 'Theme', text: 'Chose dark or light theme', default: 'Dark', show: false },
+        { title: 'Default currency', text: 'Chose default currency for pages, etc.', default: 'EUR', show: false }
       ],
       showDropdown: false
     }
