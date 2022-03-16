@@ -7,7 +7,8 @@
         :default-value="'Test'"
         :show-content="showDropdown"
         :dropdown-items="['item1', 'item2', 'item3']"
-        @show="showDropdownContent"
+        @show="showDropdown = !showDropdown"
+        @close="showDropdown = false"
       />
       <div class="account-container-item" v-for="item in settingsOptions">
         <div class="account-container-item-icon"></div>
@@ -46,11 +47,6 @@ export default {
   async mounted() {
     await getUserByToken(this.$router, localStorage.getItem('token'))
   },
-  methods: {
-    showDropdownContent() {
-      this.showDropdown = !this.showDropdown
-    }
-  }
 }
 </script>
 
