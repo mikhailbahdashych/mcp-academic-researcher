@@ -1,10 +1,10 @@
 <template>
   <div class="dropdown-menu" v-click-outside="close">
     <p class="paragraph medium dropdown-default-value" @click="$emit('show')">
-      <span>{{ defaultValue }}</span>
+      <span>{{ dropdownItems.default }}</span>
     </p>
     <div v-if="showContent" class="dropdown-menu-content">
-      <div v-for="item in dropdownItems">
+      <div v-for="item in dropdownItems.items">
         <p class="paragraph medium drop-item" @click="pick(item)">{{ item }}</p>
       </div>
     </div>
@@ -19,8 +19,7 @@ export default {
     clickOutside: vClickOutside.directive
   },
   props: {
-    defaultValue: String,
-    dropdownItems: Array,
+    dropdownItems: Object,
     showContent: Boolean,
     onShow: Boolean
   },

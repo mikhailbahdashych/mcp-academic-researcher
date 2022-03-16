@@ -16,12 +16,11 @@
 
         <div class="account-container-item-button">
           <Dropdown
-            :default-value="item.default"
             :show-content="item.show"
-            :dropdown-items="item.items"
+            :dropdown-items="item.dropdowndata"
             @show="item.show = !item.show"
             @close="item.show = false"
-            @pick="pick(item)"
+            @pick="pick($event)"
           />
         </div>
 
@@ -38,9 +37,15 @@ export default {
   data() {
     return {
       settingsOptions: [
-        { title: 'Language', text: 'Interface language', show: false, default: 'English', items: ['English', 'Russian', 'Polish'] },
-        { title: 'Theme', text: 'Chose dark or light theme', show: false, default: 'Dark', items: ['Dark', 'Light'] },
-        { title: 'Default currency', text: 'Chose default currency for pages, etc.', show: false, default: 'EUR', items: ['EUR', 'USD'] }
+        { title: 'Language', text: 'Interface language', show: false, dropdowndata: {
+          default: 'English', items: ['English', 'Russian', 'Polish']
+        } },
+        { title: 'Theme', text: 'Chose dark or light theme', show: false, dropdowndata: {
+          default: 'Dark', items: ['Dark', 'Light']
+        } },
+        { title: 'Default currency', text: 'Chose default currency for pages, etc.', show: false, dropdowndata: {
+          default: 'EUR', items: ['EUR', 'USD']
+        } }
       ],
       showDropdown: false
     }
