@@ -7,10 +7,20 @@
   border-radius: 8px;
   display: flex;
   cursor: pointer;
-  p {
+  .dropdown-default-value {
     margin: 0;
     width: 100%;
     padding: 15px;
+  }
+  .drop-item {
+    transition: 0.2s;
+    padding: 15px;
+    width: 70%;
+    margin: 15px auto;
+    border-radius: 8px;
+  }
+  .drop-item:hover {
+    background-color: rgba(#fff, 0.5);
   }
   .dropdown-menu-content {
     margin-top: 50px;
