@@ -135,3 +135,12 @@ export const sendEmail = async (payload) => {
     return e.response.data
   }
 }
+
+export const generateReferralLink = async (payload) => {
+  try {
+    const { data } = await api.post('/generate-referral-link', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
