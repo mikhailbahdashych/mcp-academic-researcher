@@ -23,7 +23,9 @@
             @close="item.dropdowndata.show = false"
             @pick="pick($event)"
           />
-          <TougleSwitch v-else :check="item" @changeSwitch="changeSwitch($event)" />
+          <div class="account-container-item-button" v-else>
+            <TougleSwitch :check="item" @changeSwitch="changeSwitch($event)" />
+          </div>
         </div>
 
       </div>
