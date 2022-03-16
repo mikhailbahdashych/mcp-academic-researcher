@@ -6,13 +6,9 @@
         <p class="paragraph average">Test</p>
         <p class="paragraph average">Test</p>
         <p class="paragraph average">Test</p>
-        <p class="paragraph average">Test</p>
-        <p class="paragraph average">Test</p>
       </div>
       <div class="footer-item">
         <p class="paragraph medium bold">Products and services</p>
-        <p class="paragraph average">Test</p>
-        <p class="paragraph average">Test</p>
         <p class="paragraph average">Test</p>
         <p class="paragraph average">Test</p>
         <p class="paragraph average">Test</p>
