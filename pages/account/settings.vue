@@ -21,7 +21,6 @@
         </div>
 
         <div class="account-container-item-button">
-<!--          <Button :label="``" />-->
         </div>
 
       </div>
