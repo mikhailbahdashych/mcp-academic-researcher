@@ -25,6 +25,7 @@
         </div>
 
       </div>
+      <TougleSwitch/>
     </div>
     <Footer :bright="true" />
   </div>
