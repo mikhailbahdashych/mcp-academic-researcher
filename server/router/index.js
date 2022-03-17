@@ -145,4 +145,13 @@ router.post('/generate-referral-link', async (req, res) => {
   }
 })
 
+router.post('/get-referral-link', async (req, res) => {
+  try {
+    const data = await api.post('/get-referral-link', req.body)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 module.exports = router

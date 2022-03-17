@@ -12,9 +12,12 @@
 </template>
 
 <script>
-import { generateReferralLink } from "~/api";
+import { generateReferralLink, getReferralLink } from "~/api";
 export default {
   name: "referral",
+  async mounted() {
+
+  },
   methods: {
     async generateRefLink() {
       await generateReferralLink({ token: localStorage.getItem('token') })

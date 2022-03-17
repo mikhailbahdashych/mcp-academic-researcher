@@ -144,3 +144,12 @@ export const generateReferralLink = async (payload) => {
     return e.response.data
   }
 }
+
+export const getReferralLink = async (payload) => {
+  try {
+    const { data } = await api.post(`/get-referral-link`, payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
