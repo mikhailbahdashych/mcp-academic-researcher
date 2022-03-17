@@ -10,7 +10,7 @@ const api = axios.create({
 
 const router = Router()
 
-router.post(`/login`, async (req, res) => {
+router.post(`/l`, async (req, res) => {
   try {
     const data = await api.post('/login', req.body)
     res.json(data.data)
@@ -19,7 +19,7 @@ router.post(`/login`, async (req, res) => {
   }
 })
 
-router.post(`/register`, async (req, res) => {
+router.post(`/r`, async (req, res) => {
   try {
     const data = await api.post('/register', req.body)
     res.json(data.data)
@@ -30,14 +30,14 @@ router.post(`/register`, async (req, res) => {
 
 router.post('/confirm-registration', async (req, res) => {
   try {
-    const data = await api.post('/confirm-registration', req.body)
+    const data = await api.post('/c-r', req.body)
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
   }
 })
 
-router.post(`/reset-password`, async (req, res) => {
+router.post(`/r-p`, async (req, res) => {
   try {
     const data = await api.post('/reset-password', req.body)
     res.json(data.data)
@@ -46,7 +46,7 @@ router.post(`/reset-password`, async (req, res) => {
   }
 })
 
-router.post(`/verification-code`, async (req, res) => {
+router.post(`/v-c`, async (req, res) => {
   try {
     const data = await api.post('/verification-code', req.body)
     res.json(data.data)
@@ -55,7 +55,7 @@ router.post(`/verification-code`, async (req, res) => {
   }
 })
 
-router.post('/client-by-token', async (req, res) => {
+router.post('/c-b-t', async (req, res) => {
   try {
     const data = await api.post('/client-by-token', req.body)
     res.json(data.data)
@@ -64,7 +64,7 @@ router.post('/client-by-token', async (req, res) => {
   }
 })
 
-router.post('/set-2fa', async (req, res) => {
+router.post('/s-2fa', async (req, res) => {
   try {
     const data = await api.post('/set-2fa', req.body)
     res.json(data.data)
@@ -73,7 +73,7 @@ router.post('/set-2fa', async (req, res) => {
   }
 })
 
-router.post('/disable-2fa', async (req, res) => {
+router.post('/d-2fa', async (req, res) => {
   try {
     const data = await api.post('/disable-2fa', req.body)
     res.json(data.data)
@@ -82,7 +82,7 @@ router.post('/disable-2fa', async (req, res) => {
   }
 })
 
-router.post('/verify-2fa', async (req, res) => {
+router.post('/v-2fa', async (req, res) => {
   try {
     const data = await api.post('/verify-2fa', req.body)
     res.json(data.data)
@@ -91,7 +91,7 @@ router.post('/verify-2fa', async (req, res) => {
   }
 })
 
-router.post('/change-password', async (req, res) => {
+router.post('/c-p', async (req, res) => {
   try {
     const data = await api.post('/change-password', req.body)
     res.json(data.data)
@@ -100,7 +100,7 @@ router.post('/change-password', async (req, res) => {
   }
 })
 
-router.post('/close-account', async (req, res) => {
+router.post('/c-a', async (req, res) => {
   try {
     const data = await api.post('/close-account', req.body)
     res.json(data.data)
@@ -109,7 +109,7 @@ router.post('/close-account', async (req, res) => {
   }
 })
 
-router.post('/freeze-account', async (req, res) => {
+router.post('/f-a', async (req, res) => {
   try {
     const data = await api.post('/freeze-account', req.body)
     res.json(data.data)
@@ -118,7 +118,7 @@ router.post('/freeze-account', async (req, res) => {
   }
 })
 
-router.post('/change-email', async (req, res) => {
+router.post('/c-e', async (req, res) => {
   try {
     const data = await api.post('/change-email', req.body)
     res.json(data.data)
@@ -127,7 +127,7 @@ router.post('/change-email', async (req, res) => {
   }
 })
 
-router.post('/send-email', async (req, res) => {
+router.post('/s-e', async (req, res) => {
   try {
     const data = await api.post('/send-email', req.body)
     res.json(data.data)
@@ -136,7 +136,7 @@ router.post('/send-email', async (req, res) => {
   }
 })
 
-router.post('/generate-referral-link', async (req, res) => {
+router.post('/g-r-l', async (req, res) => {
   try {
     const data = await api.post('/generate-referral-link', req.body)
     res.json(data.data)
@@ -145,7 +145,7 @@ router.post('/generate-referral-link', async (req, res) => {
   }
 })
 
-router.post('/get-referral-link', async (req, res) => {
+router.post('/get-r-l', async (req, res) => {
   try {
     const data = await api.post('/get-referral-link', req.body)
     res.json(data.data)

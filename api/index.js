@@ -12,7 +12,7 @@ const api = axios.create({
 
 export const login = async (payload) => {
   try {
-    const { data } = await api.post(`/login`, payload)
+    const { data } = await api.post(`/l`, payload)
     return data
   } catch (e) {
     return e.response.data
@@ -21,7 +21,7 @@ export const login = async (payload) => {
 
 export const register = async (payload) => {
   try {
-    const { data } =  await api.post(`/register`, payload)
+    const { data } =  await api.post(`/r`, payload)
     return data
   } catch (e) {
     return e.response.data
@@ -30,7 +30,7 @@ export const register = async (payload) => {
 
 export const confirmRegistration = async (payload) => {
   try {
-    const { data } = await api.post('/confirm-registration', payload)
+    const { data } = await api.post('/c-r', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -39,7 +39,7 @@ export const confirmRegistration = async (payload) => {
 
 export const resetPassword = async (payload) => {
   try {
-    const { data } = await api.post(`/reset-password`, payload)
+    const { data } = await api.post(`/r-p`, payload)
     return data
   } catch (e) {
     return e.response.data
@@ -48,7 +48,7 @@ export const resetPassword = async (payload) => {
 
 export const sendVerificationCode = async (payload) => {
   try {
-    const { data } = await api.post(`/verification-code`, payload)
+    const { data } = await api.post(`/v-c`, payload)
     return data
   } catch (e) {
     return e.response.data
@@ -57,7 +57,7 @@ export const sendVerificationCode = async (payload) => {
 
 export const getClientByToken = async (token) => {
   try {
-    const { data } = await api.post('/client-by-token', token)
+    const { data } = await api.post('/c-b-t', token)
     return data
   } catch (e) {
     return e.response.data
@@ -66,7 +66,7 @@ export const getClientByToken = async (token) => {
 
 export const set2fa = async (payload) => {
   try {
-    const { data } = await api.post('/set-2fa', payload)
+    const { data } = await api.post('/s-2fa', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -75,7 +75,7 @@ export const set2fa = async (payload) => {
 
 export const disable2fa = async (payload) => {
   try {
-    const { data } = await api.post('/disable-2fa', payload)
+    const { data } = await api.post('/d-2fa', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -84,7 +84,7 @@ export const disable2fa = async (payload) => {
 
 export const verify2fa = async (payload) => {
   try {
-    const { data } = await api.post('/verify-2fa', payload)
+    const { data } = await api.post('/v-2fa', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -93,7 +93,7 @@ export const verify2fa = async (payload) => {
 
 export const changePassword = async (payload) => {
   try {
-    const { data } = await api.post('/change-password', payload)
+    const { data } = await api.post('/c-p', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -102,7 +102,7 @@ export const changePassword = async (payload) => {
 
 export const closeAccount = async (payload) => {
   try {
-    const { data } = await api.post('/close-account', payload)
+    const { data } = await api.post('/c-a', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -111,7 +111,7 @@ export const closeAccount = async (payload) => {
 
 export const freezeAccount = async (payload) => {
   try {
-    const { data } = await api.post('/freeze-account', payload)
+    const { data } = await api.post('/f-a', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -120,7 +120,7 @@ export const freezeAccount = async (payload) => {
 
 export const changeEmail = async (payload) => {
   try {
-    const { data } = await api.post('/change-email', payload)
+    const { data } = await api.post('/c-e', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -129,7 +129,7 @@ export const changeEmail = async (payload) => {
 
 export const sendEmail = async (payload) => {
   try {
-    const { data } = await api.post('/send-email', payload)
+    const { data } = await api.post('/s-e', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -138,7 +138,7 @@ export const sendEmail = async (payload) => {
 
 export const generateReferralLink = async (payload) => {
   try {
-    const { data } = await api.post('/generate-referral-link', payload)
+    const { data } = await api.post('/g-r-l', payload)
     return data
   } catch (e) {
     return e.response.data
@@ -147,7 +147,7 @@ export const generateReferralLink = async (payload) => {
 
 export const getReferralLink = async (payload) => {
   try {
-    const { data } = await api.post(`/get-referral-link`, payload)
+    const { data } = await api.post(`/get-r-l`, payload)
     return data
   } catch (e) {
     return e.response.data
