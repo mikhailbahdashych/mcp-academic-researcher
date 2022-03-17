@@ -17,7 +17,7 @@ export default {
   name: "referral",
   methods: {
     async generateRefLink() {
-      const res = await generateReferralLink({ token: localStorage.getItem('token') })
+      await generateReferralLink({ token: localStorage.getItem('token') })
     }
   }
 }
