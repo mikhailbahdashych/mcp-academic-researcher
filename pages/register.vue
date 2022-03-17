@@ -147,7 +147,8 @@ export default {
         await register({
           email: this.email.email,
           password: this.password.password
-        }).then(async () => {
+        }).then(async (res) => {
+          if (res.status === -1) return this.$store.commit('setStatus', -1)
           await sendEmail({ type: 'reg', to: this.email.email }).then((res) => {
             if (res.status === 1) {
               this.$store.commit('setStatus', 1)
