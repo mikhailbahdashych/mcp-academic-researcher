@@ -16,7 +16,7 @@ import { generateReferralLink, getReferralLink } from "~/api";
 export default {
   name: "referral",
   async mounted() {
-
+    const res = await getReferralLink({ token: localStorage.getItem('token') })
   },
   methods: {
     async generateRefLink() {
