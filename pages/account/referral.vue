@@ -7,15 +7,16 @@
       <p>By generating your own referral link you are able to send it to your friends and make bonuses. C'mon, it's much fun together!</p>
       <Button class="center-button" :label="'Generate referral link'" :clickon="generateRefLink" />
     </div>
-    <div v-else>
-      
+    <div class="account-container" v-else>
+      <h3>Here is your referral link: {{ reflink }}</h3>
+      <p class="paragraph medium">List of users who has been registered from your link:</p>
     </div>
     <Footer :bright="true" />
   </div>
 </template>
 
 <script>
-import { generateReferralLink, getReferralLink } from "~/api";
+import { generateReferralLink, getReferralLink, getClientsByReferralLink } from "~/api";
 export default {
   name: "referral",
   data() {
@@ -25,6 +26,7 @@ export default {
   },
   async mounted() {
     this.reflink = await getReferralLink({ token: localStorage.getItem('token') })
+    await getClientsByReferralLink(this.reflink)
   },
   methods: {
     async generateRefLink() {
