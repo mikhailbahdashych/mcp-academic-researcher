@@ -9,10 +9,10 @@
     </div>
     <div class="account-container" v-else>
 
-      <input id="reflink" :value="`http://localhost:8010/register/${reflink}`" type="hidden" />
+      <input id="reflink" :value="`http://localhost:8010/register/?reflink=${reflink}`" type="hidden" />
       <p class="paragraph medium">
         Here is your referral link (click on to copy):
-        <span class="paragraph link average pointer" @click="copyLink">http://localhost:8010/register/{{ reflink }}</span>
+        <span class="paragraph link average pointer" @click="copyLink">http://localhost:8010/register/?reflink={{ reflink }}</span>
       </p>
 
       <p class="paragraph medium" v-if="reflinkclients.length === 0">There is no clients registered by your referral link :(</p>
