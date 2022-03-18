@@ -1,6 +1,6 @@
 import { getClientByToken } from "~/api";
 
-export const getclientByToken = async (router, token, returnclient = false, nonRedirect = false) => {
+export const verifyClientByToken = async (router, token, returnclient = false, nonRedirect = false) => {
   if (!nonRedirect) {
     if (!token) return await router.push({ path: '/' })
 

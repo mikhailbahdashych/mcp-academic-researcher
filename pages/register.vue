@@ -35,7 +35,7 @@
         </div>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
-        <p v-if="status === -1" class="paragraph error">client with this email already exists!</p>
+        <p v-if="status === -1" class="paragraph error">User with this email already exists!</p>
         <Button :label="'Sign up'" :clickon="register" :disabled="!validFields()" />
       </div>
       <div class="login-inputs-container" v-else>
@@ -50,7 +50,7 @@
 
 <script>
 import {register, sendEmail} from "~/api";
-import { getClientByToken } from "~/helpers/auth";
+import { verifyClientByToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
 export default {
@@ -119,7 +119,7 @@ export default {
     this.$store.commit('setDefaultValues')
   },
   async mounted() {
-    await getUserByToken(this.$router, localStorage.getItem('token'), false, true)
+    await verifyClientByToken(this.$router, localStorage.getItem('token'), false, true)
   },
   methods: {
     redirect(path) {

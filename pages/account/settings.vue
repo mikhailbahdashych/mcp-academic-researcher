@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { getUserByToken } from "~/helpers/auth";
+import { verifyClientByToken } from "~/helpers/auth";
 export default {
   name: "settings",
   data() {
@@ -56,7 +56,7 @@ export default {
     }
   },
   async mounted() {
-    await getUserByToken(this.$router, localStorage.getItem('token'))
+    await verifyClientByToken(this.$router, localStorage.getItem('token'))
   },
   methods: {
     pick({ item, items }) {

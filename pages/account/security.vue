@@ -168,7 +168,7 @@
 </template>
 
 <script>
-import { getUserByToken } from "~/helpers/auth";
+import { verifyClientByToken } from "~/helpers/auth";
 import { validateEmail } from "~/helpers/frontValidators";
 import { mapActions } from "vuex";
 export default {
@@ -239,7 +239,7 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
-    await getUserByToken(this.$router, localStorage.getItem('token'))
+    await verifyClientByToken(this.$router, localStorage.getItem('token'))
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
