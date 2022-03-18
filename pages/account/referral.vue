@@ -9,7 +9,7 @@
     </div>
     <div class="account-container" v-else>
       <h3>Here is your referral link: {{ reflink }}</h3>
-      <p class="paragraph medium">List of users who has been registered from your link:</p>
+      <p class="paragraph medium">List of clients who has been registered from your link:</p>
     </div>
     <Footer :bright="true" />
   </div>
