@@ -66,7 +66,7 @@ router.post('/c-b-t', async (req, res) => {
 
 router.post('/s-2fa', async (req, res) => {
   try {
-    const data = await api.post('/set-2fa', req.body)
+    const data = await api.post('/set-2fa', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -75,7 +75,7 @@ router.post('/s-2fa', async (req, res) => {
 
 router.post('/d-2fa', async (req, res) => {
   try {
-    const data = await api.post('/disable-2fa', req.body)
+    const data = await api.post('/disable-2fa', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -84,7 +84,7 @@ router.post('/d-2fa', async (req, res) => {
 
 router.post('/v-2fa', async (req, res) => {
   try {
-    const data = await api.post('/verify-2fa', req.body)
+    const data = await api.post('/verify-2fa', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -93,7 +93,7 @@ router.post('/v-2fa', async (req, res) => {
 
 router.post('/c-p', async (req, res) => {
   try {
-    const data = await api.post('/change-password', req.body)
+    const data = await api.post('/change-password', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -102,7 +102,7 @@ router.post('/c-p', async (req, res) => {
 
 router.post('/c-a', async (req, res) => {
   try {
-    const data = await api.post('/close-account', req.body)
+    const data = await api.post('/close-account', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -111,7 +111,7 @@ router.post('/c-a', async (req, res) => {
 
 router.post('/f-a', async (req, res) => {
   try {
-    const data = await api.post('/freeze-account', req.body)
+    const data = await api.post('/freeze-account', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -120,7 +120,7 @@ router.post('/f-a', async (req, res) => {
 
 router.post('/c-e', async (req, res) => {
   try {
-    const data = await api.post('/change-email', req.body)
+    const data = await api.post('/change-email', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -138,7 +138,7 @@ router.post('/s-e', async (req, res) => {
 
 router.post('/g-r-l', async (req, res) => {
   try {
-    const data = await api.post('/generate-referral-link', req.body)
+    const data = await api.post('/generate-referral-link', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -147,7 +147,7 @@ router.post('/g-r-l', async (req, res) => {
 
 router.post('/get-r-l', async (req, res) => {
   try {
-    const data = await api.post('/get-referral-link', req.body)
+    const data = await api.post('/get-referral-link', req.body, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -156,7 +156,7 @@ router.post('/get-r-l', async (req, res) => {
 
 router.get(`/g-c-b-r-l/:reflink`, async (req, res) => {
   try {
-    const data = await api.get(`/get-clients-by-referral-link/${req.params.reflink}`)
+    const data = await api.get(`/get-clients-by-referral-link/${req.params.reflink}`, { headers: req.headers })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
