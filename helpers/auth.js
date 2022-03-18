@@ -1,23 +1,23 @@
 import { getClientByToken } from "~/api";
 
-export const getUserByToken = async (router, token, returnUser = false, nonRedirect = false) => {
+export const getclientByToken = async (router, token, returnclient = false, nonRedirect = false) => {
   if (!nonRedirect) {
     if (!token) return await router.push({ path: '/' })
 
-    const user = await getClientByToken({ token })
+    const client = await getClientByToken({ token })
 
-    if (!user || user.status === -1) {
+    if (!client || client.status === -1) {
       localStorage.removeItem('token')
       localStorage.removeItem('email')
       return await router.push({ path: '/' })
     }
 
-    if (returnUser) return user
+    if (returnclient) return client
     else return { status: 1 }
   } else {
     if (token) {
-      const user = await getClientByToken({ token })
-      if (user || user.status !== -1) return await router.push({ path: '/account' })
+      const client = await getClientByToken({ token })
+      if (client || client.status !== -1) return await router.push({ path: '/account' })
     }
   }
 }

@@ -5,8 +5,8 @@
     <div class="account-container">
       <h1>Account Information</h1>
       <div class="account-container-info">
-        <Panel :title="'UUID'" :text="`Your UUID: ${user.personaluuid}`" />
-        <Panel :title="'Email'" :text="`Your email: ${user.email}`" />
+        <Panel :title="'UUID'" :text="`Your UUID: ${client.personaluuid}`" />
+        <Panel :title="'Email'" :text="`Your email: ${client.email}`" />
         <Panel :title="'Phone'" :text="'Your mobile phone'" />
         <Panel :title="'2FA'" :text="'Your Google Authenticator status'" />
       </div>
@@ -16,22 +16,22 @@
 </template>
 
 <script>
-import { getUserByToken } from "~/helpers/auth";
+import { getclientByToken } from "~/helpers/auth";
 export default {
   name: "account",
   data() {
     return {
-      user: {}
+      client: {}
     }
   },
   async mounted() {
-    this.user = await getUserByToken(this.$router, localStorage.getItem('token'), true)
-    this.hideEmail(this.user.email)
+    this.client = await getclientByToken(this.$router, localStorage.getItem('token'), true)
+    this.hideEmail(this.client.email)
   },
   methods: {
     hideEmail(email) {
       if (email) {
-        this.user.email = email.split('@')[0].slice(0, 2) + '**'
+        this.client.email = email.split('@')[0].slice(0, 2) + '**'
           + '@**.' + email.split('.')[email.split('.').length - 1]
       }
     },
