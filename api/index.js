@@ -10,6 +10,15 @@ const api = axios.create({
   }
 })
 
+api.interceptors.request.use(function (config) {
+  const token = localStorage.getItem('token')
+  if (token) config.headers.common['Authorization'] = 'Bearer ' + token
+  return config;
+}, function (error) {
+  return Promise.reject(error);
+});
+
+
 export const login = async (payload) => {
   try {
     const { data } = await api.post(`/l`, payload)
