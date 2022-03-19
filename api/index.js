@@ -153,12 +153,3 @@ export const getReferralLink = async (payload) => {
     return e.response.data
   }
 }
-
-export const getClientsByReferralLink = async (reflink) => {
-  try {
-    const { data } = await api.get(`/g-c-b-r-l/${reflink}`)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}

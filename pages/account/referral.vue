@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { generateReferralLink, getReferralLink, getClientsByReferralLink } from "~/api";
+import { generateReferralLink, getReferralLink } from "~/api";
 export default {
   name: "referral",
   data() {
@@ -36,7 +36,6 @@ export default {
   },
   async mounted() {
     this.reflink = await getReferralLink({ token: localStorage.getItem('token') })
-    this.reflinkclients = await getClientsByReferralLink(this.reflink)
   },
   methods: {
     async generateRefLink() {
