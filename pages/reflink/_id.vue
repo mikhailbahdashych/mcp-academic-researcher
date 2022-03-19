@@ -1,7 +1,12 @@
 <template>
-  <div>
-    <p class="paragraph" v-if="reflink.status === -1">Oops... Something went wrong!</p>
-    <p class="paragraph" v-else>{{ reflink }}</p>
+  <div class="referral-container">
+    <div class="referral-container-side">
+<!--      <p class="paragraph">Oops... Something went wrong!</p>-->
+    </div>
+    <div class="referral-container-side">
+      <div class="referral-container-card"></div>
+<!--      <p class="paragraph">{{ reflink }}</p>-->
+    </div>
   </div>
 </template>
 
@@ -26,6 +31,6 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss">
+@import "../../assets/css/referral";
 </style>

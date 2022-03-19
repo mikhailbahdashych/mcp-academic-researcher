@@ -1,0 +1,28 @@
+@import "basics";
+
+.referral-container {
+  height: 100%;
+  width: 90%;
+  padding: 0;
+  position: fixed;
+  background-color: $backgroundcolorthird;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  display: flex;
+
+  .referral-container-side {
+    width: 50%;
+    height: 100%;
+    .referral-container-card {
+      margin: 0 auto;
+      width: 60%;
+      min-width: 400px;
+      height: 600px;
+      background-color: #ccc;
+      border-radius: 0 0 35px 35px;
+    }
+  }
+
+}
