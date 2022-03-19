@@ -1,19 +1,21 @@
 <template>
   <div class="referral-container">
     <div class="referral-container-side">
-      <div class="referral-container-side-title-box">
+      <div class="referral-container-side-title-box" v-if="reflink.status === -1">
+        <h1>Oops... Something went wrong! :(</h1>
+      </div>
+      <div class="referral-container-side-title-box" v-else>
         <h1>Oh, you are probably from someone's referral program? It's nice to see you!</h1>
         <p class="paragraph medium">Lemme explain what is this and why it's cool.</p>
       </div>
-<!--      <p class="paragraph">Oops... Something went wrong!</p>-->
     </div>
     <div class="referral-container-side">
       <div class="referral-container-card">
-        <Input :additional-class="'basic-input-box'" :title="'Email'" />
-        <Input :additional-class="'basic-input-box'" :title="'Password'" />
-        <Input :additional-class="'basic-input-box'" :title="'Password repeat'" />
-        <Checkbox :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
-        <Button :label="'Create account'" />
+        <Input :additional-class="'basic-input-box'" :title="'Email'" :disabled="reflink.status === -1" />
+        <Input :additional-class="'basic-input-box'" :title="'Password'" :disabled="reflink.status === -1" />
+        <Input :additional-class="'basic-input-box'" :title="'Password repeat'" :disabled="reflink.status === -1" />
+        <Checkbox :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" :disabled="reflink.status === -1" />
+        <Button :label="'Create account'" :disabled="reflink.status === -1" />
       </div>
     </div>
   </div>

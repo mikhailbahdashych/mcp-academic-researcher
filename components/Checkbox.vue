@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox-container">
     <label class="container">
-      <input type="checkbox" :value="innerValue" @input="onInput">
+      <input type="checkbox" :value="innerValue" @input="onInput" :disabled="disabled">
       <span class="checkmark"></span>
     </label>
     <p class="checkbox-paragraph" v-html="label" />
@@ -16,6 +16,10 @@ export default {
       default: ''
     },
     value: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }
