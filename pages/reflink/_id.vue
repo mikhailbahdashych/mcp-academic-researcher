@@ -8,8 +8,13 @@
 <!--      <p class="paragraph">Oops... Something went wrong!</p>-->
     </div>
     <div class="referral-container-side">
-      <div class="referral-container-card"></div>
-<!--      <p class="paragraph">{{ reflink }}</p>-->
+      <div class="referral-container-card">
+        <Input :additional-class="'basic-input-box'" :title="'Email'" />
+        <Input :additional-class="'basic-input-box'" :title="'Password'" />
+        <Input :additional-class="'basic-input-box'" :title="'Password repeat'" />
+        <Checkbox :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" />
+        <Button :label="'Create account'" />
+      </div>
     </div>
   </div>
 </template>

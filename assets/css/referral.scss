@@ -10,20 +10,20 @@
   left: 0;
   right: 0;
   display: flex;
-  text-align: center;
 
   .referral-container-side {
     width: 50%;
     height: 100%;
     .referral-container-side-title-box {
-      height: 50%;
       text-align: center;
+      padding: 80px 0;
     }
     .referral-container-card {
       margin: 0 auto;
+      padding: 30px 30px;
       width: 60%;
       min-width: 400px;
-      height: 600px;
+      height: 500px;
       background-color: $backgroundcolorsecond;
       border-left: 0.5px solid $maincolor;
       border-right: 0.5px solid $maincolor;
