@@ -12,7 +12,7 @@
             If you are on this page, it means you've got invitation by someone to become a part
             of referral program. But don't get mad, by participating in it, you will also get bonuses like:
           </p>
-          <ul style="color: white;">
+          <ul>
             <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li>
             <li>Lorem ipsum dolor sit amet.</li>
             <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam illo non officiis totam.</li>
@@ -27,8 +27,8 @@
         <Input :additional-class="'basic-input-box'" :title="'Email'" :disabled="reflink.status === -1" />
         <Input :additional-class="'basic-input-box'" :title="'Password'" :disabled="reflink.status === -1" />
         <Input :additional-class="'basic-input-box'" :title="'Password repeat'" :disabled="reflink.status === -1" />
-        <Checkbox :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" :disabled="reflink.status === -1" />
-        <Button :label="'Create account'" :disabled="reflink.status === -1" />
+        <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" :disabled="reflink.status === -1" />
+        <Button :clickon="register" :label="'Create account'" :disabled="reflink.status === -1 || !validFields()" />
         <p class="paragraph" id="referral-about">Read more about
           <span class="paragraph link">referral program</span>.
         </p>

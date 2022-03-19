@@ -21,7 +21,7 @@
         <p v-if="passwordError.passwordRequirement" class="paragraph error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
 
-          <div v-for="rule in passwordRulesList" style="display: flex;">
+          <div v-for="rule in passwordRulesList" class="flex">
             <div v-for="(item) in Object.entries(rule)">
               <p>
                 <span v-if="item[0] === 'text'">{{ item[1] }}</span>
