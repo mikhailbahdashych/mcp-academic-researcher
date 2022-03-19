@@ -24,9 +24,27 @@
     </div>
     <div class="referral-container-side">
       <div class="referral-container-card">
-        <Input :additional-class="'basic-input-box'" :title="'Email'" :disabled="reflink.status === -1" />
-        <Input :additional-class="'basic-input-box'" :title="'Password'" :disabled="reflink.status === -1" />
-        <Input :additional-class="'basic-input-box'" :title="'Password repeat'" :disabled="reflink.status === -1" />
+        <Input :additional-class="'basic-input-box'" :title="'Email'" :disabled="reflink.status === -1" :oneerror="email.emailError" :type="'text'" v-model="email.email" />
+        <Input :additional-class="'basic-input-box'" :title="'Password'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :type="'password'" v-model="password.password"  />
+        <Input :additional-class="'basic-input-box'" :title="'Password repeat'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules":type="'password'" v-model="password.passwordRepeat" />
+        <p v-if="passwordError.passwordMismatch" class="paragraph error">Passwords have to match!</p>
+        <p v-if="passwordError.passwordRequirement" class="paragraph error">Password are requirement!</p>
+
+<!--        <div v-if="passwordError.passwordRules" class="password-requirement">-->
+
+<!--          <div v-for="rule in passwordRulesList" class="flex">-->
+<!--            <div v-for="(item) in Object.entries(rule)">-->
+<!--              <p>-->
+<!--                <span v-if="item[0] === 'text'">{{ item[1] }}</span>-->
+<!--                <span v-else>-->
+<!--                  <span class="paragraph medium success" v-if="item[1]">OK</span>-->
+<!--                  <span class="paragraph medium error" v-else>NOT OK</span>-->
+<!--                </span>-->
+<!--              </p>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" :disabled="reflink.status === -1" />
         <Button :clickon="register" :label="'Create account'" :disabled="reflink.status === -1 || !validFields()" />
         <p class="paragraph" id="referral-about">Read more about
