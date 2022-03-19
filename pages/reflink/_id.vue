@@ -12,6 +12,13 @@
             If you are on this page, it means you've got invitation by someone to become a part
             of referral program. But don't get mad, by participating in it, you will also get bonuses like:
           </p>
+          <ul style="color: white;">
+            <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam illo non officiis totam.</li>
+            <li>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A ea facere nulla.</li>
+            <li>Lorem ipsum dolor sit amet.</li>
+          </ul>
         </div>
       </div>
     </div>
