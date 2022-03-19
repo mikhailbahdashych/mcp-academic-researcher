@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Popup :content="'Copied!'" v-if="showPopup" />
     <Header />
     <AccountHeader />
     <div class="account-container center" v-if="reflink.status === -1">
@@ -29,7 +30,8 @@ export default {
   data() {
     return {
       reflink: {},
-      reflinkclients: []
+      reflinkclients: [],
+      showPopup: false
     }
   },
   async mounted() {
@@ -46,6 +48,8 @@ export default {
       input.select()
       document.execCommand('copy')
       input.setAttribute('type', 'hidden')
+      this.showPopup = true
+      setTimeout(() => { this.showPopup = false }, 5000)
     }
   }
 }
