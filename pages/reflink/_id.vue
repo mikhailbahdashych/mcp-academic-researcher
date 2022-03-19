@@ -39,8 +39,10 @@
 
 <script>
 import { registrationFromReflink } from "~/api";
+import { registration } from "~/mixins/register";
 export default {
   name: "reflink",
+  mixins: [ registration ],
   data() {
     return {
       reflink: {}
