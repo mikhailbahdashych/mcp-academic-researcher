@@ -28,9 +28,9 @@ router.post(`/r`, async (req, res) => {
   }
 })
 
-router.post('/confirm-registration', async (req, res) => {
+router.post('/c-r', async (req, res) => {
   try {
-    const data = await api.post('/c-r', req.body)
+    const data = await api.post('/confirm-registration', req.body)
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
