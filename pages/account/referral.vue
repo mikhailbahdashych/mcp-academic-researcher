@@ -25,6 +25,7 @@
 
 <script>
 import { generateReferralLink, getReferralLink } from "~/api";
+import { verifyClientByToken } from "~/helpers/auth";
 export default {
   name: "referral",
   data() {
@@ -34,6 +35,7 @@ export default {
     }
   },
   async mounted() {
+    await verifyClientByToken(this.$router, localStorage.getItem('token'))
     this.reflink = await getReferralLink({ token: localStorage.getItem('token') })
   },
   methods: {
