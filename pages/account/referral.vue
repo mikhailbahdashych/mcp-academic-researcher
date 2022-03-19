@@ -49,7 +49,7 @@ export default {
       document.execCommand('copy')
       input.setAttribute('type', 'hidden')
       this.showPopup = true
-      setTimeout(() => { this.showPopup = false }, 5000)
+      setTimeout(() => { this.showPopup = false }, 1500)
     }
   }
 }
