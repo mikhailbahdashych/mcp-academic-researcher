@@ -22,8 +22,7 @@ body {
   &.right { float: right; }
   &.error { color: $error; }
   &.on-white-paragraph { color: black; }
-  &.pointer { cursor: pointer; }
-  &.link { color: $maincolor; }
+  &.link { color: $maincolor; cursor: pointer; }
   &.success { color: lightgreen }
   &.opacity { opacity: 0.5; }
   &.bold { font-weight: 500 }

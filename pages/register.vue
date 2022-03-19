@@ -7,7 +7,7 @@
 
     <div class="login-header">
       <p class="paragraph right">Already have account?
-        <span class="paragraph pointer link" @click="redirect('/login')">Log in!</span>
+        <span class="paragraph link" @click="redirect('/login')">Log in!</span>
       </p>
     </div>
 

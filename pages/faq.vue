@@ -8,7 +8,7 @@
           <h1 class="title large">FAQ</h1>
           <h1 class="title small-title">
             If you haven't found answer on your question, feel free to
-            <span class="pointer link" @click="redirect('/contact')">contact</span>.
+            <span class="link" @click="redirect('/contact')">contact</span>.
           </h1>
         </div>
       </div>

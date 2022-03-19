@@ -7,7 +7,7 @@
 
     <div class="login-header">
       <p class="paragraph right">Don't have account yet?
-        <span class="paragraph pointer link" @click="redirect('/register')">Register now!</span>
+        <span class="paragraph link" @click="redirect('/register')">Register now!</span>
       </p>
     </div>
 
@@ -42,7 +42,7 @@
         <Input @keyup.enter.native="logIn" :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
         <p v-if="loginError === -1" class="paragraph error">Account doesn't exists or wasn't confirmed!</p>
         <Button :label="'Log In'" :clickon="logIn" />
-        <p class="paragraph right pointer" @click="redirect('reset-password')">Forgot password?</p>
+        <p class="paragraph right" @click="redirect('reset-password')">Forgot password?</p>
 
       </div>
     </div>
