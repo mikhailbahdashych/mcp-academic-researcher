@@ -10,14 +10,14 @@
     </div>
     <div class="account-container" v-else>
 
-      <input id="reflink" :value="`http://localhost:8010/register/?reflink=${reflink}`" type="hidden" />
+      <input id="reflink" :value="`http://localhost:8010/register/?reflink=${reflink.reflink}`" type="hidden" />
       <p class="paragraph medium">
         Here is your referral link (click on to copy):
-        <span class="paragraph link average pointer" @click="copyLink">localhost:8010/register/?reflink={{ reflink }}</span>
+        <span class="paragraph link average pointer" @click="copyLink">localhost:8010/register/?reflink={{ reflink.reflink }}</span>
       </p>
 
-      <p class="paragraph medium" v-if="reflinkclients.length === 0">There is no clients registered by your referral link :(</p>
-      <p class="paragraph medium">List of clients who has been registered from your link:</p>
+      <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>
+      <p class="paragraph medium" v-else>List of clients who has been registered from your link:</p>
     </div>
     <Footer :bright="true" />
   </div>
@@ -30,7 +30,6 @@ export default {
   data() {
     return {
       reflink: {},
-      reflinkclients: [],
       showPopup: false
     }
   },
