@@ -9,12 +9,20 @@
   right: 0;
   display: flex;
 
+  @media only screen and (max-width: 930px) {
+    display: block;
+  }
+
   .referral-container-side {
     width: 50%;
     height: 100%;
+    @media only screen and (max-width: 930px) {
+      width: 100%;
+    }
     .referral-container-side-title-box {
       text-align: center;
-      padding: 80px 0;
+      padding: 50px 0;
+      margin-right: 30px;
     }
     .referral-container-side-text-box {
       text-align: left;
@@ -30,6 +38,10 @@
       border-right: 0.5px solid $maincolor;
       border-bottom: 0.5px solid $maincolor;
       border-radius: 0 0 35px 35px;
+      @media only screen and (max-width: 930px) {
+        border: 0.5px solid $maincolor;
+        border-radius: 35px;
+      }
       #referral-about {
         text-align: center;
         padding: 25px 0;
