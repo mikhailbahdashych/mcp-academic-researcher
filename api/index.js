@@ -153,3 +153,12 @@ export const getReferralLink = async (payload) => {
     return e.response.data
   }
 }
+
+export const registrationFromReflink = async (reflink) => {
+  try {
+    const { data } = await api.get(`/r-f-r-l/${reflink}`)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}

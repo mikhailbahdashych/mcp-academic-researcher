@@ -27,14 +27,11 @@ export default {
     }
   },
   async mounted() {
-    if (this.$route.params.id) {
-      await confirmRegistration({ confirmToken: this.$route.params.id })
+    if (!this.$route.params.id) return this.redirect('/')
+    await confirmRegistration({ confirmToken: this.$route.params.id })
       .then((res) => {
         this.status = res.status
       })
-    } else {
-      this.redirect('/')
-    }
   },
   methods: {
     redirect(path) {

@@ -154,4 +154,13 @@ router.post('/get-r-l', async (req, res) => {
   }
 })
 
+router.get('/r-f-r-l/:reflink', async (req, res) => {
+  try {
+    const data = await api.get(`/registration-from-reflink/${req.params.reflink}`)
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 module.exports = router
