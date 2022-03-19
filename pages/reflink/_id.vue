@@ -50,7 +50,11 @@ export default {
   },
   async mounted() {
     if (!this.$route.params.id) return this.redirect('/')
-    this.reflink = await registrationFromReflink(this.$route.params.id)
+    await registrationFromReflink(this.$route.params.id)
+    .then((res) => {
+      if (res.status) this.$store.commit('setStatus', res.status)
+      else this.reflink = res
+    })
   },
   methods: {
     redirect(path) {
