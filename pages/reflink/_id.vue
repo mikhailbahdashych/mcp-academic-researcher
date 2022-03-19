@@ -1,6 +1,10 @@
 <template>
   <div class="referral-container">
     <div class="referral-container-side">
+      <div class="referral-container-side-title-box">
+        <h1>Oh, you are probably from someone's referral program? It's nice to see you!</h1>
+        <p class="paragraph medium">Lemme explain what is this and why it's cool.</p>
+      </div>
 <!--      <p class="paragraph">Oops... Something went wrong!</p>-->
     </div>
     <div class="referral-container-side">
