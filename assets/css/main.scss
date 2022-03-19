@@ -22,7 +22,7 @@ body {
   &.right { float: right; }
   &.error { color: $error; }
   &.on-white-paragraph { color: black; }
-  &.link { color: $maincolor; cursor: pointer; }
+  &.link { color: $maincolor; cursor: pointer; text-decoration: underline }
   &.success { color: lightgreen }
   &.opacity { opacity: 0.5; }
   &.bold { font-weight: 500 }

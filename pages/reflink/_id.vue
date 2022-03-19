@@ -30,14 +30,14 @@
         <p v-if="passwordError.passwordMismatch" class="paragraph error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph error">Password are requirement!</p>
 
-        <div v-if="passwordError.passwordRules">
+        <div v-if="passwordError.passwordRules" class="password-requirement">
           <div v-for="rule in passwordRulesList" class="flex">
             <div v-for="(item) in Object.entries(rule)">
               <p>
-                <span v-if="item[0] === 'text'">{{ item[1] }}</span>
+                <span class="paragraph" v-if="item[0] === 'text'">{{ item[1] }}</span>
                 <span v-else>
-                  <span class="paragraph medium success" v-if="item[1]">OK</span>
-                  <span class="paragraph medium error" v-else>NOT OK</span>
+                  <span class="paragraph success" v-if="item[1]">OK</span>
+                  <span class="paragraph error" v-else>NOT OK</span>
                 </span>
               </p>
             </div>
