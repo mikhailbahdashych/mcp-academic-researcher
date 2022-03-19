@@ -29,10 +29,9 @@
     }
     .referral-container-card {
       margin: 0 auto;
-      padding: 30px 30px;
+      padding: 30px 30px 15px;
       width: 60%;
       min-width: 400px;
-      height: 450px;
       background-color: $backgroundcolorsecond;
       border-left: 0.5px solid $maincolor;
       border-right: 0.5px solid $maincolor;
@@ -44,7 +43,8 @@
       }
       #referral-about {
         text-align: center;
-        padding: 25px 0;
+        padding: 15px 0;
+        margin: 0;
       }
     }
   }
