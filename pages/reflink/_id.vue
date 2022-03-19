@@ -1,8 +1,7 @@
 <template>
   <div>
-    <p class="paragraph">{{reflink}}</p>
-    <p class="paragraph" v-if="reflink">{{ reflink.reflink }}</p>
-    <p class="paragraph" v-else-if="reflink.status === -1">Oops... Something went wrong!</p>
+    <p class="paragraph" v-if="reflink.status === -1">Oops... Something went wrong!</p>
+    <p class="paragraph" v-else>{{ reflink }}</p>
   </div>
 </template>
 
