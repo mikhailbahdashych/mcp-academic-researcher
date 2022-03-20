@@ -11,6 +11,9 @@
     margin: 0 auto;
     display: flex;
     border-bottom: 1px solid white;
+    @media only screen and (max-width: 930px) {
+      width: 100%;
+    }
     .account-header-item-block {
       height: calc(100% - 15px);
       padding-top: 15px;

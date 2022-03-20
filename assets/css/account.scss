@@ -7,6 +7,9 @@
   padding-top: 130px;
   &.referral-panel {
     display: flex;
+    @media only screen and (max-width: 1000px) {
+      display: block;
+    }
   }
   p { color: white; }
   .account-container-item {
@@ -39,6 +42,9 @@
   .account-container-info {
     display: flex;
     justify-content: space-between;
+    @media only screen and (max-width: 1000px) {
+      display: block;
+    }
   }
 
   &.center {
@@ -89,6 +95,11 @@
       .referral-panel-card-header-item:hover {
         color: #fff;
       }
+    }
+  }
+  .account-header-title {
+    @media only screen and (max-width: 1000px) {
+      text-align: center;
     }
   }
 }

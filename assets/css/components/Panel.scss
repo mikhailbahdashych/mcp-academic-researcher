@@ -31,6 +31,9 @@
       }
     }
   }
+  @media only screen and (max-width: 1000px) {
+    margin: 0 auto 15px;
+  }
 }
 
 .panel:hover {
