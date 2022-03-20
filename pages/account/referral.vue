@@ -26,15 +26,21 @@
             </div>
           </div>
           <div v-if="settingsHeaders[0].active">
+            <input id="reflink" :value="`http://localhost:8010/reflink/${reflink.reflink}`" type="hidden" />
+            <input id="refcode" :value="`${reflink.reflink}`" type="hidden" />
             <InputWithButton
               :title="'Referral code'"
               :button-title="'Copy'"
               :disabled="true"
+              :value="reflink.reflink"
+              :button-click-on="copyCode"
             />
             <InputWithButton
               :title="'Referral link'"
               :button-title="'Copy'"
               :disabled="true"
+              :value="`localhost:8010/reflink/${reflink.reflink}`"
+              :button-click-on="copyLink"
             />
           </div>
           <div v-else>
@@ -44,20 +50,7 @@
         </div>
       </div>
     </div>
-
-<!--    <div class="account-container center" v-if="reflink.status !== -1">-->
-<!--      <h1>Generate your referral link, invite friends and get bonuses</h1>-->
-<!--      <p>By generating your own referral link you are able to send it to your friends and make bonuses. C'mon, it's much fun together!</p>-->
-<!--      <Button class="center-button" :label="'Generate referral link'" :clickon="generateRefLink" />-->
-<!--    </div>-->
-
-<!--    <div class="account-container" v-else>-->
-<!--      <input id="reflink" :value="`http://localhost:8010/reflink/${reflink.reflink}`" type="hidden" />-->
-<!--      <p class="paragraph medium">-->
-<!--        Here is your referral link (click on to copy):-->
-<!--        <span class="paragraph link average" @click="copyLink">localhost:8010/reflink/{{ reflink.reflink }}</span>-->
-<!--      </p>-->
-
+    
 <!--      <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>-->
 <!--      <div v-else>-->
 <!--        <p class="paragraph medium">List of clients who has been registered from your link:</p>-->
@@ -99,6 +92,15 @@ export default {
     },
     copyLink() {
       const input = document.querySelector(`#reflink`)
+      input.setAttribute('type', 'text')
+      input.select()
+      document.execCommand('copy')
+      input.setAttribute('type', 'hidden')
+      this.showPopup = true
+      setTimeout(() => { this.showPopup = false }, 1500)
+    },
+    copyCode() {
+      const input = document.querySelector(`#refcode`)
       input.setAttribute('type', 'text')
       input.select()
       document.execCommand('copy')
