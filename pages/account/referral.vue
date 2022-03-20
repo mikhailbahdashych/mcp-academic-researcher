@@ -19,8 +19,7 @@
       <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>
       <div v-else>
         <p class="paragraph medium">List of clients who has been registered from your link:</p>
-<!--        <BasicTable :headers="['Email', 'Invited at', 'Amount']" :items="reflink.invitedclients" />-->
-        <BasicTable :headers="[{title: 'Email', field: 'email'}, {title: 'Invited at', field: 'Invited at'}]" :items="reflink.invitedclients" />
+        <BasicTable :headers="['Email', 'Invited at']" :items="reflink.invitedclients" />
       </div>
     </div>
     <Footer :bright="true" />

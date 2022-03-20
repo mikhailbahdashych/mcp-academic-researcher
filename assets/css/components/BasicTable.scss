@@ -1,11 +1,11 @@
 @import "../basics";
 
 .basic-table {
-  .table-headers {
+  .table-items {
     width: 100%;
     height: 60px;
     display: flex;
-    .table-headers-item {
+    .table-headers-item, .table-item {
       height: 100%;
       width: 100%;
       border: 0.5px solid rgba(#fff, 0.5);
@@ -13,16 +13,5 @@
     }
     .table-headers-item:nth-child(1) { border-radius: 20px 0 0 0; }
     .table-headers-item:last-child { border-radius: 0 20px 0 0; }
-  }
-  .table-items {
-    width: 100%;
-    height: 60px;
-    display: flex;
-    .table-item {
-      height: 100%;
-      width: 100%;
-      border: 0.5px solid rgba(#fff, 0.5);
-      text-align: center;
-    }
   }
 }
