@@ -31,9 +31,11 @@
             <InputWithButton
               :title="'Referral code'"
               :button-title="'Copy'"
-              :disabled="true"
+              :readonly="true"
               :value="reflink.reflink"
               :button-click-on="copyCode"
+              :select="test"
+              :focus="test"
             />
             <InputWithButton
               :title="'Referral link'"
@@ -50,7 +52,7 @@
         </div>
       </div>
     </div>
-    
+
 <!--      <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>-->
 <!--      <div v-else>-->
 <!--        <p class="paragraph medium">List of clients who has been registered from your link:</p>-->
@@ -70,6 +72,7 @@ export default {
     return {
       reflink: {},
       showPopup: false,
+      test: false,
       settingsHeaders: [
         { title: 'With link', active: true },
         { title: 'With QR code', active: false },
@@ -90,17 +93,18 @@ export default {
       await generateReferralLink({ token: localStorage.getItem('token') })
       .then((res) => { if (res.status === 1) window.location.reload() })
     },
-    copyLink() {
-      const input = document.querySelector(`#reflink`)
+    copyCode() {
+      const input = document.querySelector(`#refcode`)
       input.setAttribute('type', 'text')
       input.select()
       document.execCommand('copy')
       input.setAttribute('type', 'hidden')
       this.showPopup = true
+      this.test = true
       setTimeout(() => { this.showPopup = false }, 1500)
     },
-    copyCode() {
-      const input = document.querySelector(`#refcode`)
+    copyLink() {
+      const input = document.querySelector(`#reflink`)
       input.setAttribute('type', 'text')
       input.select()
       document.execCommand('copy')

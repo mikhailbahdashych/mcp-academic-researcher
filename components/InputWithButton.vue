@@ -8,6 +8,7 @@
         :class="[error && innerValue && innerValue.length > 0 ? 'error' : '']"
         :type="type"
         :disabled="disabled"
+        :readonly="readonly"
         :placeholder="placeholder"
         :name="name"
         :value="innerValue"
@@ -54,6 +55,10 @@ export default {
       type: Boolean,
       default: false
     },
+    readonly: {
+      type: Boolean,
+      default: false
+    },
     placeholder: {
       type: String,
       default: ''
@@ -65,11 +70,18 @@ export default {
     focus: {
       type: Boolean,
       default: false
+    },
+    select: {
+      type: Boolean,
+      default: false
     }
   },
   watch: {
     focus: function() {
       if (this.focus) this.$refs.name.focus()
+    },
+    select: function () {
+      if (this.select) this.$refs.name.select()
     },
     value(value) {
       this.innerValue = value
