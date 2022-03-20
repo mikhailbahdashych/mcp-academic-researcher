@@ -31,5 +31,11 @@
     border-radius: 7px;
     z-index: 2;
     color: white;
+    @media only screen and (max-width: 525px) {
+      width: 100px;
+    }
+  }
+  @media only screen and (max-width: 525px) {
+    width: 100px;
   }
 }
