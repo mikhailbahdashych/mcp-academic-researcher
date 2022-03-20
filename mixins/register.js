@@ -95,7 +95,8 @@ export const registration = {
       if (this.validFields()) {
         await register({
           email: this.email.email,
-          password: this.password.password
+          password: this.password.password,
+          reflink: this.reflink || null
         }).then(async (res) => {
           if (res.status === -1) return this.$store.commit('setStatus', res.status)
           await sendEmail({ type: 'reg', to: this.email.email }).then((res) => {
