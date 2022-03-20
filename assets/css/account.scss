@@ -64,6 +64,10 @@
       margin: 25px auto;
       border-radius: 15px;
       padding: 0 20px;
+      .qr-side {
+        text-align: center;
+        .qr-code { width: 230px; }
+      }
     }
     .referral-panel-card-header {
       width: 100%;

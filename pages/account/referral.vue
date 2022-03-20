@@ -46,8 +46,9 @@
               :select="showPopupLink"
             />
           </div>
-          <div v-else>
-            <h1>Here is qr</h1>
+          <div class="qr-side" v-else>
+            <p class="paragraph medium">Invite by QR code</p>
+            <img class="qr-code" :src="reflink.qrcode" alt="QR" style="border-radius: 3px">
           </div>
           <p class="paragraph opacity">Or share this link in social networks</p>
         </div>
