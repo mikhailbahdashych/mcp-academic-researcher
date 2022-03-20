@@ -15,8 +15,26 @@
         </div>
       </div>
       <div class="referral-panel-card-container">
-        <div class="referral-panel-card">
-
+        <div class="referral-panel-card" v-if="reflink.status === -1">
+          <p class="paragraph medium">If you feel ready to go, click the button to generate referral link.</p>
+          <Button :label="'Generate referral link'" :clickon="generateRefLink" />
+        </div>
+        <div class="referral-panel-card" v-else>
+          <div class="referral-panel-card-header">
+            <p class="paragraph referral-panel-card-header-item">With link</p>
+            <p class="paragraph referral-panel-card-header-item">With QR code</p>
+          </div>
+          <InputWithButton
+            :title="'Referral code'"
+            :button-title="'Copy'"
+            :disabled="true"
+          />
+          <InputWithButton
+            :title="'Referral link'"
+            :button-title="'Copy'"
+            :disabled="true"
+          />
+          <p class="paragraph opacity">Or share this link in social networks</p>
         </div>
       </div>
     </div>

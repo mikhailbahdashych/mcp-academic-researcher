@@ -63,6 +63,24 @@
       border: 0.5px solid $maincolor;
       margin: 25px auto;
       border-radius: 15px;
+      padding: 0 20px;
+    }
+    .referral-panel-card-header {
+      width: 100%;
+      border-bottom: 0.5px solid white;
+      height: 50px;
+      display: flex;
+      text-align: center;
+      .referral-panel-card-header-item {
+        cursor: pointer;
+        width: 100%;
+        padding-top: 5px;
+        color: rgba(#fff, 0.5);
+        transition: .2s;
+      }
+      .referral-panel-card-header-item:hover {
+        color: #fff;
+      }
     }
   }
 }
