@@ -39,7 +39,7 @@
         <Button :label="'Sign up'" :clickon="register" :disabled="!validFields()" />
       </div>
       <div class="login-inputs-container" v-else>
-        <h1>Conformation email has been sent.</h1>
+        <h1>Confirmation email has been sent.</h1>
         <p class="paragraph medium">Please, follow the instruction in the email to complete registration process.</p>
         <p class="paragraph medium">The link will be valid for 24 hours.</p>
       </div>

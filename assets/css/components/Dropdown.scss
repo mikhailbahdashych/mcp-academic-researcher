@@ -3,7 +3,7 @@
 .dropdown-menu {
   width: 200px;
   height: 50px;
-  border: 0.5px solid rgba(#fff, 0.5);
+  border: 1px solid rgba(#fff, 0.5);
   border-radius: 8px;
   display: flex;
   cursor: pointer;
@@ -31,5 +31,11 @@
     border-radius: 7px;
     z-index: 2;
     color: white;
+    @media only screen and (max-width: 525px) {
+      width: 100px;
+    }
+  }
+  @media only screen and (max-width: 525px) {
+    width: 100px;
   }
 }

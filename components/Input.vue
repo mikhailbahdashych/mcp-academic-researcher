@@ -10,6 +10,7 @@
         && innerValue && innerValue.length > 0 ? `error ${additionalClass}` : additionalClass]"
       :type="type"
       :disabled="disabled"
+      :readonly="readonly"
       :placeholder="placeholder"
       :name="name"
       :value="innerValue"
@@ -39,6 +40,10 @@ export default {
       default: ''
     },
     disabled: {
+      type: Boolean,
+      default: false
+    },
+    readonly: {
       type: Boolean,
       default: false
     },

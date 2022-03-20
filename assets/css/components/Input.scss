@@ -6,7 +6,7 @@
     min-height: 35px;
     border-radius: 5px;
     outline: none;
-    border: 0.5px solid rgba(0,0,0,0);
+    border: 1px solid rgba(0,0,0,0);
     background-color: rgba(#000, 0.5);
     padding: 0 0 0 16px;
     height: 48px;
@@ -14,17 +14,17 @@
     line-height: 24px;
     transition: 0.3s;
     color: white;
-    &.error { border: 0.5px solid $error; }
-    &.error:focus { border: 0.5px solid $error; }
+    &.error { border: 1px solid $error; }
+    &.error:focus { border: 1px solid $error; }
   }
-  .basic-input:focus { border: 0.5px solid $maincolor; }
+  .basic-input:focus { border: 1px solid $maincolor; }
   .basic-input:disabled { background-color: rgba(#aaa, 0.5) }
 
   .basic-input-box { width: calc(100% - 16px); }
   .basic-input-wide { width: 500px; }
 
   .on-white {
-    border: 0.5px solid $backgroundcolor;
+    border: 1px solid $backgroundcolor;
     background-color: rgba(#fff, 0.5);
     color: black;
   }

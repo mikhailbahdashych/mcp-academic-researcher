@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="referral-container-side">
-      <div class="referral-container-card">
+      <div v-if="status !== 1" class="referral-container-card">
         <Input :additional-class="'basic-input-box'" :title="'Email'" :disabled="reflink.status === -1" :oneerror="email.emailError" :type="'text'" v-model="email.email" />
         <Input :additional-class="'basic-input-box'" :title="'Password'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :type="'password'" v-model="password.password"  />
         <Input :additional-class="'basic-input-box'" :title="'Password repeat'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules":type="'password'" v-model="password.passwordRepeat" />
@@ -45,10 +45,17 @@
         </div>
 
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" :disabled="reflink.status === -1" />
+        <p v-if="status === -1" class="paragraph error">User with this email already exists!</p>
         <Button :clickon="register" :label="'Create account'" :disabled="reflink.status === -1 || !validFields()" />
         <p class="paragraph" id="referral-about">Read more about
           <span class="paragraph link">referral program</span>.
         </p>
+      </div>
+      <div v-else class="referral-container-card">
+        <h1>Сonfirmation email has been sent.</h1>
+        <p class="paragraph medium">Please, follow the instruction in the email to complete registration process.</p>
+        <p class="paragraph medium">The link will be valid for 24 hours.</p>
+        <p class="paragraph">Go to <span class="paragraph link" @click="redirect('/login')">login</span> page.</p>
       </div>
     </div>
   </div>

@@ -3,7 +3,7 @@
     <Header />
     <AccountHeader />
     <div class="account-container">
-      <h1>Account Information</h1>
+      <h1 class="account-header-title">Account Information</h1>
       <div class="account-container-info">
         <Panel :title="'UUID'" :text="`Your UUID: ${client.personaluuid}`" />
         <Panel :title="'Email'" :text="`Your email: ${client.email}`" />
