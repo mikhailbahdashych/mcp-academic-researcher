@@ -1,11 +1,18 @@
 <template>
   <div class="basic-table">
+
     <div class="table-headers">
-      <div class="table-item" v-for="header in headers">
-        <p class="paragraph medium">{{ header }}</p>
+      <div class="table-headers-item" v-for="header in headers">
+        <p class="paragraph medium">{{ header.title }}</p>
       </div>
     </div>
-    <div class="table-items"></div>
+
+    <div class="table-items" v-for="item in items">
+      <div class="table-item" v-for="i in item">
+        <p class="paragraph medium">{{ i }}</p>
+      </div>
+    </div>
+
   </div>
 </template>
 
