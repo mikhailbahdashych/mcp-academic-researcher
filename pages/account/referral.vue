@@ -3,7 +3,7 @@
     <Popup :content="'Copied!'" v-if="showPopup" />
     <Header />
     <AccountHeader />
-    <div class="account-container wide">
+    <div class="account-container wide referral-panel">
       <div class="home-base referral-panel">
         <div class="home-text-box referral-panel">
           <div class="home-welcome">
@@ -12,6 +12,11 @@
             <h1 class="title small-content">Make from 20$ up to 1000$ from every invited friend. C'mon, it's much fun together!</h1>
             <p class="paragraph medium">For more information see <span class="paragraph medium link">FAQ</span>.</p>
           </div>
+        </div>
+      </div>
+      <div class="referral-panel-card-container">
+        <div class="referral-panel-card">
+
         </div>
       </div>
     </div>

@@ -5,6 +5,9 @@
   min-height: 65vh;
   margin: 0 auto;
   padding-top: 130px;
+  &.referral-panel {
+    display: flex;
+  }
   p { color: white; }
   .account-container-item {
     margin: 0 auto 20px;
@@ -48,5 +51,18 @@
   }
   &.wide {
     width: 90%;
+  }
+
+  .referral-panel-card-container {
+    height: 500px;
+    width: 100%;
+    .referral-panel-card {
+      height: 90%;
+      width: 400px;
+      background-color: $backgroundcolorsecond;
+      border: 0.5px solid $maincolor;
+      margin: 25px auto;
+      border-radius: 15px;
+    }
   }
 }
