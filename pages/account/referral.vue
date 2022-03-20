@@ -17,7 +17,10 @@
       </p>
 
       <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>
-      <p class="paragraph medium" v-else>List of clients who has been registered from your link:</p>
+      <div v-else>
+        <p class="paragraph medium">List of clients who has been registered from your link:</p>
+        <p class="paragraph medium">{{ reflink.invitedclients }}</p>
+      </div>
     </div>
     <Footer :bright="true" />
   </div>
