@@ -4,6 +4,10 @@
   height: 100%;
   min-height: 700px;
   width: 100%;
+  &.referral-panel {
+    height: 500px;
+    min-height: 500px;
+  }
 }
 
 .home-text-box {
@@ -37,6 +41,8 @@
   &.referral-panel {
     left: 0;
     top: unset;
+    height: 500px;
+    min-height: 500px;
   }
 }
 

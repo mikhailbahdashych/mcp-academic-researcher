@@ -4,7 +4,7 @@
     <Header />
     <AccountHeader />
     <div class="account-container wide">
-      <div class="home-base">
+      <div class="home-base referral-panel">
         <div class="home-text-box referral-panel">
           <div class="home-welcome">
             <h1 class="title">Welcome to referral panel!</h1>
