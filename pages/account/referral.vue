@@ -8,19 +8,21 @@
         <div class="home-text-box referral-panel">
           <div class="home-welcome">
             <h1 class="title">Welcome to referral panel!</h1>
-            <h1 class="title small-title">Improve your trading strategy with personal AI</h1>
-            <h1 class="title small-content">Let your personal Artificial Intelligence collect and analyze trading data to improve your personal strategy</h1>
+            <h1 class="title small-title">Generate your referral link, invite friends and earn bonuses bonuses.</h1>
+            <h1 class="title small-content">Make from 20$ up to 1000$ from every invited friend. C'mon, it's much fun together!</h1>
+            <p class="paragraph medium">For more information see <span class="paragraph medium link">FAQ</span>.</p>
           </div>
         </div>
       </div>
     </div>
-<!--    <div class="account-container center" v-if="reflink.status === -1">-->
+
+<!--    <div class="account-container center" v-if="reflink.status !== -1">-->
 <!--      <h1>Generate your referral link, invite friends and get bonuses</h1>-->
 <!--      <p>By generating your own referral link you are able to send it to your friends and make bonuses. C'mon, it's much fun together!</p>-->
 <!--      <Button class="center-button" :label="'Generate referral link'" :clickon="generateRefLink" />-->
 <!--    </div>-->
-<!--    <div class="account-container" v-else>-->
 
+<!--    <div class="account-container" v-else>-->
 <!--      <input id="reflink" :value="`http://localhost:8010/reflink/${reflink.reflink}`" type="hidden" />-->
 <!--      <p class="paragraph medium">-->
 <!--        Here is your referral link (click on to copy):-->
@@ -55,6 +57,7 @@ export default {
   methods: {
     async generateRefLink() {
       await generateReferralLink({ token: localStorage.getItem('token') })
+      .then((res) => { if (res.status === 1) window.location.reload() })
     },
     copyLink() {
       const input = document.querySelector(`#reflink`)

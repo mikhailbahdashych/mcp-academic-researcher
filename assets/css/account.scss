@@ -2,7 +2,7 @@
 
 .account-container {
   width: 75%;
-  min-height: 75vh;
+  min-height: 65vh;
   margin: 0 auto;
   padding-top: 130px;
   p { color: white; }
@@ -47,6 +47,6 @@
     max-width: 250px;
   }
   &.wide {
-    width: 100%;
+    width: 90%;
   }
 }
