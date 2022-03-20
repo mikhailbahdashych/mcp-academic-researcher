@@ -1,6 +1,10 @@
 <template>
   <div class="basic-table">
-    <div class="table-headers"></div>
+    <div class="table-headers">
+      <div class="table-item" v-for="header in headers">
+        <p class="paragraph medium">{{ header }}</p>
+      </div>
+    </div>
     <div class="table-items"></div>
   </div>
 </template>
