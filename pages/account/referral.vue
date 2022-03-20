@@ -1,6 +1,7 @@
 <template>
   <div>
-    <Popup :content="'Copied!'" v-if="showPopup" />
+    <Popup :content="'Copied code!'" v-if="showPopupCode" />
+    <Popup :content="'Copied link!'" v-if="showPopupLink" />
     <Header />
     <AccountHeader />
     <div class="account-container wide referral-panel">
@@ -34,14 +35,15 @@
               :readonly="true"
               :value="reflink.reflink"
               :button-click-on="copyCode"
-              :select="test"
+              :select="showPopupCode"
             />
             <InputWithButton
               :title="'Referral link'"
               :button-title="'Copy'"
-              :disabled="true"
+              :readonly="true"
               :value="`localhost:8010/reflink/${reflink.reflink}`"
               :button-click-on="copyLink"
+              :select="showPopupLink"
             />
           </div>
           <div v-else>
@@ -70,7 +72,8 @@ export default {
   data() {
     return {
       reflink: {},
-      showPopup: false,
+      showPopupCode: false,
+      showPopupLink: false,
       test: false,
       settingsHeaders: [
         { title: 'With link', active: true },
@@ -98,9 +101,8 @@ export default {
       input.select()
       document.execCommand('copy')
       input.setAttribute('type', 'hidden')
-      this.showPopup = true
-      this.test = true
-      setTimeout(() => { this.showPopup = false }, 1500)
+      this.showPopupCode = true
+      setTimeout(() => { this.showPopupCode = false }, 1500)
     },
     copyLink() {
       const input = document.querySelector(`#reflink`)
@@ -108,8 +110,8 @@ export default {
       input.select()
       document.execCommand('copy')
       input.setAttribute('type', 'hidden')
-      this.showPopup = true
-      setTimeout(() => { this.showPopup = false }, 1500)
+      this.showPopupLink = true
+      setTimeout(() => { this.showPopupLink = false }, 1500)
     }
   }
 }
