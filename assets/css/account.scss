@@ -64,7 +64,7 @@
     width: 100%;
     .referral-panel-card {
       height: 90%;
-      width: 400px;
+      max-width: 400px;
       background-color: $backgroundcolorsecond;
       border: 1px solid $maincolor;
       margin: 25px auto;
@@ -73,6 +73,10 @@
       .qr-side {
         text-align: center;
         .qr-code { width: 230px; }
+      }
+      @media only screen and (max-width: 385px) {
+        max-width: 280px;
+        width: 280px;
       }
     }
     .referral-panel-card-header {

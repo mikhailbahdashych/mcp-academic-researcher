@@ -7,9 +7,9 @@
   &.referral-panel {
     height: 500px;
     min-height: 500px;
-    @media only screen and (max-width: 1000px) {
-      height: 250px;
-      min-height: 250px;
+    @media only screen and (max-width: 525px) {
+      min-height: 330px;
+      height: 330px;
     }
   }
 }
@@ -33,6 +33,9 @@
   .home-welcome {
     height: 30%;
     margin-top: 100px;
+    @media only screen and (max-width: 525px) {
+      margin-top: 20px;
+    }
   }
   .home-start-box {
     width: 50%;
@@ -48,6 +51,12 @@
     height: 500px;
     min-height: 500px;
     position: relative;
+    @media only screen and (max-width: 525px) {
+      min-width: 385px;
+      width: 385px;
+      height: 385px;
+      min-height: 385px;
+    }
   }
 }
 
