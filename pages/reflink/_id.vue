@@ -55,6 +55,7 @@
         <h1>Сonfirmation email has been sent.</h1>
         <p class="paragraph medium">Please, follow the instruction in the email to complete registration process.</p>
         <p class="paragraph medium">The link will be valid for 24 hours.</p>
+        <p class="paragraph">Go to <span class="paragraph link" @click="redirect('/login')">login</span> page.</p>
       </div>
     </div>
   </div>
