@@ -7,9 +7,10 @@
   &.referral-panel {
     height: 500px;
     min-height: 500px;
-    @media only screen and (max-width: 525px) {
+    @media only screen and (max-width: 1000px) {
       min-height: 330px;
       height: 330px;
+      margin: 0 auto;
     }
   }
 }
@@ -56,6 +57,7 @@
       width: 385px;
       height: 385px;
       min-height: 385px;
+      margin: 0 auto;
     }
   }
 }
