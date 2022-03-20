@@ -154,9 +154,9 @@ export const getReferralLink = async (payload) => {
   }
 }
 
-export const getClientsByReferralLink = async (reflink) => {
+export const registrationFromReflink = async (reflink) => {
   try {
-    const { data } = await api.get(`/g-c-b-r-l/${reflink}`)
+    const { data } = await api.get(`/r-f-r-l/${reflink}`)
     return data
   } catch (e) {
     return e.response.data

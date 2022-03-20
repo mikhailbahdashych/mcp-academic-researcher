@@ -22,8 +22,7 @@ body {
   &.right { float: right; }
   &.error { color: $error; }
   &.on-white-paragraph { color: black; }
-  &.pointer { cursor: pointer; }
-  &.link { color: $maincolor; }
+  &.link { color: $maincolor; cursor: pointer; text-decoration: underline }
   &.success { color: lightgreen }
   &.opacity { opacity: 0.5; }
   &.bold { font-weight: 500 }
@@ -84,4 +83,17 @@ h3 {
 .arrow-down {
   transform: rotate(45deg);
   --webkit-transform: rotate(45deg);
+}
+
+ul {
+  color: white;
+  font-size: 18px;
+}
+li {
+  padding-top: 5px;
+  padding-bottom: 5px
+}
+
+.flex {
+  display: flex;
 }

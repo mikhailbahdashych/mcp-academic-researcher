@@ -26,15 +26,6 @@ export default {
   },
   async mounted() {
     this.client = await verifyClientByToken(this.$router, localStorage.getItem('token'), true)
-    this.hideEmail(this.client.email)
-  },
-  methods: {
-    hideEmail(email) {
-      if (email) {
-        this.client.email = email.split('@')[0].slice(0, 2) + '**'
-          + '@**.' + email.split('.')[email.split('.').length - 1]
-      }
-    },
   }
 }
 </script>

@@ -28,9 +28,9 @@ router.post(`/r`, async (req, res) => {
   }
 })
 
-router.post('/confirm-registration', async (req, res) => {
+router.post('/c-r', async (req, res) => {
   try {
-    const data = await api.post('/c-r', req.body)
+    const data = await api.post('/confirm-registration', req.body)
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -154,9 +154,9 @@ router.post('/get-r-l', async (req, res) => {
   }
 })
 
-router.get(`/g-c-b-r-l/:reflink`, async (req, res) => {
+router.get('/r-f-r-l/:reflink', async (req, res) => {
   try {
-    const data = await api.get(`/get-clients-by-referral-link/${req.params.reflink}`)
+    const data = await api.get(`/registration-from-reflink/${req.params.reflink}`)
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)

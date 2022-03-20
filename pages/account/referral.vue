@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Popup :content="'Copied!'" v-if="showPopup" />
     <Header />
     <AccountHeader />
     <div class="account-container center" v-if="reflink.status === -1">
@@ -8,31 +9,47 @@
       <Button class="center-button" :label="'Generate referral link'" :clickon="generateRefLink" />
     </div>
     <div class="account-container" v-else>
-      <h3>Here is your referral link: {{ reflink }}</h3>
-      <p class="paragraph medium" v-if="reflinkclients.length === 0">There is no clients registered by your referral link :(</p>
-      <p class="paragraph medium">List of clients who has been registered from your link:</p>
+
+      <input id="reflink" :value="`http://localhost:8010/reflink/${reflink.reflink}`" type="hidden" />
+      <p class="paragraph medium">
+        Here is your referral link (click on to copy):
+        <span class="paragraph link average" @click="copyLink">localhost:8010/reflink/{{ reflink.reflink }}</span>
+      </p>
+
+      <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>
+      <p class="paragraph medium" v-else>List of clients who has been registered from your link:</p>
     </div>
     <Footer :bright="true" />
   </div>
 </template>
 
 <script>
-import { generateReferralLink, getReferralLink, getClientsByReferralLink } from "~/api";
+import { generateReferralLink, getReferralLink } from "~/api";
+import { verifyClientByToken } from "~/helpers/auth";
 export default {
   name: "referral",
   data() {
     return {
       reflink: {},
-      reflinkclients: []
+      showPopup: false
     }
   },
   async mounted() {
+    await verifyClientByToken(this.$router, localStorage.getItem('token'))
     this.reflink = await getReferralLink({ token: localStorage.getItem('token') })
-    this.reflinkclients = await getClientsByReferralLink(this.reflink)
   },
   methods: {
     async generateRefLink() {
       await generateReferralLink({ token: localStorage.getItem('token') })
+    },
+    copyLink() {
+      const input = document.querySelector(`#reflink`)
+      input.setAttribute('type', 'text')
+      input.select()
+      document.execCommand('copy')
+      input.setAttribute('type', 'hidden')
+      this.showPopup = true
+      setTimeout(() => { this.showPopup = false }, 1500)
     }
   }
 }
