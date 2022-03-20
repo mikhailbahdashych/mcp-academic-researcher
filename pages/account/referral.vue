@@ -35,7 +35,6 @@
               :value="reflink.reflink"
               :button-click-on="copyCode"
               :select="test"
-              :focus="test"
             />
             <InputWithButton
               :title="'Referral link'"
