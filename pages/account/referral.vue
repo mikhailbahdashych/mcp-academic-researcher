@@ -21,19 +21,25 @@
         </div>
         <div class="referral-panel-card" v-else>
           <div class="referral-panel-card-header">
-            <p class="paragraph referral-panel-card-header-item">With link</p>
-            <p class="paragraph referral-panel-card-header-item">With QR code</p>
+            <div v-for="setting in settingsHeaders" :class="[setting.active ? 'active': '']" class="referral-panel-card-header-item">
+              <p class="paragraph" @click="changeRef(setting)">{{ setting.title }}</p>
+            </div>
           </div>
-          <InputWithButton
-            :title="'Referral code'"
-            :button-title="'Copy'"
-            :disabled="true"
-          />
-          <InputWithButton
-            :title="'Referral link'"
-            :button-title="'Copy'"
-            :disabled="true"
-          />
+          <div v-if="settingsHeaders[0].active">
+            <InputWithButton
+              :title="'Referral code'"
+              :button-title="'Copy'"
+              :disabled="true"
+            />
+            <InputWithButton
+              :title="'Referral link'"
+              :button-title="'Copy'"
+              :disabled="true"
+            />
+          </div>
+          <div v-else>
+            <h1>Here is qr</h1>
+          </div>
           <p class="paragraph opacity">Or share this link in social networks</p>
         </div>
       </div>
@@ -70,7 +76,11 @@ export default {
   data() {
     return {
       reflink: {},
-      showPopup: false
+      showPopup: false,
+      settingsHeaders: [
+        { title: 'With link', active: true },
+        { title: 'With QR code', active: false },
+      ],
     }
   },
   async mounted() {
@@ -78,6 +88,11 @@ export default {
     this.reflink = await getReferralLink({ token: localStorage.getItem('token') })
   },
   methods: {
+    changeRef(s) {
+      this.settingsHeaders.forEach(item => {
+        item.active = item.title === s.title;
+      })
+    },
     async generateRefLink() {
       await generateReferralLink({ token: localStorage.getItem('token') })
       .then((res) => { if (res.status === 1) window.location.reload() })

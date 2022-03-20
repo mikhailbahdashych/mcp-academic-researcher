@@ -77,6 +77,10 @@
         padding-top: 5px;
         color: rgba(#fff, 0.5);
         transition: .2s;
+        height: calc(100% - 5px);
+        &.active {
+          border-bottom: 3px solid $maincolor;
+        }
       }
       .referral-panel-card-header-item:hover {
         color: #fff;
