@@ -19,7 +19,7 @@
 
     <div class="home-content">
     </div>
-    <Footer/>
+    <Footer :bright="true"/>
 
   </div>
 </template>

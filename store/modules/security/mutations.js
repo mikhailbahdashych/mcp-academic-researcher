@@ -22,8 +22,9 @@ export default {
       sms: false,
       closingAccount: false,
       changeEmail: false,
-      changeEmailSuccess: false,
-      disable2fa: false
+      changePassword: false,
+      disable2fa: false,
+      freezeAccount: false
     }
   }
 }

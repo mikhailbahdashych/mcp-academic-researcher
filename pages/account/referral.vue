@@ -26,7 +26,6 @@
             </div>
           </div>
           <div v-if="settingsHeaders[0].active">
-            <p class="paragraph">{{showPopup}}</p>
             <input id="reflink" :value="`http://localhost:8010/reflink/${reflink.reflink}`" type="hidden" />
             <input id="refcode" :value="`${reflink.reflink}`" type="hidden" />
             <InputWithButton
