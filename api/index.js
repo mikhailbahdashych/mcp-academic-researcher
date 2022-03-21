@@ -46,15 +46,6 @@ export const resetPassword = async (payload) => {
   }
 }
 
-export const sendVerificationCode = async (payload) => {
-  try {
-    const { data } = await api.post(`/v-c`, payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
 export const getClientByToken = async (token) => {
   try {
     const { data } = await api.post('/c-b-t', token)

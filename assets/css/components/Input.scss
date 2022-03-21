@@ -22,6 +22,7 @@
 
   .basic-input-box { width: calc(100% - 16px); }
   .basic-input-wide { width: 500px; }
+  .basic-input-search { width: 200px; }
 
   .on-white {
     border: 1px solid $backgroundcolor;
@@ -32,6 +33,7 @@
   .margin-bottom-10 { margin-bottom: 10px }
   .margin-bottom-20 { margin-bottom: 20px }
   .margin-bottom-30 { margin-bottom: 30px }
+  .margin-center { margin: 0 auto }
 
   &.wide {
     width: 80%;
