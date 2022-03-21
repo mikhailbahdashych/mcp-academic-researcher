@@ -1,7 +1,6 @@
 <template>
   <div>
-    <Popup :content="'Copied code!'" v-if="showPopupCode" />
-    <Popup :content="'Copied link!'" v-if="showPopupLink" />
+    <Popup :content="'Copied!'" v-if="showPopup.status" />
     <Header />
     <AccountHeader />
     <div class="account-container wide referral-panel">
@@ -27,6 +26,7 @@
             </div>
           </div>
           <div v-if="settingsHeaders[0].active">
+            <p class="paragraph">{{showPopup}}</p>
             <input id="reflink" :value="`http://localhost:8010/reflink/${reflink.reflink}`" type="hidden" />
             <input id="refcode" :value="`${reflink.reflink}`" type="hidden" />
             <InputWithButton
@@ -34,16 +34,16 @@
               :button-title="'Copy'"
               :readonly="true"
               :value="reflink.reflink"
-              @show="copyCode('as2d')"
-              :select="showPopupCode"
+              @show="copyCode('refcode')"
+              :select="showPopup.refcode"
             />
             <InputWithButton
               :title="'Referral link'"
               :button-title="'Copy'"
               :readonly="true"
               :value="`localhost:8010/reflink/${reflink.reflink}`"
-              @show="copyCode('as1d')"
-              :select="showPopupLink"
+              @show="copyCode('reflink')"
+              :select="showPopup.reflink"
             />
           </div>
           <div class="qr-side" v-else>
@@ -71,8 +71,7 @@ export default {
   data() {
     return {
       reflink: {},
-      showPopupCode: false,
-      showPopupLink: false,
+      showPopup: { status: false, refcode: false, reflink: false },
       test: false,
       settingsHeaders: [
         { title: 'With link', active: true },
@@ -95,24 +94,22 @@ export default {
       .then((res) => { if (res.status === 1) window.location.reload() })
     },
     copyCode(t) {
-      console.log(t)
-      // const input = document.querySelector(`#refcode`)
-      // input.setAttribute('type', 'text')
-      // input.select()
-      // document.execCommand('copy')
-      // input.setAttribute('type', 'hidden')
-      // this.showPopupCode = true
-      // setTimeout(() => { this.showPopupCode = false }, 1500)
-    },
-    // copyLink() {
-    //   const input = document.querySelector(`#reflink`)
-    //   input.setAttribute('type', 'text')
-    //   input.select()
-    //   document.execCommand('copy')
-    //   input.setAttribute('type', 'hidden')
-    //   this.showPopupLink = true
-    //   setTimeout(() => { this.showPopupLink = false }, 1500)
-    // }
+      const input = document.querySelector(`#${t}`)
+      input.setAttribute('type', 'text')
+      input.select()
+      document.execCommand('copy')
+      input.setAttribute('type', 'hidden')
+
+      this.showPopup.status = true
+      if (t === 'refcode') this.showPopup.refcode = true
+      else this.showPopup.reflink = true
+
+      setTimeout(() => {
+        this.showPopup.status = false
+        this.showPopup.refcode = false
+        this.showPopup.reflink = false
+      }, 1500)
+    }
   }
 }
 </script>
