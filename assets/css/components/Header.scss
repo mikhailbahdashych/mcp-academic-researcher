@@ -42,7 +42,17 @@
     }
   }
 
-  .header-nav-menu {}
+  .header-nav-menu {
+    margin: 10px;
+    width: 90px;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+    line-height: 40px;
+    border-radius: 5px;
+    border: 1px solid rgba(#fff, 0.5);
+    color: white;
+  }
   .header-nav-menu:hover .arrow {
     border: solid $maincolor;
     transform: rotate(-135deg);

@@ -2,6 +2,7 @@
   <div :class="dark ? 'header' : 'header dark'">
     <div class="inner-header">
       <div class="inner-header-small">
+
         <div class="dropdown">
 
           <div class="header-nav-menu">
@@ -14,6 +15,20 @@
           </div>
 
         </div>
+
+        <div class="dropdown">
+          <div class="header-nav-menu">
+            <span>More <i class="arrow arrow-down" /></span>
+          </div>
+          <div class="dropdown-content">
+            <div class="dropdown-item">
+              <span class="item">asd</span>
+              <span class="item">asd</span>
+              <span class="item">asd</span>
+            </div>
+          </div>
+        </div>
+
       </div>
       <div class="inner-header-big">
         <Input @keyup.enter.native="() => {}" :additional-class="'search-bar'" />
