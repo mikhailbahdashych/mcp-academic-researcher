@@ -33,11 +33,11 @@
       <div class="inner-header-big">
         <Input @keyup.enter.native="() => {}" :additional-class="'search-bar'" />
       </div>
-      <div class="inner-header-small" v-if="!token">
+      <div class="inner-header-small buttons" v-if="!token">
         <Button @show="redirect('/login')" :label="'Log in'" :additional-class="'transparent'" class="inner-header-button" />
         <Button @show="redirect('/register')" :label="'Sign up'" :additional-class="'transparent'" class="inner-header-button" />
       </div>
-      <div class="inner-header-small" v-else>
+      <div class="inner-header-small buttons" v-else>
         <Button @show="redirect('/account')" :label="'My account'" :additional-class="'transparent'" class="inner-header-button" />
         <Button @show="logout" :label="'Log out'" class="inner-header-button" />
       </div>
