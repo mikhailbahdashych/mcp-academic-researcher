@@ -22,11 +22,11 @@ export default {
   props: {
     headers: {
       type: Array,
-      default: []
+      default: () => {}
     },
     items: {
       type: Array,
-      default: []
+      default: () => {}
     }
   }
 }

@@ -1,8 +1,8 @@
 @import "../basics";
 
 .basic-table {
+  width: 100%;
   .table-items {
-    width: 100%;
     height: 60px;
     display: flex;
     .table-headers-item, .table-item {

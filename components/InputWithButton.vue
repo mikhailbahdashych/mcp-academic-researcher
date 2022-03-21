@@ -14,7 +14,14 @@
         :value="innerValue"
         @input="onInput"
       >
-      <Button :clickon="buttonClickOn" :label="`${buttonTitle}`" class="input-button" />
+      <div @click="buttonClickOn" class="basic-button-outer">
+        <button
+          @click="$emit('show')"
+          class="basic-button input-with-button"
+        >
+          {{ buttonTitle }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -107,4 +114,5 @@ export default {
 
 <style lang="scss">
 @import "../assets/css/components/InputWithButton";
+@import "../assets/css/components/Button";
 </style>

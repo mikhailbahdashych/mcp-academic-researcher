@@ -11,6 +11,9 @@
     font-family: "Inter", sans-serif;
     font-weight: 300;
     transition: 0.5s;
+    &.input-with-button {
+      width: 75px;
+    }
   }
   .basic-button:disabled {
     background-color: rgba($maincolor, 0.5);

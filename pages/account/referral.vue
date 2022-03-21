@@ -34,7 +34,7 @@
               :button-title="'Copy'"
               :readonly="true"
               :value="reflink.reflink"
-              :button-click-on="copyCode"
+              @show="copyCode('as2d')"
               :select="showPopupCode"
             />
             <InputWithButton
@@ -42,7 +42,7 @@
               :button-title="'Copy'"
               :readonly="true"
               :value="`localhost:8010/reflink/${reflink.reflink}`"
-              :button-click-on="copyLink"
+              @show="copyCode('as1d')"
               :select="showPopupLink"
             />
           </div>
@@ -55,12 +55,10 @@
       </div>
     </div>
 
-<!--      <p class="paragraph medium" v-if="!reflink.invitedclients">There is no clients registered by your referral link :(</p>-->
-<!--      <div v-else>-->
-<!--        <p class="paragraph medium">List of clients who has been registered from your link:</p>-->
-<!--        <BasicTable :headers="['Email', 'Invited at']" :items="reflink.invitedclients" />-->
-<!--      </div>-->
-<!--    </div>-->
+    <div class="account-container wide referral-panel">
+      <BasicTable :headers="['Email', 'Invited at']" :items="reflink.invitedclients" />
+    </div>
+
     <Footer :bright="true" />
   </div>
 </template>
@@ -96,24 +94,25 @@ export default {
       await generateReferralLink({ token: localStorage.getItem('token') })
       .then((res) => { if (res.status === 1) window.location.reload() })
     },
-    copyCode() {
-      const input = document.querySelector(`#refcode`)
-      input.setAttribute('type', 'text')
-      input.select()
-      document.execCommand('copy')
-      input.setAttribute('type', 'hidden')
-      this.showPopupCode = true
-      setTimeout(() => { this.showPopupCode = false }, 1500)
+    copyCode(t) {
+      console.log(t)
+      // const input = document.querySelector(`#refcode`)
+      // input.setAttribute('type', 'text')
+      // input.select()
+      // document.execCommand('copy')
+      // input.setAttribute('type', 'hidden')
+      // this.showPopupCode = true
+      // setTimeout(() => { this.showPopupCode = false }, 1500)
     },
-    copyLink() {
-      const input = document.querySelector(`#reflink`)
-      input.setAttribute('type', 'text')
-      input.select()
-      document.execCommand('copy')
-      input.setAttribute('type', 'hidden')
-      this.showPopupLink = true
-      setTimeout(() => { this.showPopupLink = false }, 1500)
-    }
+    // copyLink() {
+    //   const input = document.querySelector(`#reflink`)
+    //   input.setAttribute('type', 'text')
+    //   input.select()
+    //   document.execCommand('copy')
+    //   input.setAttribute('type', 'hidden')
+    //   this.showPopupLink = true
+    //   setTimeout(() => { this.showPopupLink = false }, 1500)
+    // }
   }
 }
 </script>
