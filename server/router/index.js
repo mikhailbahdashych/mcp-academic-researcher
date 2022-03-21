@@ -46,15 +46,6 @@ router.post(`/r-p`, async (req, res) => {
   }
 })
 
-router.post(`/v-c`, async (req, res) => {
-  try {
-    const data = await api.post('/verification-code', req.body)
-    res.json(data.data)
-  } catch (e) {
-    res.status(e.response.status).json(e.response.data)
-  }
-})
-
 router.post('/c-b-t', async (req, res) => {
   try {
     const data = await api.post('/client-by-token', req.body)
