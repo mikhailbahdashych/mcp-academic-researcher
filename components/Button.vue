@@ -37,9 +37,4 @@ export default {
 
 <style lang="scss">
 @import "../assets/css/components/Button";
-.on-hover {}
-.on-hover:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 15px $maincolor;
-}
 </style>

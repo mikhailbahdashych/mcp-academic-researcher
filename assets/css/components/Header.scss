@@ -6,8 +6,39 @@
   height: 60px;
   background-color: $backgroundcolorsecond;
   display: flex;
-  justify-content: space-between;
   position: fixed;
   z-index: 99;
-  transition: .2s;
+
+  .inner-header {
+    height: 60px;
+    width: 80%;
+    margin: 0 auto;
+    display: flex;
+    .inner-header-small {
+      width: 25%;
+      height: 60px;
+      display: flex;
+      .inner-header-button {
+        width: 70px;
+        margin-top: 10px;
+        margin-left: 10px;
+        button { height: 40px; }
+      }
+    }
+    .inner-header-big {
+      width: 50%;
+      height: 60px;
+      margin: 0 auto;
+      .search-bar {
+        height: 18px;
+        margin: 0 auto;
+        width: 250px;
+        display: flex;
+      }
+    }
+  }
+
+  &.dark {
+    background-color: $backgroundcolor;
+  }
 }

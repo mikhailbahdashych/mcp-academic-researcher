@@ -1,6 +1,19 @@
 <template>
   <div :class="dark ? 'header' : 'header dark'">
-
+    <div class="inner-header">
+      <div class="inner-header-small"></div>
+      <div class="inner-header-big">
+        <Input @keyup.enter.native="() => {}" :additional-class="'search-bar'" />
+      </div>
+      <div class="inner-header-small" v-if="!token">
+        <Button @show="redirect('/login')" :label="'Log in'" class="inner-header-button" />
+        <Button @show="redirect('/register')" :label="'Sign up'" class="inner-header-button" />
+      </div>
+      <div class="inner-header-small" v-else>
+        <Button @show="redirect('/account')" :label="'My account'" class="inner-header-button" />
+        <Button @show="logout" :label="'Log out'" class="inner-header-button" />
+      </div>
+    </div>
   </div>
 </template>
 
