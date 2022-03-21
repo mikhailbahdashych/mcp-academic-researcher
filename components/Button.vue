@@ -4,7 +4,7 @@
       @click="$emit('show')"
       :disabled="disabled"
       class="basic-button"
-      :class="[onhover ? 'on-hover' : '']"
+      :class="additionalClass"
     >
       {{ label }}
     </button>
@@ -27,9 +27,9 @@ export default {
       type: Function,
       default: () => {}
     },
-    onhover: {
-      type: Boolean,
-      default: false
+    additionalClass: {
+      type: String,
+      default: ''
     }
   }
 }
