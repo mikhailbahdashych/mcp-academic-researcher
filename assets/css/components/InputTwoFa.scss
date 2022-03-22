@@ -1,0 +1,19 @@
+@import "../basics";
+
+.input-two-fa {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 4rem;
+  height: 4rem;
+  font-size: 32px;
+  text-align: center;
+  outline: none;
+  color: white;
+  background-color: $backgroundcolorthird;
+  border-radius: 6px;
+  border: 1px solid rgba($maincolor, 0.5);
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    display: none;
+  }
+}

@@ -7,6 +7,7 @@
       <div class="home-base referral-panel">
         <div class="home-text-box referral-panel">
           <div class="home-welcome">
+            <InputTwoFa />
             <h1 class="title">Welcome to referral panel!</h1>
             <h1 class="title small-title">Generate your referral link, invite friends and earn bonuses.</h1>
             <h1 class="title small-content">Make from 20$ up to 1000$ from every invited friend. C'mon, it's much fun together!</h1>
