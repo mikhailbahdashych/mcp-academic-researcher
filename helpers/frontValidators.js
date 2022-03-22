@@ -61,3 +61,8 @@ export const setParser = (state, statename, value) => {
     })
   })
 }
+
+export const validate2fa = (i) => {
+  if (i.length > 1) { i = i.slice(0, 1) }
+  return i
+}
