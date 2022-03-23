@@ -68,17 +68,22 @@ export default {
   name: "InputTwoFa",
   props: ["twofa"],
   watch: {
-    i1() { this.i1 = validate2fa(this.i1) },
-    i2() { this.i2 = validate2fa(this.i2) },
-    i3() { this.i3 = validate2fa(this.i3) },
-    i4() { this.i4 = validate2fa(this.i4) },
-    i5() { this.i5 = validate2fa(this.i5) },
-    i6() { this.i6 = validate2fa(this.i6) },
+    i1() { this.i1 = validate2fa(this.i1); this.twofa[0] = this.i1; this.returnTwofa() },
+    i2() { this.i2 = validate2fa(this.i2); this.twofa[1] = this.i2; this.returnTwofa() },
+    i3() { this.i3 = validate2fa(this.i3); this.twofa[2] = this.i3; this.returnTwofa() },
+    i4() { this.i4 = validate2fa(this.i4); this.twofa[3] = this.i4; this.returnTwofa() },
+    i5() { this.i5 = validate2fa(this.i5); this.twofa[4] = this.i5; this.returnTwofa() },
+    i6() { this.i6 = validate2fa(this.i6); this.twofa[5] = this.i6; this.returnTwofa() },
   },
   data() {
     return {
       i1: null, i2: null, i3: null, i4: null, i5: null, i6: null,
     }
+  },
+  methods: {
+    returnTwofa() {
+      this.$emit('returnTwofa', this.twofa)
+    },
   }
 }
 </script>

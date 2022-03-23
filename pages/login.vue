@@ -13,7 +13,7 @@
 
     <div class="login-inputs">
       <div class="login-inputs-container">
-        <InputTwoFa />
+        <InputTwoFa :twofa="twofa" v-on:returnTwofa="returnTwofa" />
         <h1>Log In</h1>
 
         <div class="login-options">
@@ -137,6 +137,9 @@ export default {
     },
     redirect(path) {
       this.$router.push({ path })
+    },
+    returnTwofa(test) {
+
     },
     chooseLogin(option) {
       if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')
