@@ -13,6 +13,7 @@
 
     <div class="login-inputs">
       <div class="login-inputs-container">
+        <InputTwoFa />
         <h1>Log In</h1>
 
         <div class="login-options">
@@ -64,7 +65,8 @@ export default {
       'fetchLoginPassword',
       'fetchLoginError',
       'fetchEmailFocusLogin',
-      'fetchPhoneFocusLogin'
+      'fetchPhoneFocusLogin',
+      'fetchTwofa'
     ]),
     'loginEmail.email': {
       handler: function () {
@@ -94,6 +96,10 @@ export default {
       get() { return this.$store.getters.getLoginError },
       set(value) { this.$store.commit('setLoginError', value) }
     },
+    twofa: {
+      get() { return this.$store.getters.getTwofa },
+      set(value) { this.$store.commit('setTwofa', value) }
+    }
   },
   destroyed() {
     this.$store.commit('setLoginDefaultValues')

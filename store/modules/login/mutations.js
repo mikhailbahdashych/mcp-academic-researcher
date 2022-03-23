@@ -5,6 +5,7 @@ export default {
   setLoginPhone(state, value) { setParser(state, 'loginPhone', value) },
   setLoginPassword(state, value) { setParser(state, 'loginPassword', value) },
   setLoginError(state, value) { state.loginError = value },
+  setTwofa(state, value) { state.twofa = value },
   setLoginDefaultValues(state) {
     state.loginEmail = {
       email: null,

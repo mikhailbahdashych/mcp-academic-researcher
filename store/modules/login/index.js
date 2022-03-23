@@ -17,7 +17,8 @@ const state = () => ({
     phoneFocus: false,
     phone: null,
   },
-  loginError: false
+  loginError: false,
+  twofa: null
 })
 
 export default {

@@ -66,6 +66,7 @@
 import { validate2fa } from "~/helpers/frontValidators";
 export default {
   name: "InputTwoFa",
+  props: ["twofa"],
   watch: {
     i1() { this.i1 = validate2fa(this.i1) },
     i2() { this.i2 = validate2fa(this.i2) },
