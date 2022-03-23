@@ -12,8 +12,7 @@
     </div>
 
     <div class="login-inputs">
-      <div class="login-inputs-container">
-        <InputTwoFa :twofa="twofa" v-on:returnTwofa="returnTwofa" />
+      <div class="login-inputs-container" v-if="!phone.show && !twofa.show">
         <h1>Log In</h1>
 
         <div class="login-options">
@@ -43,9 +42,19 @@
         <Input @keyup.enter.native="logIn" :additional-class="'basic-input-wide margin-bottom-30'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
         <p v-if="loginError === -1" class="paragraph error">Account doesn't exists or wasn't confirmed!</p>
         <Button :label="'Log In'" :clickon="logIn" />
-        <p class="paragraph right" @click="redirect('reset-password')">Forgot password?</p>
+        <p class="paragraph right link" @click="redirect('reset-password')">Forgot password?</p>
 
       </div>
+
+      <div class="login-inputs-container" v-else-if="twofa.show">
+        <h1>Two-Factor authentication</h1>
+        <p class="paragraph">Please, provide Google Authenticator code to continue</p>
+        <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" />
+        <p class="paragraph right link">Unable to login with 2FA?</p>
+      </div>
+
+      <div class="login-inputs-container" v-else-if="phone.show"></div>
+
     </div>
 
   </div>
@@ -99,6 +108,10 @@ export default {
     twofa: {
       get() { return this.$store.getters.getTwofa },
       set(value) { this.$store.commit('setTwofa', value) }
+    },
+    phone: {
+      get() { return this.$store.getters.getPhone },
+      set(value) { this.$store.commit('setPhone', value) }
     }
   },
   destroyed() {
@@ -125,11 +138,17 @@ export default {
           return
         }
 
-        localStorage.setItem('token', res)
-        localStorage.setItem('email', this.loginEmail.email)
-        this.$store.commit('setLoginPassword', { password: null })
-        this.$store.commit('setLoginEmail', { email: null })
-        await this.$router.push({path: '/account'})
+        if (res.twofa) {
+          this.twofa.show = true
+        } else if (res.phone) {
+          this.phone.show = true
+        } else {
+          localStorage.setItem('token', res)
+          localStorage.setItem('email', this.loginEmail.email)
+          this.$store.commit('setLoginPassword', { password: null })
+          this.$store.commit('setLoginEmail', { email: null })
+          await this.$router.push({path: '/account'})
+        }
       } else {
         this.loginEmail.loginEmailError = true
         this.loginPassword.loginPasswordError = true
@@ -138,8 +157,10 @@ export default {
     redirect(path) {
       this.$router.push({ path })
     },
-    returnTwofa(test) {
-
+    returnTwofa(twofa) {
+      if (twofa.length === 6) {
+        console.log(twofa.join(''))
+      }
     },
     chooseLogin(option) {
       if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')

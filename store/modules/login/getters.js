@@ -3,5 +3,6 @@ export default {
   getLoginPhone: state => state.loginPhone,
   getLoginPassword: state => state.loginPassword,
   getLoginError: state => state.loginError,
-  getTwofa: state => state.twofa
+  getTwofa: state => state.twofa,
+  getPhone: state => state.phone
 }

@@ -18,7 +18,8 @@ const state = () => ({
     phone: null,
   },
   loginError: false,
-  twofa: []
+  twofa: { code: [], show: false },
+  phone: { phone: null, show: false }
 })
 
 export default {
