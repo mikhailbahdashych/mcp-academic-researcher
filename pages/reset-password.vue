@@ -41,8 +41,8 @@
           v-model="resetPasswordPhone.phone"
         />
 
-        <Input @keyup.enter.native="resetPassword" :title="'Verification code'" :additional-class="'margin-bottom-30 basic-input-wide'" />
-        <Button :label="'Submit'" :clickon="resetPassword" />
+        <Input @keyup.enter.native="() => {}" :title="'Verification code'" :additional-class="'margin-bottom-30 basic-input-wide'" />
+        <Button :label="'Submit'" :clickon="() => {}" />
       </div>
     </div>
 
@@ -50,7 +50,6 @@
 </template>
 
 <script>
-import { resetPassword } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail } from "~/helpers/frontValidators";
 export default {
@@ -95,11 +94,6 @@ export default {
     this.chooseOption('email')
   },
   methods: {
-    async resetPassword() {
-      const res = await resetPassword({
-        email: this.resetPasswordEmail.email
-      })
-    },
     redirect(path) {
       this.$router.push({ path })
     },

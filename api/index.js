@@ -37,15 +37,6 @@ export const confirmRegistration = async (payload) => {
   }
 }
 
-export const resetPassword = async (payload) => {
-  try {
-    const { data } = await api.post(`/r-p`, payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
 export const getClientByToken = async (token) => {
   try {
     const { data } = await api.post('/c-b-t', token)
