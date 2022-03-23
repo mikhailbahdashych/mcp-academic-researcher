@@ -82,9 +82,9 @@ router.post('/v-2fa', async (req, res) => {
   }
 })
 
-router.post('/c-2fa', async (req, res) => {
+router.post('/l-w-2fa', async (req, res) => {
   try {
-    const data = await api.post('/check-2fa', req.body)
+    const data = await api.post('/login-with-2fa', req.body)
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)

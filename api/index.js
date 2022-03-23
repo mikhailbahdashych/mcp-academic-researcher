@@ -82,9 +82,9 @@ export const verify2fa = async (payload) => {
   }
 }
 
-export const check2fa = async (payload) => {
+export const loginWith2fa = async (payload) => {
   try {
-    const { data } = await api.post('/c-2fa', payload)
+    const { data } = await api.post('/l-w-2fa', payload)
     return data
   } catch (e) {
     return e.response.data

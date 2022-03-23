@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { login, check2fa } from "~/api";
+import {login, loginWith2fa} from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import { verifyClientByToken } from "~/helpers/auth";
@@ -159,7 +159,18 @@ export default {
     },
     async returnTwofa(twofa) {
       if (twofa.length !== 6 || twofa.join('').length !== 6) return
-      const res = await check2fa({ twofa, email: this.loginEmail.email })
+
+      const res = await loginWith2fa({ twoFaCode: twofa, email: this.loginEmail.email })
+
+      if (res.status === 1) {
+        localStorage.setItem('token', res.token)
+        localStorage.setItem('email', this.loginEmail.email)
+        this.$store.commit('setLoginPassword', { password: null })
+        this.$store.commit('setLoginEmail', { email: null })
+        await this.$router.push({path: '/account'})
+      } else {
+        // show error here
+      }
     },
     chooseLogin(option) {
       if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')
