@@ -82,6 +82,15 @@ export const verify2fa = async (payload) => {
   }
 }
 
+export const check2fa = async (payload) => {
+  try {
+    const { data } = await api.post('/c-2fa', payload)
+    return data
+  } catch (e) {
+    return e.response.data
+  }
+}
+
 export const changePassword = async (payload) => {
   try {
     const { data } = await api.post('/c-p', payload)

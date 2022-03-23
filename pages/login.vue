@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { login } from "~/api";
+import { login, check2fa } from "~/api";
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import { verifyClientByToken } from "~/helpers/auth";
@@ -157,10 +157,9 @@ export default {
     redirect(path) {
       this.$router.push({ path })
     },
-    returnTwofa(twofa) {
-      if (twofa.length === 6) {
-        console.log(twofa.join(''))
-      }
+    async returnTwofa(twofa) {
+      if (twofa.length !== 6 || twofa.join('').length !== 6) return
+      const res = await check2fa({ twofa, email: this.loginEmail.email })
     },
     chooseLogin(option) {
       if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')
