@@ -50,6 +50,7 @@
         <h1>Two-Factor authentication</h1>
         <p class="paragraph">Please, provide Google Authenticator code to continue</p>
         <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" />
+        <p v-if="this.twofa.error" class="paragraph error">Wrong code!</p>
         <p class="paragraph right link">Unable to login with 2FA?</p>
       </div>
 
@@ -160,7 +161,7 @@ export default {
     async returnTwofa(twofa) {
       if (twofa.length !== 6 || twofa.join('').length !== 6) return
 
-      const res = await loginWith2fa({ twoFaCode: twofa, email: this.loginEmail.email })
+      const res = await loginWith2fa({ twoFaCode: twofa.join(''), email: this.loginEmail.email })
 
       if (res.status === 1) {
         localStorage.setItem('token', res.token)
@@ -169,7 +170,7 @@ export default {
         this.$store.commit('setLoginEmail', { email: null })
         await this.$router.push({path: '/account'})
       } else {
-        // show error here
+        this.twofa.error = true
       }
     },
     chooseLogin(option) {
