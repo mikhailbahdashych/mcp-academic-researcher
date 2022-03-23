@@ -109,7 +109,8 @@
       <Button v-if="!securityTwofa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
       <img v-if="securityTwofa.qr && ([null, -1, -2].includes(securityTwofa.status))" :src="securityTwofa.qr" alt="2fa">
       <div v-if="securityTwofa.qr && ([null, -1, -2].includes(securityTwofa.status))">
-        <Input :title-class="'on-white-paragraph'" :additional-class="'basic-input-box on-white margin-bottom-20'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />
+        <InputTwoFa :onwhite="true" />
+<!--        <Input :title-class="'on-white-paragraph'" :additional-class="'basic-input-box on-white margin-bottom-20'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />-->
         <Button :label="'Confirm 2FA'" :clickon="set2fa" />
       </div>
       <div v-else-if="securityTwofa.status === 1">
@@ -127,7 +128,8 @@
       description="Are you sure you want to do this?
       If you are, provide code below."
     >
-      <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="securityTwofa.status === -3" />
+      <InputTwoFa :onwhite="true" />
+<!--      <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="securityTwofa.status === -3" />-->
       <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="securityTwofa.status === -3" />
       <div v-if="securityTwofa.status === -3">
         <p class="paragraph medium on-white-paragraph">Successfully deactivated!</p>

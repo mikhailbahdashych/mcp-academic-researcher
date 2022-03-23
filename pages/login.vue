@@ -13,7 +13,6 @@
 
     <div class="login-inputs">
       <div class="login-inputs-container" v-if="!phone.show && !twofa.show">
-        <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" />
         <h1>Log In</h1>
 
         <div class="login-options">
@@ -50,7 +49,7 @@
       <div class="login-inputs-container" v-else-if="twofa.show">
         <h1>Two-Factor authentication</h1>
         <p class="paragraph">Please, provide Google Authenticator code to continue</p>
-        <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" :disabled="true" />
+        <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" />
         <p v-if="this.twofa.error" class="paragraph error">Wrong code!</p>
         <p class="paragraph right link">Unable to login with 2FA?</p>
       </div>

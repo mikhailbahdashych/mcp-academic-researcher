@@ -1,6 +1,7 @@
 @import "../basics";
 
 .input-two-fa {
+  margin-bottom: 10px;
   appearance: none;
   -webkit-appearance: none;
   width: 4rem;
@@ -20,4 +21,12 @@
 
 .input-two-fa:disabled {
   background-color: rgba($backgroundcolorthird, 0.5);
+}
+
+.on-white {
+  input {
+    border: 1px solid $backgroundcolor;
+    background-color: rgba(#fff, 0.5);
+    color: black;
+  }
 }

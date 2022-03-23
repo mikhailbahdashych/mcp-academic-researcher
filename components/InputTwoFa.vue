@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="onwhite ? 'on-white' : ''">
     <input
       class="input-two-fa"
       :id="`n1`" type="number"
@@ -72,7 +72,7 @@
 import { validate2fa } from "~/helpers/frontValidators";
 export default {
   name: "InputTwoFa",
-  props: ["twofa", "disabled"],
+  props: ["twofa", "disabled", "onwhite"],
   watch: {
     i1() { this.i1 = validate2fa(this.i1); this.twofa[0] = this.i1; this.returnTwofa() },
     i2() { this.i2 = validate2fa(this.i2); this.twofa[1] = this.i2; this.returnTwofa() },
