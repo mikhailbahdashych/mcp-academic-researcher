@@ -109,8 +109,7 @@
       <Button v-if="!securityTwofa.qr" :label="'Generate 2FA'" :clickon="generate2fa" />
       <img v-if="securityTwofa.qr && ([null, -1, -2].includes(securityTwofa.status))" :src="securityTwofa.qr" alt="2fa">
       <div v-if="securityTwofa.qr && ([null, -1, -2].includes(securityTwofa.status))">
-        <InputTwoFa :onwhite="true" />
-<!--        <Input :title-class="'on-white-paragraph'" :additional-class="'basic-input-box on-white margin-bottom-20'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" />-->
+        <InputTwoFa :twofa="securityTwofa.code" @returnTwofa="returnTwofa" :onwhite="true" />
         <Button :label="'Confirm 2FA'" :clickon="set2fa" />
       </div>
       <div v-else-if="securityTwofa.status === 1">
@@ -128,8 +127,7 @@
       description="Are you sure you want to do this?
       If you are, provide code below."
     >
-      <InputTwoFa :onwhite="true" />
-<!--      <Input :title-class="'on-white-paragraph'" :additional-class="'margin-bottom-20 on-white'" :title="'Provide 6-digit code'" :placeholder="'XXXXXX'" :type="'text'" v-model="securityTwofa.code" :disabled="securityTwofa.status === -3" />-->
+      <InputTwoFa :twofa="securityTwofa.code" @returnTwofa="returnTwofa" :onwhite="true" :disabled="securityTwofa.status === -3" />
       <Button :label="'Disable 2FA'" :clickon="deactivate2fa" :disabled="securityTwofa.status === -3" />
       <div v-if="securityTwofa.status === -3">
         <p class="paragraph medium on-white-paragraph">Successfully deactivated!</p>
@@ -245,18 +243,19 @@ export default {
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   methods: {
+    returnTwofa(twofa) { return twofa.join('') },
     closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
-        code: this.securityTwofa.code,
+        code: this.returnTwofa(this.securityTwofa.code),
         token: this.securityTwofa.secret,
         jwt: localStorage.getItem('token')
       })
     },
     async deactivate2fa() {
       await this.$store.dispatch('fetchDisable2fa', {
-        code: this.securityTwofa.code,
+        code: this.returnTwofa(this.securityTwofa.code),
         jwt: localStorage.getItem('token')
       })
     },
