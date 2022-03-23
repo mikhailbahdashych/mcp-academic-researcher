@@ -9,11 +9,15 @@
   text-align: center;
   outline: none;
   color: white;
-  background-color: $backgroundcolorthird;
+  background-color: $backgroundcolor;
   border-radius: 6px;
   border: 1px solid rgba($maincolor, 0.5);
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     display: none;
   }
+}
+
+.input-two-fa:disabled {
+  background-color: rgba($backgroundcolorthird, 0.5);
 }
