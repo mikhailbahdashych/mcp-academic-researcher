@@ -15,7 +15,7 @@
     <div class="home-content">
       <div class="home-content-box">
         <div class="home-content-fields">
-          <Input :title="'Message title'" :additional-class="'basic-input-box'" />
+          <Input :title="'Message title'" />
           <Textarea :title="'Message'" />
           <Button :label="'Send message'" />
         </div>

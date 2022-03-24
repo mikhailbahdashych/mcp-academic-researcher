@@ -22,7 +22,6 @@
         </div>
 
         <InputWithButton
-          :additional-class="'basic-input-wide'"
           :error="resetPasswordEmail.emailError"
           :button-click-on="() => {}"
           :title="'Email'"
@@ -32,7 +31,6 @@
           v-model="resetPasswordEmail.email"
         />
         <InputWithButton
-          :additional-class="'basic-input-wide'"
           :button-click-on="() => {}"
           :title="'Phone'"
           :focus="resetPasswordPhone.phoneFocus"
@@ -41,7 +39,7 @@
           v-model="resetPasswordPhone.phone"
         />
 
-        <Input @keyup.enter.native="() => {}" :title="'Verification code'" :additional-class="'basic-input-wide'" />
+        <Input @keyup.enter.native="() => {}" :title="'Verification code'" />
         <Button :label="'Submit'" :clickon="() => {}" />
       </div>
     </div>

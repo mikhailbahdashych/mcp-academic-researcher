@@ -22,7 +22,6 @@
         </div>
 
         <Input
-          :additional-class="'basic-input-wide'"
           :oneerror="loginEmail.loginEmailError"
           :style="[!loginEmail.loginWithEmail ? {'display': 'none'} : {'': ''}]"
           :focus="loginEmail.emailFocus"
@@ -31,7 +30,6 @@
           v-model="loginEmail.email"
         />
         <Input
-          :additional-class="'basic-input-wide'"
           :style="[loginEmail.loginWithEmail ? {'display': 'none'} : {'': ''}]"
           :focus="loginPhone.phoneFocus"
           :title="'Phone number'"
@@ -39,7 +37,7 @@
           v-model="loginPhone.phone"
         />
 
-        <Input @keyup.enter.native="logIn" :additional-class="'basic-input-wide'" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
+        <Input @keyup.enter.native="logIn" :oneerror="loginPassword.loginPasswordError" :title="'Password'" :type="'password'" v-model="loginPassword.password" />
         <p v-if="loginError === -1" class="paragraph error">Account doesn't exists or wasn't confirmed!</p>
         <Button :label="'Log In'" :clickon="logIn" />
         <p class="paragraph right link" @click="redirect('reset-password')">Forgot password?</p>
