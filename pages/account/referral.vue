@@ -54,8 +54,8 @@
       </div>
     </div>
 
-    <div class="account-container wide referral-panel invited-clients">
-      <BasicTable :headers="['Email', 'Invited at']" :items="[]" />
+    <div class="account-container invited-clients" v-if="reflink.status !== -1">
+      <BasicTable :headers="['Email', 'Invited at']" :items="reflink.invitedclients" />
     </div>
 
     <Footer :bright="true" />
