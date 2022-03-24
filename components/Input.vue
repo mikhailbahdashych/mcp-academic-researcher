@@ -1,5 +1,5 @@
 <template>
-  <div class="basic-input-outer" :class="outerClass">
+  <div class="basic-input-outer">
     <p :class="`paragraph ${titleClass}`">{{ title }}</p>
     <input
       ref="name"
@@ -71,10 +71,6 @@ export default {
       type: String,
       default: ''
     },
-    outerClass: {
-      type: String,
-      default: ''
-    }
   },
   watch: {
     focus: function() {
