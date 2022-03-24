@@ -46,42 +46,6 @@ export const getClientByToken = async (token) => {
   }
 }
 
-export const set2fa = async (payload) => {
-  try {
-    const { data } = await api.post('/s-2fa', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const disable2fa = async (payload) => {
-  try {
-    const { data } = await api.post('/d-2fa', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const verify2fa = async (payload) => {
-  try {
-    const { data } = await api.post('/v-2fa', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const loginWith2fa = async (payload) => {
-  try {
-    const { data } = await api.post('/l-w-2fa', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
 export const changePassword = async (payload) => {
   try {
     const { data } = await api.post('/c-p', payload)
@@ -121,33 +85,6 @@ export const changeEmail = async (payload) => {
 export const sendEmail = async (payload) => {
   try {
     const { data } = await api.post('/s-e', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const generateReferralLink = async (payload) => {
-  try {
-    const { data } = await api.post('/g-r-l', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const getReferralLink = async (payload) => {
-  try {
-    const { data } = await api.post(`/get-r-l`, payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const registrationFromReflink = async (reflink) => {
-  try {
-    const { data } = await api.get(`/r-f-r-l/${reflink}`)
     return data
   } catch (e) {
     return e.response.data

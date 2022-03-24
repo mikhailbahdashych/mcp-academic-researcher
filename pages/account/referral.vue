@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { generateReferralLink, getReferralLink } from "~/api";
+import { generateReferralLink, getReferralLink } from "@/api/reflink";
 import { verifyClientByToken } from "~/helpers/auth";
 export default {
   name: "referral",

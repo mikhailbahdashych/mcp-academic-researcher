@@ -1,4 +1,4 @@
-import { register, sendEmail } from "~/api";
+import { register, sendEmail } from "@/api/account";
 import { verifyClientByToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";

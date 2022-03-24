@@ -1,4 +1,4 @@
-import { getClientByToken } from "~/api";
+import { getClientByToken } from "@/api/account";
 
 export const verifyClientByToken = async (router, token, returnclient = false, nonRedirect = false) => {
   if (!nonRedirect) {

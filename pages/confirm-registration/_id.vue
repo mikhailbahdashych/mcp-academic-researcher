@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { confirmRegistration } from "~/api";
+import { confirmRegistration } from "@/api/account";
 export default {
   name: "confirm-registration",
   data() {

@@ -10,6 +10,7 @@
         <Panel :title="'Phone'" :text="'Your mobile phone'" />
         <Panel :title="'2FA'" :text="'Your Google Authenticator status'" />
       </div>
+      <h1 class="account-header-title">Wallets</h1>
     </div>
     <Footer :bright="true" />
   </div>

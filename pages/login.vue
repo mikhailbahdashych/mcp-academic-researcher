@@ -60,7 +60,8 @@
 </template>
 
 <script>
-import { login, loginWith2fa } from "~/api";
+import { login } from "@/api/account";
+import { loginWith2fa } from "@/api/twofa"
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import { verifyClientByToken } from "~/helpers/auth";

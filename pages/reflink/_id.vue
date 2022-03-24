@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { registrationFromReflink } from "~/api";
+import { registrationFromReflink } from "@/api/reflink";
 import { registration } from "~/mixins/register";
 export default {
   name: "reflink",
