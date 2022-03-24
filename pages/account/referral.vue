@@ -55,7 +55,7 @@
     </div>
 
     <div class="account-container wide referral-panel invited-clients">
-      <BasicTable :headers="['Email', 'Invited at']" :items="reflink.invitedclients" />
+      <BasicTable :headers="['Email', 'Invited at']" :items="[]" />
     </div>
 
     <Footer :bright="true" />

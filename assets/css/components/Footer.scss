@@ -4,6 +4,7 @@
   width: 100%;
   background-color: $backgroundcolor;
   bottom: 0;
+  height: 250px;
   &.bright {
     background-color: $backgroundcolorsecond;
   }
@@ -27,9 +28,8 @@
       display: flex;
     }
     &.down {
-      height: 70px;
       text-align: center;
-      p { padding-top: 25px }
+      p { padding-top: 15px; }
     }
   }
 }

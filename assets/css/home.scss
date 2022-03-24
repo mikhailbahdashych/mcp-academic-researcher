@@ -2,11 +2,8 @@
 
 .home-base {
   height: 100%;
-  min-height: 700px;
   width: 100%;
   &.referral-panel {
-    height: 500px;
-    min-height: 500px;
     @media only screen and (max-width: 1000px) {
       min-height: 330px;
       height: 330px;
@@ -19,7 +16,6 @@
   position: absolute;
   width: 60%;
   min-width: 500px;
-  height: 700px;
   top: 60px;
   right: 0;
   text-align: center;
@@ -49,8 +45,6 @@
   &.referral-panel {
     width: 100%;
     top: unset;
-    height: 500px;
-    min-height: 500px;
     position: relative;
     @media only screen and (max-width: 525px) {
       min-width: 300px;
