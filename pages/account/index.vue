@@ -23,12 +23,12 @@ export default {
   name: "account",
   data() {
     return {
-      client: {}
+      client: { wallets: [] }
     }
   },
   async mounted() {
     this.client = await verifyClientByToken(this.$router, localStorage.getItem('token'), true)
-    await checkWallets({ token: localStorage.getItem('token') })
+    this.client.wallets = await checkWallets({ token: localStorage.getItem('token') })
   }
 }
 </script>
