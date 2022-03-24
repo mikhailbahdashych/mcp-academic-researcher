@@ -18,6 +18,7 @@
 
 <script>
 import { verifyClientByToken } from "~/helpers/auth";
+import { checkWallets } from "@/api/wallet";
 export default {
   name: "account",
   data() {
@@ -27,6 +28,7 @@ export default {
   },
   async mounted() {
     this.client = await verifyClientByToken(this.$router, localStorage.getItem('token'), true)
+    await checkWallets({ token: localStorage.getItem('token') })
   }
 }
 </script>
