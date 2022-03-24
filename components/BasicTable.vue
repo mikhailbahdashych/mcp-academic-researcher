@@ -7,7 +7,10 @@
       </div>
     </div>
 
-    <div class="table-items" v-for="item in items">
+    <div class="table-items" v-if="items.length === 0">
+      <h3 class="no-records">No records found...</h3>
+    </div>
+    <div class="table-items" v-for="item in items" v-else>
       <div class="table-item" v-for="i in item">
         <p class="paragraph medium">{{ i }}</p>
       </div>

@@ -7,10 +7,14 @@
   padding-top: 130px;
   &.referral-panel {
     display: flex;
+    //max-height: 300px;
     @media only screen and (max-width: 1000px) {
       display: block;
     }
   }
+  //&.invited-clients {
+  //  padding-top: 0;
+  //}
   p { color: white; }
   .account-container-item {
     margin: 0 auto 20px;
