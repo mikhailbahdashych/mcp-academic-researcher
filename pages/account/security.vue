@@ -35,7 +35,6 @@
       description="Are you sure you want to change password?"
     >
       <Input
-        :outer-class="'wide'"
         :title="'Current password'"
         :title-class="'on-white-paragraph'"
         :additional-class="'on-white'"
@@ -43,7 +42,6 @@
         v-model="securityPassword.currentPassword"
       />
       <Input
-        :outer-class="'wide'"
         :title="'New password'"
         :title-class="'on-white-paragraph'"
         :additional-class="'on-white'"
@@ -51,10 +49,9 @@
         v-model="securityPassword.newPassword"
       />
       <Input
-        :outer-class="'wide'"
-        :title-class="'on-white-paragraph'"
-        :additional-class="'on-white margin-bottom-20'"
         :title="'Repeat new password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
         :type="'password'"
         v-model="securityPassword.newPasswordRepeat"
       />
@@ -68,7 +65,6 @@
       description="Be careful! You are able to change email only one time."
     >
       <Input
-        :outer-class="'wide'"
         :type="'email'"
         :title="'Current email'"
         :title-class="'on-white-paragraph'"
@@ -77,7 +73,6 @@
         v-model="securityEmail.currentEmail"
       />
       <Input
-        :outer-class="'wide'"
         :type="'email'"
         :title="'New email'"
         :title-class="'on-white-paragraph'"
@@ -86,11 +81,10 @@
         v-model="securityEmail.newEmail"
       />
       <Input
-        :outer-class="'wide'"
         :type="'email'"
         :title="'Repeat new email'"
         :title-class="'on-white-paragraph'"
-        :additional-class="'on-white margin-bottom-20'"
+        :additional-class="'on-white'"
         :oneerror="securityEmail.newEmailRepeatError"
         v-model="securityEmail.newEmailRepeat"
       />

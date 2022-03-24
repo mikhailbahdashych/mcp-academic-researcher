@@ -4,7 +4,7 @@
     <div class="main-class" :class="additionalClass">
       <input
         ref="name"
-        class="basic-input-button"
+        class="bi basic-input-button"
         :class="[error && innerValue && innerValue.length > 0 ? 'error' : '']"
         :type="type"
         :disabled="disabled"
@@ -14,7 +14,7 @@
         :value="innerValue"
         @input="onInput"
       >
-      <div @click="buttonClickOn" class="basic-button-outer">
+      <div @click="buttonClickOn">
         <button
           @click="$emit('show')"
           class="basic-button input-with-button"

@@ -1,19 +1,10 @@
 @import "../basics";
 
 .basic-input-outer {
+  min-width: 350px;
   .basic-input {
-    width: 100%;
     min-height: 35px;
-    border-radius: 5px;
-    outline: none;
-    border: 1px solid rgba(0,0,0,0);
-    background-color: rgba(#000, 0.5);
-    padding: 0 0 0 16px;
-    height: 48px;
-    font-size: 16px;
-    line-height: 24px;
-    transition: 0.3s;
-    color: white;
+    margin-bottom: 10px;
     &.error { border: 1px solid $error; }
     &.error:focus { border: 1px solid $error; }
   }
@@ -28,14 +19,5 @@
     border: 1px solid $backgroundcolor;
     background-color: rgba(#fff, 0.5);
     color: black;
-  }
-
-  .margin-bottom-10 { margin-bottom: 10px }
-  .margin-bottom-20 { margin-bottom: 20px }
-  .margin-bottom-30 { margin-bottom: 30px }
-  .margin-center { margin: 0 auto }
-
-  &.wide {
-    width: 80%;
   }
 }

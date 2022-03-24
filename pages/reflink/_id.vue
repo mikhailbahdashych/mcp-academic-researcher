@@ -24,9 +24,9 @@
     </div>
     <div class="referral-container-side">
       <div v-if="status !== 1" class="referral-container-card">
-        <Input :additional-class="'basic-input-box'" :title="'Email'" :disabled="reflink.status === -1" :oneerror="email.emailError" :type="'text'" v-model="email.email" />
-        <Input :additional-class="'basic-input-box'" :title="'Password'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :type="'password'" v-model="password.password"  />
-        <Input :additional-class="'basic-input-box'" :title="'Password repeat'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules":type="'password'" v-model="password.passwordRepeat" />
+        <Input :title="'Email'" :disabled="reflink.status === -1" :oneerror="email.emailError" :type="'text'" v-model="email.email" />
+        <Input :title="'Password'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :type="'password'" v-model="password.password"  />
+        <Input :title="'Password repeat'" :disabled="reflink.status === -1" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules":type="'password'" v-model="password.passwordRepeat" />
         <p v-if="passwordError.passwordMismatch" class="paragraph error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph error">Password are requirement!</p>
 

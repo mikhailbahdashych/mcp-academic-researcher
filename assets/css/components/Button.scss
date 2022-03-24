@@ -1,26 +1,26 @@
 @import "../basics";
 
-.basic-button-outer {
-  .basic-button {
-    width: 100%;
-    height: 48px;
-    border-radius: 5px;
-    cursor: pointer;
-    background-color: $maincolor;
-    border: 1px solid $maincolor;
-    font-family: "Inter", sans-serif;
-    font-weight: 300;
-    transition: 0.5s;
-    &.input-with-button {
-      width: 75px;
-    }
+.basic-button {
+  width: 100%;
+  height: 48px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: $maincolor;
+  border: 1px solid $maincolor;
+  font-family: "Inter", sans-serif;
+  font-weight: 300;
+  transition: 0.5s;
+  margin-top: 10px;
+  &.input-with-button {
+    width: 75px;
+    margin-top: 0;
   }
-  .basic-button:disabled {
-    background-color: rgba($maincolor, 0.5);
-    cursor: auto;
-  }
-  .transparent {
-    background-color: transparent;
-    color: $maincolor;
-  }
+}
+.basic-button:disabled {
+  background-color: rgba($maincolor, 0.5);
+  cursor: auto;
+}
+.transparent {
+  background-color: transparent;
+  color: $maincolor;
 }

@@ -4,18 +4,7 @@
   display: flex;
   width: 100%;
   .basic-input-button {
-    width: 80%;
-    border-radius: 5px;
-    outline: none;
-    border: 1px solid rgba(0,0,0,0);
-    background-color: rgba(#000, 0.5);
-    padding: 0 0 0 16px;
-    height: 48px;
-    font-size: 16px;
-    line-height: 24px;
-    transition: 0.3s;
     margin-right: 15px;
-    color: white;
     &.error {
       border: 1px solid $error;
     }
@@ -36,7 +25,4 @@
   .basic-input-wide {
     width: 500px;
   }
-  .margin-bottom-10 { margin-bottom: 10px }
-  .margin-bottom-20 { margin-bottom: 20px }
-  .margin-bottom-30 { margin-bottom: 30px }
 }

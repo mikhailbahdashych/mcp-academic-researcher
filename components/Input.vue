@@ -3,7 +3,7 @@
     <p :class="`paragraph ${titleClass}`">{{ title }}</p>
     <input
       ref="name"
-      class="basic-input"
+      class="bi basic-input"
       :class="[
         oneerror ||
         (error.passwordMismatch || error.passwordRequirement || error.passwordRules)

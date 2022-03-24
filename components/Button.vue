@@ -1,5 +1,5 @@
 <template>
-  <div @click="clickon" class="basic-button-outer">
+  <div @click="clickon">
     <button
       @click="$emit('show')"
       :disabled="disabled"

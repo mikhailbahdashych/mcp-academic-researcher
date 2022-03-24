@@ -16,7 +16,7 @@
         <h1>Sign up</h1>
         <Input :additional-class="'basic-input-wide'" :oneerror="email.emailError" :title="'Email'" :type="'text'" v-model="email.email" />
         <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Password'" :type="'password'" v-model="password.password" />
-        <Input :additional-class="'basic-input-wide margin-bottom-10'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" v-model="password.passwordRepeat" />
+        <Input :additional-class="'basic-input-wide'" :oneerror="passwordError.passwordMismatch || passwordError.passwordRequirement || passwordError.passwordRules" :title="'Repeat password'" :type="'password'" v-model="password.passwordRepeat" />
         <p v-if="passwordError.passwordMismatch" class="paragraph error">Passwords have to match!</p>
         <p v-if="passwordError.passwordRequirement" class="paragraph error">Password are requirement!</p>
         <div v-if="passwordError.passwordRules" class="password-requirement">
