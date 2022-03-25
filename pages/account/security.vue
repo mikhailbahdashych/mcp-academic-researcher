@@ -6,7 +6,9 @@
     <div class="account-container">
       <div :class="`account-container-item ${item.title === 'Freeze account' || item.title === 'Close account' ? 'danger' : ''}`"
            v-for="item in securityOptions">
-        <div class="account-container-item-icon"></div>
+        <div class="account-container-item-icon">
+<!--          <img src="../../assets/img/email_white_18dp.svg" alt="" width="48" height="48">-->
+        </div>
         <div class="account-container-item-icon-texts">
           <div class="account-container-item-icon-texts" v-if="item.title === 'Freeze account' || item.title === 'Close account'">
             <p class="paragraph large bold error">{{ item.title }}</p>

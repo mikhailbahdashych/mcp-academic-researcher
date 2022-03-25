@@ -1,12 +1,14 @@
 <template>
   <div class="panel">
     <div class="panel-content">
-      <div class="panel-icon"></div>
+      <div class="panel-icon">
+        <img :src="require(`~/assets/img/${img}.svg`)" alt="img" class="svg-white">
+      </div>
       <div class="panel-texts">
         <div class="panel-texts">
           <p class="paragraph large">{{ title }}</p>
         </div>
-        <div class="panel-texts text">
+        <div class="panel-texts">
           <p class="paragraph opacity">{{ text }}</p>
         </div>
       </div>
@@ -25,6 +27,10 @@ export default {
     text: {
       type: String,
       default: ''
+    },
+    img: {
+      type: String,
+      default: 'email'
     }
   }
 }

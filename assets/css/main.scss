@@ -113,3 +113,7 @@ li {
   transition: 0.3s;
   color: white;
 }
+
+.svg-white {
+  filter: invert(100%) sepia(0%) saturate(1352%) hue-rotate(87deg) brightness(119%) contrast(50%);
+}
