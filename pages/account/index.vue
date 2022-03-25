@@ -11,9 +11,9 @@
         <Panel :title="'2FA'" :text="'Your Google Authenticator status'" />
       </div>
       <h1 class="account-header-title">Wallets</h1>
-      <div class="account-container-info" v-for="wallet in client.wallets">
-        <Panel :title="`${wallet.shortname}`" :text="`${wallet.name}`" />
-      </div>
+<!--      <div class="account-container-info" v-for="wallet in client.wallets">-->
+<!--        <Panel :title="`${wallet.shortname}`" :text="`${wallet.name}`" />-->
+<!--      </div>-->
     </div>
     <Footer :bright="true" />
   </div>

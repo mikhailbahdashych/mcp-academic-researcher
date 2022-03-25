@@ -1,7 +1,11 @@
 <template>
   <div :class="dark ? 'header' : 'header dark'">
+    <div class="header-logo" @click="redirect('/')">
+
+    </div>
     <div class="inner-header">
       <div class="inner-header-small">
+
 
         <div class="dropdown">
 

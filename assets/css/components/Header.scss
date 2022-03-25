@@ -9,10 +9,14 @@
   position: fixed;
   z-index: 99;
 
+  .header-logo {
+    width: 10%;
+    height: 100%;
+  }
+
   .inner-header {
     height: 60px;
     width: 80%;
-    margin: 0 auto;
     display: flex;
     @media only screen and (max-width: 930px) { width: 100%; }
     .inner-header-small {
