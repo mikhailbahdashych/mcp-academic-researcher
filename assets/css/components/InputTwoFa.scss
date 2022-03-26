@@ -17,6 +17,11 @@
   &::-webkit-inner-spin-button {
     display: none;
   }
+  @media only screen and (max-width: 930px) {
+    width: 2.8rem;
+    height: 2.8rem;
+    font-size: 24px;
+  }
 }
 
 .input-two-fa:disabled {

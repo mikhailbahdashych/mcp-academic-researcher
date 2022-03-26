@@ -46,10 +46,12 @@
 
       <div class="login-inputs-container" v-else-if="twofa.show">
         <h1>Two-Factor authentication</h1>
-        <p class="paragraph">Please, provide Google Authenticator code to continue</p>
-        <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" />
-        <p v-if="this.twofa.error" class="paragraph error">Wrong code!</p>
-        <p class="paragraph right link">Unable to login with 2FA?</p>
+        <div class="login-inputs-container-two-fa">
+          <p class="paragraph">Please, provide Google Authenticator code to continue</p>
+          <InputTwoFa :twofa="twofa.code" @returnTwofa="returnTwofa" />
+          <p v-if="this.twofa.error" class="paragraph error">Wrong code!</p>
+          <p class="paragraph right link">Unable to login with 2FA?</p>
+        </div>
       </div>
 
       <div class="login-inputs-container" v-else-if="phone.show"></div>
