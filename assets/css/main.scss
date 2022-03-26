@@ -114,3 +114,13 @@ li {
 .svg-white {
   filter: invert(100%) brightness(119%) contrast(50%);
 }
+
+.password-requirement {
+  border-radius: 5px;
+  border: 1px solid rgba(#fff,0.9);
+  p {
+    padding-left: 15px;
+    color: white;
+    opacity: 0.9;
+  }
+}

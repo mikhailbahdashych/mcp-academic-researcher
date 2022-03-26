@@ -24,10 +24,10 @@
           <div v-for="rule in passwordRulesList" class="flex">
             <div v-for="(item) in Object.entries(rule)">
               <p>
-                <span v-if="item[0] === 'text'">{{ item[1] }}</span>
+                <span class="paragraph" v-if="item[0] === 'text'">{{ item[1] }}</span>
                 <span v-else>
-                  <span class="paragraph medium success" v-if="item[1]">OK</span>
-                  <span class="paragraph medium error" v-else>NOT OK</span>
+                  <span class="paragraph success" v-if="item[1]">OK</span>
+                  <span class="paragraph error" v-else>NOT OK</span>
                 </span>
               </p>
             </div>
