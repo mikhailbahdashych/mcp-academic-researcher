@@ -181,6 +181,7 @@ export default {
       'fetchCloseAccount',
       'fetchGenerate2fa',
       'fetchDisable2fa',
+      'fetchFreezeAccount'
     ]),
     'securityEmail.currentEmail': {
       handler: function () {
@@ -274,6 +275,9 @@ export default {
     },
     async closeAccount() {
       await this.$store.dispatch('fetchCloseAccount', { token: localStorage.getItem('token') })
+    },
+    async freezeAccount() {
+      await this.$store.dispatch('fetchFreezeAccount', { token: localStorage.getItem('token') })
     }
   }
 }
