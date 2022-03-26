@@ -3,6 +3,9 @@
 .referral-panel {
   display: flex;
   @media only screen and (max-width: 1000px) { display: block; }
+  .referral-panel-welcome-texts {
+    text-align: center;
+  }
 }
 
 .referral-panel-card-container {

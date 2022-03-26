@@ -52,6 +52,8 @@ h1 {
   @media only screen and (max-width: 1000px) {
     text-align: center;
   }
+  &.medium { font-size: 28px; }
+  &.small { font-size: 18px; }
 }
 
 h3 {
