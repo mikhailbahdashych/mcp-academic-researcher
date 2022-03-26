@@ -1,8 +1,6 @@
 <template>
   <div>
     <Header />
-    <div class="home-base"></div>
-    <div class="home-content"></div>
     <Footer />
   </div>
 </template>

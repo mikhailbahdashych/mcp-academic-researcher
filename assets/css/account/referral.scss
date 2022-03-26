@@ -33,9 +33,7 @@
       width: 100%;
       padding-top: 5px;
       height: calc(100% - 5px);
-      &.active {
-        border-bottom: 3px solid $maincolor;
-      }
+      &.active { border-bottom: 3px solid $maincolor; }
     }
   }
 
