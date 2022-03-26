@@ -47,7 +47,7 @@
         <Checkbox v-model="tac" :label="`I have read and accepted <a href='/'>terms and conditions.</a>`" :disabled="reflink.status === -1" />
         <p v-if="status === -1" class="paragraph error">User with this email already exists!</p>
         <Button :clickon="register" :label="'Create account'" :disabled="reflink.status === -1 || !validFields()" />
-        <p class="paragraph" id="referral-about">Read more about
+        <p class="paragraph">Read more about
           <span class="paragraph link">referral program</span>.
         </p>
       </div>
