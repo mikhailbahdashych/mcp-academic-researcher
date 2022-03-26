@@ -3,7 +3,8 @@
     <Popup :content="'Copied!'" v-if="showPopup.status" />
     <Header />
     <AccountHeader />
-    <div class="account-container wide referral-panel">
+    <div class="account-container referral-panel">
+
       <div class="home-base referral-panel">
         <div class="home-text-box referral-panel">
           <div class="home-welcome">
@@ -14,6 +15,7 @@
           </div>
         </div>
       </div>
+
       <div class="referral-panel-card-container">
         <div class="referral-panel-card" v-if="reflink.status === -1">
           <p class="paragraph medium">If you feel ready to go, click the button to generate referral link.</p>
@@ -52,6 +54,7 @@
           <p class="paragraph opacity">Or share this link in social networks</p>
         </div>
       </div>
+
     </div>
 
     <div class="account-container invited-clients" v-if="reflink.status !== -1">
@@ -115,5 +118,6 @@ export default {
 
 <style lang="scss">
 @import "../../assets/css/account/account";
+@import "../../assets/css/account/referral";
 @import "../../assets/css/home";
 </style>

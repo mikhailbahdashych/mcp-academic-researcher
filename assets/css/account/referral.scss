@@ -1,72 +1,41 @@
 @import "assets/css/basics";
 
-//&.referral-panel {
-//  display: flex;
-//  @media only screen and (max-width: 1000px) {
-//    display: block;
-//  }
-//}
-//&.invited-clients {
-//  padding-top: 0;
-//}
-//p { color: white; }
+.referral-panel {
+  display: flex;
+  @media only screen and (max-width: 1000px) { display: block; }
+}
 
+.referral-panel-card-container {
+  height: 500px;
+  width: 100%;
+  .referral-panel-card {
+    height: 90%;
+    max-width: 400px;
+    background-color: $backgroundcolorsecond;
+    border: 1px solid $maincolor;
+    margin: 25px auto;
+    border-radius: 15px;
+    padding: 0 20px;
+    .qr-side {
+      text-align: center;
+      .qr-code { width: 230px; }
+    }
+  }
 
+  .referral-panel-card-header {
+    border-bottom: 1px solid white;
+    height: 50px;
+    display: flex;
+    text-align: center;
+    .referral-panel-card-header-item {
+      cursor: pointer;
+      width: 100%;
+      padding-top: 5px;
+      height: calc(100% - 5px);
+      &.active {
+        border-bottom: 3px solid $maincolor;
+      }
+    }
+  }
 
-//&.center {
-//  text-align: center;
-//}
-//.center-button {
-//  margin: 0 auto;
-//  width: 200px;
-//  max-width: 250px;
-//}
-//&.wide {
-//  width: 90%;
-//}
-
-//.referral-panel-card-container {
-//  height: 500px;
-//  width: 100%;
-//  .referral-panel-card {
-//    height: 90%;
-//    max-width: 400px;
-//    background-color: $backgroundcolorsecond;
-//    border: 1px solid $maincolor;
-//    margin: 25px auto;
-//    border-radius: 15px;
-//    padding: 0 20px;
-//    .qr-side {
-//      text-align: center;
-//      .qr-code { width: 230px; }
-//    }
-//    @media only screen and (max-width: 385px) {
-//      max-width: 280px;
-//      width: 280px;
-//    }
-//  }
-//  .referral-panel-card-header {
-//    width: 100%;
-//    border-bottom: 1px solid white;
-//    height: 50px;
-//    display: flex;
-//    text-align: center;
-//    .referral-panel-card-header-item {
-//      cursor: pointer;
-//      width: 100%;
-//      padding-top: 5px;
-//      color: rgba(#fff, 0.5);
-//      transition: .2s;
-//      height: calc(100% - 5px);
-//      &.active {
-//        border-bottom: 3px solid $maincolor;
-//      }
-//    }
-//    .referral-panel-card-header-item:hover {
-//      color: #fff;
-//    }
-//  }
-//}
-//@media only screen and (max-width: 525px) {
-//  width: 100%;
-//}
+}
