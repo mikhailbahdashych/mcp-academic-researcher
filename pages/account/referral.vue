@@ -57,7 +57,7 @@
 
     </div>
 
-    <div class="account-container invited-clients" v-if="reflink.status !== -1">
+    <div v-if="reflink.status !== -1">
       <BasicTable :headers="['Email', 'Invited at']" :items="reflink.invitedclients" />
     </div>
 
