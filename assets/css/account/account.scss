@@ -1,0 +1,16 @@
+@import "assets/css/basics";
+
+.account-container {
+  width: 75%;
+  margin: 0 auto;
+  padding-top: 130px;
+
+  .account-container-info {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    @media only screen and (max-width: 1000px) {
+      display: block;
+    }
+  }
+}

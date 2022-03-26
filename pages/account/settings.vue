@@ -6,10 +6,10 @@
       <div class="account-container-item" v-for="item in settingsOptions">
         <div class="account-container-item-icon"></div>
         <div class="account-container-item-icon-texts">
-          <div class="account-container-item-icon-texts text">
+          <div class="account-container-item-icon-texts">
             <p class="paragraph large bold">{{ item.title }}</p>
           </div>
-          <div class="account-container-item-icon-texts text">
+          <div class="account-container-item-icon-texts">
             <p class="paragraph opacity">{{ item.text }}</p>
           </div>
         </div>
@@ -71,5 +71,5 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../assets/css/account";
+@import "../../assets/css/account/account";
 </style>

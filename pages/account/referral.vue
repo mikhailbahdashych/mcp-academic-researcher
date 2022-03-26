@@ -114,6 +114,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../../assets/css/account";
+@import "../../assets/css/account/account";
 @import "../../assets/css/home";
 </style>
