@@ -38,8 +38,9 @@
     justify-content: center;
 
     @media only screen and (max-width: 930px) {
-      width: 100%;
+      width: 90%;
       height: 100vh;
+      margin-top: 50px;
     }
 
     .login-inputs-container {
