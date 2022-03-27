@@ -1,10 +1,13 @@
 @import "assets/css/basics";
 
 .account-container {
+  min-height: calc(100vh - 250px);
+}
+
+.account-container-wrap {
   width: 75%;
   margin: 0 auto;
   padding-top: 130px;
-
   .account-container-info {
     display: flex;
     flex-wrap: wrap;

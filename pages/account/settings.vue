@@ -3,33 +3,35 @@
     <Header />
     <AccountHeader />
     <div class="account-container">
-      <div class="account-container-item" v-for="item in settingsOptions">
-        <div class="account-container-item-icon"></div>
-        <div class="account-container-item-icon-texts">
+      <div class="account-container-wrap">
+        <div class="account-container-item" v-for="item in settingsOptions">
+          <div class="account-container-item-icon"></div>
           <div class="account-container-item-icon-texts">
-            <p class="paragraph large bold">{{ item.title }}</p>
+            <div class="account-container-item-icon-texts">
+              <p class="paragraph large bold">{{ item.title }}</p>
+            </div>
+            <div class="account-container-item-icon-texts">
+              <p class="paragraph opacity">{{ item.text }}</p>
+            </div>
           </div>
-          <div class="account-container-item-icon-texts">
-            <p class="paragraph opacity">{{ item.text }}</p>
-          </div>
-        </div>
 
-        <div class="account-container-item-button">
-          <Dropdown
-            v-if="item.dropdowndata"
-            :show-content="item.dropdowndata.show"
-            :dropdown-items="item.dropdowndata"
-            @show="item.dropdowndata.show = !item.dropdowndata.show"
-            @close="item.dropdowndata.show = false"
-            @pick="pick($event)"
-          />
-          <div class="account-container-item-button" v-else>
-            <TougleSwitch :check="item" @changeSwitch="changeSwitch($event)" />
+          <div class="account-container-item-button">
+            <Dropdown
+              v-if="item.dropdowndata"
+              :show-content="item.dropdowndata.show"
+              :dropdown-items="item.dropdowndata"
+              @show="item.dropdowndata.show = !item.dropdowndata.show"
+              @close="item.dropdowndata.show = false"
+              @pick="pick($event)"
+            />
+            <div class="account-container-item-button" v-else>
+              <TougleSwitch :check="item" @changeSwitch="changeSwitch($event)" />
+            </div>
           </div>
+
         </div>
 
       </div>
-
     </div>
     <Footer :bright="true" />
   </div>

@@ -4,26 +4,28 @@
     <AccountHeader />
 
     <div class="account-container">
-      <div :class="`account-container-item ${item.title === 'Freeze account' || item.title === 'Close account' ? 'danger' : ''}`"
-           v-for="item in securityOptions">
-        <div class="account-container-item-icon"></div>
-        <div class="account-container-item-icon-texts">
-          <div class="account-container-item-icon-texts" v-if="item.title === 'Freeze account' || item.title === 'Close account'">
-            <p class="paragraph large bold error">{{ item.title }}</p>
+      <div class="account-container-wrap">
+        <div :class="`account-container-item ${item.title === 'Freeze account' || item.title === 'Close account' ? 'danger' : ''}`"
+             v-for="item in securityOptions">
+          <div class="account-container-item-icon"></div>
+          <div class="account-container-item-icon-texts">
+            <div class="account-container-item-icon-texts" v-if="item.title === 'Freeze account' || item.title === 'Close account'">
+              <p class="paragraph large bold error">{{ item.title }}</p>
+            </div>
+            <div class="account-container-item-icon-texts" v-else>
+              <p class="paragraph large bold">{{ item.title }}</p>
+            </div>
+            <div class="account-container-item-icon-texts text">
+              <p class="paragraph opacity">{{ item.text }}</p>
+            </div>
           </div>
-          <div class="account-container-item-icon-texts" v-else>
-            <p class="paragraph large bold">{{ item.title }}</p>
+          <div class="account-container-item-button" v-if="item.title === 'Google Authenticator'">
+            <Button v-if="[1, -4].includes(securityTwofa.status)" :label="`Disable 2FA`" @show="showModal('disable2fa')" />
+            <Button v-else-if="securityTwofa.status !== -4" :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
           </div>
-          <div class="account-container-item-icon-texts text">
-            <p class="paragraph opacity">{{ item.text }}</p>
+          <div class="account-container-item-button" v-else>
+            <Button :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
           </div>
-        </div>
-        <div class="account-container-item-button" v-if="item.title === 'Google Authenticator'">
-          <Button v-if="[1, -4].includes(securityTwofa.status)" :label="`Disable 2FA`" @show="showModal('disable2fa')" />
-          <Button v-else-if="securityTwofa.status !== -4" :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
-        </div>
-        <div class="account-container-item-button" v-else>
-          <Button :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
         </div>
       </div>
     </div>
