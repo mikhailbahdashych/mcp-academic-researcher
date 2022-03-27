@@ -1,5 +1,5 @@
 import { changePassword, changeEmail, closeAccount, freezeAccount } from "@/api/account";
-import { set2fa, verify2fa, disable2fa } from "@/api/twofa";
+import { set2fa, checkFor2fa, disable2fa } from "@/api/twofa";
 import * as node2fa from 'node-2fa';
 
 export default {
@@ -14,7 +14,7 @@ export default {
   },
 
   async fetchCheck2fa(ctx, value) {
-    const { status } = await verify2fa(value)
+    const { status } = await checkFor2fa(value)
     ctx.commit('setSecurity2fa', { status })
   },
 

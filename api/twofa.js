@@ -28,7 +28,7 @@ export const disable2fa = async (payload) => {
   }
 }
 
-export const verify2fa = async (payload) => {
+export const checkFor2fa = async (payload) => {
   try {
     const { data } = await api.post('/v-2fa', payload)
     return data
