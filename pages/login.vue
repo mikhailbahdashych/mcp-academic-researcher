@@ -148,8 +148,6 @@ export default {
           if (!res.status) {
             localStorage.setItem('token', res)
             localStorage.setItem('email', this.loginEmail.email)
-            this.$store.commit('setLoginPassword', { password: null })
-            this.$store.commit('setLoginEmail', { email: null })
             await this.$router.push({path: '/account'})
           } else {
             if (this.twofa.code) this.twofa.error = true
