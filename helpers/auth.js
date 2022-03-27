@@ -1,4 +1,6 @@
-import { getClientByToken } from "@/api/account";
+// @TODO Here, in, probably store, I should write data about 2FA, phone etc.
+// Or start think about cookie staff
+import { getClientByToken } from "~/api/account";
 
 export const verifyClientByToken = async (router, token, returnclient = false, nonRedirect = false) => {
   if (!nonRedirect) {
