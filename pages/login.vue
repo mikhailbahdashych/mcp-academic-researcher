@@ -63,7 +63,6 @@
 
 <script>
 import { login } from "@/api/account";
-import { loginWith2fa } from "@/api/twofa"
 import { mapActions } from "vuex";
 import { validateEmail, validatePasswordLength } from "~/helpers/frontValidators";
 import { verifyClientByToken } from "~/helpers/auth";
@@ -124,7 +123,7 @@ export default {
     this.chooseLogin('email')
   },
   methods: {
-    async logIn() {
+    async logIn(twofa) {
       if (
         (this.loginEmail.email || this.loginPhone.phone) &&
         (!this.loginEmail.loginEmailError && !this.loginPassword.loginPasswordError)
@@ -132,7 +131,8 @@ export default {
         const res = await login({
           email: this.loginEmail.email,
           phone: this.loginPhone.phone,
-          password: this.loginPassword.password
+          password: this.loginPassword.password,
+          twofa
         })
 
         if (res.status === -1) {
@@ -145,11 +145,17 @@ export default {
         } else if (res.phone) {
           this.phone.show = true
         } else {
-          localStorage.setItem('token', res)
-          localStorage.setItem('email', this.loginEmail.email)
-          this.$store.commit('setLoginPassword', { password: null })
-          this.$store.commit('setLoginEmail', { email: null })
-          await this.$router.push({path: '/account'})
+
+          if (res.status === 1) {
+            localStorage.setItem('token', res)
+            localStorage.setItem('email', this.loginEmail.email)
+            this.$store.commit('setLoginPassword', { password: null })
+            this.$store.commit('setLoginEmail', { email: null })
+            await this.$router.push({path: '/account'})
+          } else {
+            if (twofa) this.twofa.error = true
+            else this.phone.error = true
+          }
         }
       } else {
         this.loginEmail.loginEmailError = true
@@ -161,18 +167,7 @@ export default {
     },
     async returnTwofa(twofa) {
       if (twofa.length !== 6 || twofa.join('').length !== 6) return
-
-      const res = await loginWith2fa({ twoFaCode: twofa.join(''), email: this.loginEmail.email })
-
-      if (res.status === 1) {
-        localStorage.setItem('token', res.token)
-        localStorage.setItem('email', this.loginEmail.email)
-        this.$store.commit('setLoginPassword', { password: null })
-        this.$store.commit('setLoginEmail', { email: null })
-        await this.$router.push({path: '/account'})
-      } else {
-        this.twofa.error = true
-      }
+      await this.logIn(twofa)
     },
     chooseLogin(option) {
       if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')

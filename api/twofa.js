@@ -36,12 +36,3 @@ export const checkFor2fa = async (payload) => {
     return e.response.data
   }
 }
-
-export const loginWith2fa = async (payload) => {
-  try {
-    const { data } = await api.post('/l-w-2fa', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
