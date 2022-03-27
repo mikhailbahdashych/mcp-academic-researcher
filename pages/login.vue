@@ -145,7 +145,7 @@ export default {
         } else if (res.phone) {
           this.phone.show = true
         } else {
-          if (res.status === 1) {
+          if (!res.status) {
             localStorage.setItem('token', res)
             localStorage.setItem('email', this.loginEmail.email)
             this.$store.commit('setLoginPassword', { password: null })
