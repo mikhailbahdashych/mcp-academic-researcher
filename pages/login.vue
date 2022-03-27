@@ -123,7 +123,7 @@ export default {
     this.chooseLogin('email')
   },
   methods: {
-    async logIn(twofa) {
+    async logIn() {
       if (
         (this.loginEmail.email || this.loginPhone.phone) &&
         (!this.loginEmail.loginEmailError && !this.loginPassword.loginPasswordError)
@@ -132,7 +132,7 @@ export default {
           email: this.loginEmail.email,
           phone: this.loginPhone.phone,
           password: this.loginPassword.password,
-          twofa
+          twofa: this.twofa.code.join('')
         })
 
         if (res.status === -1) {
@@ -145,7 +145,6 @@ export default {
         } else if (res.phone) {
           this.phone.show = true
         } else {
-
           if (res.status === 1) {
             localStorage.setItem('token', res)
             localStorage.setItem('email', this.loginEmail.email)
@@ -153,7 +152,7 @@ export default {
             this.$store.commit('setLoginEmail', { email: null })
             await this.$router.push({path: '/account'})
           } else {
-            if (twofa) this.twofa.error = true
+            if (this.twofa.code) this.twofa.error = true
             else this.phone.error = true
           }
         }
@@ -167,7 +166,7 @@ export default {
     },
     async returnTwofa(twofa) {
       if (twofa.length !== 6 || twofa.join('').length !== 6) return
-      await this.logIn(twofa)
+      await this.logIn()
     },
     chooseLogin(option) {
       if (option === 'email') this.$store.dispatch('fetchEmailFocusLogin')
