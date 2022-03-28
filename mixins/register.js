@@ -1,4 +1,4 @@
-import { register, sendEmail } from "@/api/account";
+import { register, sendEmail } from "~/api/account";
 import { verifyClientByToken } from "~/helpers/auth";
 import { mapActions } from "vuex";
 import { validateEmail, validatePassword, validatePasswordRules } from "~/helpers/frontValidators";
@@ -68,7 +68,7 @@ export const registration = {
     this.$store.commit('setDefaultValues')
   },
   async mounted() {
-    await verifyClientByToken(this.$router, localStorage.getItem('token'))
+    await verifyClientByToken(this.$router, localStorage.getItem('token'), true)
   },
   methods: {
     async redirect(path) {
