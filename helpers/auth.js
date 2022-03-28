@@ -3,7 +3,8 @@
 // UPD. Ok, seems like half of it is done, so, next, I think, I should make such staff:
 // 1) Remove those endpoints in second todos
 // 2) Maybe do something to make it store only one time, not to make a lot of requests
-// 3) Think something about redirect staff
+
+// @TODO Fix something with personaluuid and undefined
 import { getClientByToken } from "~/api/account";
 
 export const verifyClientByToken = async (router, token, nonRedirect = false) => {
