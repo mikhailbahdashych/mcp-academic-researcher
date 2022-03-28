@@ -32,7 +32,7 @@ export default {
     }
   },
   async mounted() {
-    this.client = await verifyClientByToken(this.$router, localStorage.getItem('token'), true)
+    this.client = await verifyClientByToken(this.$router, localStorage.getItem('token'))
     // this.client.wallets = await checkWallets({ token: localStorage.getItem('token') })
   }
 }

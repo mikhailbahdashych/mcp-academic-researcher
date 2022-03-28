@@ -68,7 +68,7 @@ export const registration = {
     this.$store.commit('setDefaultValues')
   },
   async mounted() {
-    await verifyClientByToken(this.$router, localStorage.getItem('token'), false)
+    await verifyClientByToken(this.$router, localStorage.getItem('token'))
   },
   methods: {
     async redirect(path) {
