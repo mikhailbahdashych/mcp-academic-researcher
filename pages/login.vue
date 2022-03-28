@@ -119,7 +119,7 @@ export default {
     this.$store.commit('setLoginDefaultValues')
   },
   async mounted() {
-    await verifyClientByToken(this.$router, localStorage.getItem('token'), false, true)
+    await verifyClientByToken(this.$router, localStorage.getItem('token'), false)
     this.chooseLogin('email')
   },
   methods: {

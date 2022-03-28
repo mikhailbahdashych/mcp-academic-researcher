@@ -23,7 +23,7 @@
 
 <script>
 import { verifyClientByToken } from "~/helpers/auth";
-import { checkWallets } from "@/api/wallet";
+import { checkWallets } from "~/api/wallet";
 export default {
   name: "account",
   data() {

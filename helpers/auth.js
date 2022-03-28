@@ -2,7 +2,7 @@
 // Or start think about cookie staff
 import { getClientByToken } from "~/api/account";
 
-export const verifyClientByToken = async (router, token, returnclient = false, nonRedirect = false) => {
+export const verifyClientByToken = async (router, token, nonRedirect = false) => {
   if (!nonRedirect) {
     if (!token) return await router.push({ path: '/' })
 
@@ -14,8 +14,7 @@ export const verifyClientByToken = async (router, token, returnclient = false, n
       return await router.push({ path: '/' })
     }
 
-    if (returnclient) return client
-    else return { status: 1 }
+    return client
   } else {
     if (token) {
       const client = await getClientByToken({ token })
