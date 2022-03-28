@@ -147,7 +147,7 @@
       header="Freeze account"
       description="Are you sure you want to freeze account"
     >
-      <Button :label="'Freeze account'" :clickon="() => {}" />
+      <Button :label="'Freeze account'" :clickon="freezeAccount" />
     </basic-modal>
 
     <basic-modal

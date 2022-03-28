@@ -51,5 +51,9 @@ export default {
 
   async fetchFreezeAccount(ctx, value) {
     const { status } = await freezeAccount(value)
+    if (status === 1) {
+      localStorage.removeItem('token')
+      await this.$router.push({ path: '/' })
+    }
   }
 }
