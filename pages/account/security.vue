@@ -147,6 +147,20 @@
       header="Freeze account"
       description="Are you sure you want to freeze account"
     >
+      <Input
+        :title="'Password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.currentPassword"
+      />
+      <Input
+        :title="'Repeat password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.newPassword"
+      />
       <Button :label="'Freeze account'" :clickon="freezeAccount" />
     </basic-modal>
 
@@ -156,6 +170,20 @@
       header="Close account"
       description="Are you sure you want to close account? You won't be able to restore your data!"
     >
+      <Input
+        :title="'Password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.currentPassword"
+      />
+      <Input
+        :title="'Repeat password'"
+        :title-class="'on-white-paragraph'"
+        :additional-class="'on-white'"
+        :type="'password'"
+        v-model="securityPassword.newPassword"
+      />
       <Button :label="'Close account'" :clickon="closeAccount" />
     </basic-modal>
 
@@ -241,7 +269,10 @@ export default {
   },
   methods: {
     returnTwofa(twofa) { return twofa.join('') },
-    closeModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: false}) },
+    closeModal(modal) {
+      this.$store.dispatch('fetchSecurityShowModal', {[modal]: false})
+      this.$store.commit('setSecurityDefaultValues')
+    },
     showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
