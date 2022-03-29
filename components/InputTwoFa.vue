@@ -9,7 +9,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
+      oninput="if (this.value === '') { if (this.previousElementSibling) {this.previousElementSibling.focus()} } else { this.nextElementSibling.focus() }"
     >
     <input
       class="input-two-fa"
@@ -64,7 +64,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { if (this.nextElementSibling) { this.nextElementSibling.focus() } }"
     >
   </div>
 </template>
