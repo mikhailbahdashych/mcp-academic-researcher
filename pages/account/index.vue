@@ -5,11 +5,15 @@
     <div class="account-container">
       <div class="account-container-wrap">
         <h1>Account Information</h1>
-        <div class="account-container-info">
+        <div class="account-container-info" v-if="this.$store.getters.getClientData">
           <Panel :title="'UUID'" :text="`Your UUID: ${this.$store.getters.getClientData.personaluuid}`" />
           <Panel :title="'Email'" :text="`Your email: ${this.$store.getters.getClientData.email}`" :img="'email'" />
           <Panel :title="'Phone'" :text="'Your mobile phone'" :img="'phone'" />
-          <Panel :title="'2FA'" :text="'Your Google Authenticator status'" :img="'google'" />
+          <Panel
+            :title="'2FA'"
+            :img="'google'"
+            :text="`Your ${this.$store.getters.getClientData.twofa ? 'have set' : 'haven\'t set'} Google Authenticator status`"
+          />
         </div>
         <h1>Wallets</h1>
         <!--      <div class="account-container-info" v-for="wallet in client.wallets">-->
