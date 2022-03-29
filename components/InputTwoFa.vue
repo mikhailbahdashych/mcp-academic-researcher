@@ -9,7 +9,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="this.nextElementSibling.focus()"
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
     >
     <input
       class="input-two-fa"
@@ -20,7 +20,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="this.nextElementSibling.focus()"
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
     >
     <input
       class="input-two-fa"
@@ -31,7 +31,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="this.nextElementSibling.focus()"
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
     >
     <input
       class="input-two-fa"
@@ -42,7 +42,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="this.nextElementSibling.focus()"
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
     >
     <input
       class="input-two-fa"
@@ -53,7 +53,7 @@
       max="9"
       autocomplete="off"
       autofocus
-      oninput="this.nextElementSibling.focus()"
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
     >
     <input
       class="input-two-fa"
@@ -64,6 +64,7 @@
       max="9"
       autocomplete="off"
       autofocus
+      oninput="if (this.value === '') { this.previousElementSibling.focus() } else { this.nextElementSibling.focus() }"
     >
   </div>
 </template>
@@ -90,6 +91,9 @@ export default {
     returnTwofa() {
       this.$emit('returnTwofa', this.twofa)
     },
+    inputFocus() {
+      this.nextElementSibling.focus()
+    }
   }
 }
 </script>
