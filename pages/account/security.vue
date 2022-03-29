@@ -200,11 +200,7 @@ export default {
   name: "security",
   watch: {
     ...mapActions([
-      'fetchSecurity2fa',
-      'fetchSecurityPassword',
-      'fetchSecurityEmail',
       'fetchSecurityShowModal',
-
       'fetchSet2fa',
       'fetchCheck2fa',
       'fetchChangePassword',
@@ -268,8 +264,7 @@ export default {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
-    const client = await verifyClientByToken(this.$router, localStorage.getItem('token'))
-    this.$store.commit('setClientData', client)
+    this.$store.commit('setClientData', await verifyClientByToken(this.$router, localStorage.getItem('token')))
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
   },
   data() {
@@ -314,7 +309,8 @@ export default {
         currentPassword: this.securityPassword.currentPassword,
         newPassword: this.securityPassword.newPassword,
         newPasswordRepeat: this.securityPassword.newPasswordRepeat,
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
+        twofa: ''
       })
     },
     async changeEmail() {
@@ -322,7 +318,8 @@ export default {
         currentEmail: this.securityEmail.currentEmail,
         newEmail: this.securityEmail.newEmail,
         newEmailRepeat: this.securityEmail.newEmailRepeat,
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('token'),
+        twofa: ''
       })
     },
     async closeAccount() {

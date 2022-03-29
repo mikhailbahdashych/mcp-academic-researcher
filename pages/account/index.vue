@@ -31,8 +31,7 @@ import { checkWallets } from "~/api/wallet";
 export default {
   name: "account",
   async mounted() {
-    const client = await verifyClientByToken(this.$router, localStorage.getItem('token'))
-    this.$store.commit('setClientData', client)
+    this.$store.commit('setClientData', await verifyClientByToken(this.$router, localStorage.getItem('token')))
     // this.client.wallets = await checkWallets({ token: localStorage.getItem('token') })
   }
 }
