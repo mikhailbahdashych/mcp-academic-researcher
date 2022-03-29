@@ -2,6 +2,7 @@
   <div>
     <Header />
     <AccountHeader />
+    <Popup :content="'To do that, you need to set up 2FA first!'" v-if="showPopup" />
 
     <div class="account-container">
       <div class="account-container-wrap">
@@ -20,8 +21,8 @@
             </div>
           </div>
           <div class="account-container-item-button" v-if="item.title === 'Google Authenticator'">
-            <Button v-if="[1, -4].includes(securityTwofa.status)" :label="`Disable 2FA`" @show="showModal('disable2fa')" />
-            <Button v-else-if="securityTwofa.status !== -4" :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
+            <Button v-if="clientData.twofa" :label="`Disable 2FA`" @show="showModal('disable2fa')" />
+            <Button v-else :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
           </div>
           <div class="account-container-item-button" v-else>
             <Button :label="`${item.buttonTitle}`" @show="showModal(item.showModalParam)" />
@@ -258,14 +259,23 @@ export default {
     },
     securityOptions: {
       get() { return this.$store.getters.getSecurityOptions },
+    },
+    clientData: {
+      get() { return this.$store.getters.getClientData }
     }
   },
   destroyed() {
     this.$store.commit('setSecurityDefaultValues')
   },
   async mounted() {
-    await verifyClientByToken(this.$router, localStorage.getItem('token'))
+    const client = await verifyClientByToken(this.$router, localStorage.getItem('token'))
+    this.$store.commit('setClientData', client)
     await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
+  },
+  data() {
+    return {
+      showPopup: false
+    }
   },
   methods: {
     returnTwofa(twofa) { return twofa.join('') },
@@ -273,7 +283,16 @@ export default {
       this.$store.dispatch('fetchSecurityShowModal', {[modal]: false})
       this.$store.commit('setSecurityDefaultValues')
     },
-    showModal(modal) { this.$store.dispatch('fetchSecurityShowModal', {[modal]: true}) },
+    showModal(modal) {
+      if ((modal === 'changePassword' || modal === 'changeEmail' || modal === 'sms') && !this.clientData.twofa) {
+        this.showPopup = true
+        setTimeout(() => {
+          this.showPopup = false
+        }, 1500)
+        return
+      }
+      this.$store.dispatch('fetchSecurityShowModal', {[modal]: true})
+    },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
         code: this.returnTwofa(this.securityTwofa.code),
