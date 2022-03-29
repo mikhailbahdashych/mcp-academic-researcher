@@ -24,7 +24,8 @@ export default {
       changeEmail: false,
       changePassword: false,
       disable2fa: false,
-      freezeAccount: false
+      freezeAccount: false,
+      twofa: false
     }
   }
 }

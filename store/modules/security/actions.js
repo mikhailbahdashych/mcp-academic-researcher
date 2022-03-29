@@ -3,9 +3,6 @@ import { set2fa, checkFor2fa, disable2fa } from "~/api/twofa";
 import * as node2fa from 'node-2fa';
 
 export default {
-  fetchSecurity2fa(ctx, value) { ctx.commit('setSecurity2fa', value) },
-  fetchSecurityPassword(ctx, value) { ctx.commit('setSecurityPassword', value) },
-  fetchSecurityEmail(ctx, value) { ctx.commit('setSecurityEmail', value) },
   fetchSecurityShowModal(ctx, value) { ctx.commit('setSecurityShowModal', value) },
 
   fetchGenerate2fa(ctx, { name, account }) {

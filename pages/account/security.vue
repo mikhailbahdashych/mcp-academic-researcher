@@ -188,6 +188,16 @@
       <Button :label="'Close account'" :clickon="closeAccount" />
     </basic-modal>
 
+    <basic-modal
+      @close="closeModal('twofa')"
+      v-if="securityShowModal.twofa"
+      header="Provide 2FA code"
+      :description="`Provide 2FA code to confirm ${twofaType} change.`"
+    >
+      <InputTwoFa :twofa="securityTwofa.code" @returnTwofa="returnTwofa" :onwhite="true" />
+      <Button :label="'Confirm'" @show="commit2fa(twofaType)" />
+    </basic-modal>
+
     <Footer :bright="true" />
   </div>
 </template>
@@ -269,7 +279,8 @@ export default {
   },
   data() {
     return {
-      showPopup: false
+      showPopup: false,
+      twofaType: null
     }
   },
   methods: {
@@ -304,22 +315,44 @@ export default {
     generate2fa() {
       this.$store.dispatch('fetchGenerate2fa', { name: 'CTD.com', account: localStorage.getItem('email') })
     },
-    async changePassword() {
+    async commit2fa(type) {
+      switch (type) {
+        case 'password':
+          await this.fetchChangePassword()
+          break;
+        case 'email':
+          await this.fetchChangeEmail()
+          break;
+        default:
+          break;
+      }
+    },
+    changePassword() {
+      this.securityShowModal.changePassword = false
+      this.securityShowModal.twofa = true
+      this.twofaType = 'password'
+    },
+    async fetchChangePassword() {
       await this.$store.dispatch('fetchChangePassword', {
         currentPassword: this.securityPassword.currentPassword,
         newPassword: this.securityPassword.newPassword,
         newPasswordRepeat: this.securityPassword.newPasswordRepeat,
         token: localStorage.getItem('token'),
-        twofa: ''
+        twofa: this.returnTwofa(this.securityTwofa.code)
       })
     },
-    async changeEmail() {
+    changeEmail() {
+      this.securityShowModal.changeEmail = false
+      this.securityShowModal.twofa = true
+      this.twofaType = 'email'
+    },
+    async fetchChangeEmail() {
       await this.$store.dispatch('fetchChangeEmail', {
         currentEmail: this.securityEmail.currentEmail,
         newEmail: this.securityEmail.newEmail,
         newEmailRepeat: this.securityEmail.newEmailRepeat,
         token: localStorage.getItem('token'),
-        twofa: ''
+        twofa: this.returnTwofa(this.securityTwofa.code)
       })
     },
     async closeAccount() {

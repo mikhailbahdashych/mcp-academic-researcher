@@ -25,7 +25,8 @@ const state = () => ({
     changeEmail: false,
     changePassword: false,
     disable2fa: false,
-    freezeAccount: false
+    freezeAccount: false,
+    twofa: false,
   },
   securityOptions: [
     { title: 'Login password', text: 'Used for account login', buttonTitle: 'Change password', showModalParam: 'changePassword' },

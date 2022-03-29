@@ -84,7 +84,7 @@ export default {
   },
   data() {
     return {
-      i1: null, i2: null, i3: null, i4: null, i5: null, i6: null,
+      i1: '', i2: '', i3: '', i4: '', i5: '', i6: '',
     }
   },
   methods: {
