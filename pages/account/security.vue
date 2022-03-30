@@ -323,6 +323,12 @@ export default {
         case 'email':
           await this.fetchChangeEmail()
           break;
+        case 'closeaccount':
+          await this.fetchCloseAccount()
+          break;
+        case 'freezeaccount':
+          await this.fetchFreezeAccount()
+          break;
         default:
           break;
       }
@@ -355,11 +361,25 @@ export default {
         twofa: this.returnTwofa(this.securityTwofa.code)
       })
     },
-    async closeAccount() {
-      await this.$store.dispatch('fetchCloseAccount', { token: localStorage.getItem('token') })
+    closeAccount() {
+      this.securityShowModal.changeEmail = false
+      this.securityShowModal.twofa = true
+      this.twofaType = 'closeaccount'
     },
-    async freezeAccount() {
-      await this.$store.dispatch('fetchFreezeAccount', { token: localStorage.getItem('token') })
+    async fetchCloseAccount() {
+      await this.$store.dispatch('fetchCloseAccount', {
+        token: localStorage.getItem('token')
+      })
+    },
+    freezeAccount() {
+      this.securityShowModal.changeEmail = false
+      this.securityShowModal.twofa = true
+      this.twofaType = 'freezeaccount'
+    },
+    async fetchFreezeAccount() {
+      await this.$store.dispatch('fetchFreezeAccount', {
+        token: localStorage.getItem('token')
+      })
     }
   }
 }
