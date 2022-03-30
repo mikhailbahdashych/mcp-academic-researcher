@@ -7,7 +7,7 @@ export default {
 
   fetchGenerate2fa(ctx, { name, account }) {
     const { qr, secret } = node2fa.generateSecret({ name, account })
-    ctx.commit('setSecurity2fa', { secret, qr, code: [] })
+    ctx.commit('setSecurity2fa', { secret, qr })
   },
 
   async fetchCheck2fa(ctx, value) {

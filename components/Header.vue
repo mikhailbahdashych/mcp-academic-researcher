@@ -81,7 +81,6 @@ export default {
     logout() {
       localStorage.removeItem('token')
       this.$router.push({ path: '/' })
-      window.location.reload()
     },
     checkToken() {
       this.token = !!localStorage.getItem('token');

@@ -6,7 +6,7 @@ export default {
   setSecurityEmail(state, value) { setParser(state, 'securityEmail', value) },
   setSecurityShowModal(state, value) { setParser(state, 'securityShowModal', value) },
   setSecurityDefaultValues(state) {
-    state.securityTwofa = { code: null, qr: null, status: null, secret: null }
+    state.securityTwofa = { code: [], qr: null, status: null, secret: null }
     state.securityPassword = {
       currentPassword: null,
       newPassword: null,

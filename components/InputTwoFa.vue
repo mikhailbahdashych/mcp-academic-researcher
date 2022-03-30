@@ -75,7 +75,6 @@ export default {
   name: "InputTwoFa",
   props: ["twofa", "disabled", "onwhite"],
   watch: {
-    // Error is somewhere here (at this.i1)
     i1() { this.i1 = validate2fa(this.i1); this.twofa[0] = this.i1; this.returnTwofa() },
     i2() { this.i2 = validate2fa(this.i2); this.twofa[1] = this.i2; this.returnTwofa() },
     i3() { this.i3 = validate2fa(this.i3); this.twofa[2] = this.i3; this.returnTwofa() },
