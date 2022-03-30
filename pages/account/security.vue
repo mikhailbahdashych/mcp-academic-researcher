@@ -353,7 +353,6 @@ export default {
       }
     },
     handleAction(action) {
-      console.log(action)
       this.securityShowModal[action] = false
       this.securityShowModal.twofa = true
       this.twofaType = action
