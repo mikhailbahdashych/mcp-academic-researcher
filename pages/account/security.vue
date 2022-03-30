@@ -362,7 +362,7 @@ export default {
       })
     },
     closeAccount() {
-      this.securityShowModal.changeEmail = false
+      this.securityShowModal.closingAccount = false
       this.securityShowModal.twofa = true
       this.twofaType = 'closeaccount'
     },
@@ -372,7 +372,7 @@ export default {
       })
     },
     freezeAccount() {
-      this.securityShowModal.changeEmail = false
+      this.securityShowModal.freezeAccount = false
       this.securityShowModal.twofa = true
       this.twofaType = 'freezeaccount'
     },
