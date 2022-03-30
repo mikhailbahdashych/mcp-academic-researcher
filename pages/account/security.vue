@@ -185,7 +185,7 @@
         :type="'password'"
         v-model="securityPassword.newPassword"
       />
-      <Button :label="'Close account'" @show="handleAction('closeAccount')" />
+      <Button :label="'Close account'" @show="handleAction('closingAccount')" />
     </basic-modal>
 
     <basic-modal
@@ -316,7 +316,7 @@ export default {
     },
     async commit2fa(type) {
       switch (type) {
-        case 'password':
+        case 'changePassword':
           await this.$store.dispatch('fetchChangePassword', {
             currentPassword: this.securityPassword.currentPassword,
             newPassword: this.securityPassword.newPassword,
@@ -325,7 +325,7 @@ export default {
             twofa: this.returnTwofa(this.securityTwofa.code)
           })
           break;
-        case 'email':
+        case 'changeEmail':
           await this.$store.dispatch('fetchChangeEmail', {
             currentEmail: this.securityEmail.currentEmail,
             newEmail: this.securityEmail.newEmail,
@@ -334,14 +334,14 @@ export default {
             twofa: this.returnTwofa(this.securityTwofa.code)
           })
           break;
-        case 'closeaccount':
+        case 'closingAccount':
           await this.$store.dispatch('fetchFreezeOrCloseAccount', {
             token: localStorage.getItem('token'),
             twofa: this.returnTwofa(this.securityTwofa.code),
             type
           })
           break;
-        case 'freezeaccount':
+        case 'freezeAccount':
           await this.$store.dispatch('fetchFreezeOrCloseAccount', {
             token: localStorage.getItem('token'),
             twofa: this.returnTwofa(this.securityTwofa.code),
@@ -353,6 +353,7 @@ export default {
       }
     },
     handleAction(action) {
+      console.log(action)
       this.securityShowModal[action] = false
       this.securityShowModal.twofa = true
       this.twofaType = action
@@ -363,7 +364,7 @@ export default {
           return 'change password';
         case 'changeEmail':
           return 'change email';
-        case 'closeAccount':
+        case 'closingAccount':
           return 'close account';
         case 'freezeAccount':
           return 'freeze account';
