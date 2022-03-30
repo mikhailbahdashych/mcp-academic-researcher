@@ -300,15 +300,15 @@ export default {
     },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
-        code: this.returnTwofa(this.securityTwofa.code),
-        token: this.securityTwofa.secret,
-        jwt: localStorage.getItem('token')
+        twofa: this.returnTwofa(this.securityTwofa.code),
+        tokenTwofa: this.securityTwofa.secret,
+        token: localStorage.getItem('token')
       })
     },
     async deactivate2fa() {
       await this.$store.dispatch('fetchDisable2fa', {
-        code: this.returnTwofa(this.securityTwofa.code),
-        jwt: localStorage.getItem('token')
+        twofa: this.returnTwofa(this.securityTwofa.code),
+        token: localStorage.getItem('token')
       })
     },
     generate2fa() {
