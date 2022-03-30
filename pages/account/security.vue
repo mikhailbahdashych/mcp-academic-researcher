@@ -337,12 +337,14 @@ export default {
           break;
         case 'closeaccount':
           await this.$store.dispatch('fetchCloseAccount', {
-            token: localStorage.getItem('token')
+            token: localStorage.getItem('token'),
+            twofa: this.returnTwofa(this.securityTwofa.code)
           })
           break;
         case 'freezeaccount':
           await this.$store.dispatch('fetchFreezeAccount', {
-            token: localStorage.getItem('token')
+            token: localStorage.getItem('token'),
+            twofa: this.returnTwofa(this.securityTwofa.code)
           })
           break;
         default:
