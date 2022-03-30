@@ -58,7 +58,7 @@
         :type="'password'"
         v-model="securityPassword.newPasswordRepeat"
       />
-      <Button :label="'Change password'" :clickon="changePassword" />
+      <Button :label="'Change password'" @show="handleAction('changePassword')" />
     </basic-modal>
 
     <basic-modal
@@ -91,7 +91,7 @@
         :oneerror="securityEmail.newEmailRepeatError"
         v-model="securityEmail.newEmailRepeat"
       />
-      <Button :label="'Change email'" :clickon="changeEmail" />
+      <Button :label="'Change email'" @show="handleAction('changeEmail')" />
     </basic-modal>
 
     <basic-modal
@@ -162,7 +162,7 @@
         :type="'password'"
         v-model="securityPassword.newPassword"
       />
-      <Button :label="'Freeze account'" :clickon="freezeAccount" />
+      <Button :label="'Freeze account'" @show="handleAction('freezeAccount')" />
     </basic-modal>
 
     <basic-modal
@@ -185,14 +185,14 @@
         :type="'password'"
         v-model="securityPassword.newPassword"
       />
-      <Button :label="'Close account'" :clickon="closeAccount" />
+      <Button :label="'Close account'" @show="handleAction('closeAccount')" />
     </basic-modal>
 
     <basic-modal
       @close="closeModal('twofa')"
       v-if="securityShowModal.twofa"
       header="Provide 2FA code"
-      :description="`Provide 2FA code to confirm ${twofaType} change.`"
+      :description="`Provide 2FA code to confirm ${actionName(twofaType)} action.`"
     >
       <InputTwoFa :twofa="securityTwofa.code" @returnTwofa="returnTwofa" :onwhite="true" />
       <Button :label="'Confirm'" @show="commit2fa(twofaType)" />
@@ -318,68 +318,55 @@ export default {
     async commit2fa(type) {
       switch (type) {
         case 'password':
-          await this.fetchChangePassword()
+          await this.$store.dispatch('fetchChangePassword', {
+            currentPassword: this.securityPassword.currentPassword,
+            newPassword: this.securityPassword.newPassword,
+            newPasswordRepeat: this.securityPassword.newPasswordRepeat,
+            token: localStorage.getItem('token'),
+            twofa: this.returnTwofa(this.securityTwofa.code)
+          })
           break;
         case 'email':
-          await this.fetchChangeEmail()
+          await this.$store.dispatch('fetchChangeEmail', {
+            currentEmail: this.securityEmail.currentEmail,
+            newEmail: this.securityEmail.newEmail,
+            newEmailRepeat: this.securityEmail.newEmailRepeat,
+            token: localStorage.getItem('token'),
+            twofa: this.returnTwofa(this.securityTwofa.code)
+          })
           break;
         case 'closeaccount':
-          await this.fetchCloseAccount()
+          await this.$store.dispatch('fetchCloseAccount', {
+            token: localStorage.getItem('token')
+          })
           break;
         case 'freezeaccount':
-          await this.fetchFreezeAccount()
+          await this.$store.dispatch('fetchFreezeAccount', {
+            token: localStorage.getItem('token')
+          })
           break;
         default:
           break;
       }
     },
-    changePassword() {
-      this.securityShowModal.changePassword = false
+    handleAction(action) {
+      this.securityShowModal[action] = false
       this.securityShowModal.twofa = true
-      this.twofaType = 'password'
+      this.twofaType = action
     },
-    async fetchChangePassword() {
-      await this.$store.dispatch('fetchChangePassword', {
-        currentPassword: this.securityPassword.currentPassword,
-        newPassword: this.securityPassword.newPassword,
-        newPasswordRepeat: this.securityPassword.newPasswordRepeat,
-        token: localStorage.getItem('token'),
-        twofa: this.returnTwofa(this.securityTwofa.code)
-      })
-    },
-    changeEmail() {
-      this.securityShowModal.changeEmail = false
-      this.securityShowModal.twofa = true
-      this.twofaType = 'email'
-    },
-    async fetchChangeEmail() {
-      await this.$store.dispatch('fetchChangeEmail', {
-        currentEmail: this.securityEmail.currentEmail,
-        newEmail: this.securityEmail.newEmail,
-        newEmailRepeat: this.securityEmail.newEmailRepeat,
-        token: localStorage.getItem('token'),
-        twofa: this.returnTwofa(this.securityTwofa.code)
-      })
-    },
-    closeAccount() {
-      this.securityShowModal.closingAccount = false
-      this.securityShowModal.twofa = true
-      this.twofaType = 'closeaccount'
-    },
-    async fetchCloseAccount() {
-      await this.$store.dispatch('fetchCloseAccount', {
-        token: localStorage.getItem('token')
-      })
-    },
-    freezeAccount() {
-      this.securityShowModal.freezeAccount = false
-      this.securityShowModal.twofa = true
-      this.twofaType = 'freezeaccount'
-    },
-    async fetchFreezeAccount() {
-      await this.$store.dispatch('fetchFreezeAccount', {
-        token: localStorage.getItem('token')
-      })
+    actionName(action) {
+      switch (action) {
+        case 'changePassword':
+          return 'change password';
+        case 'changeEmail':
+          return 'change email';
+        case 'closeAccount':
+          return 'close account';
+        case 'freezeAccount':
+          return 'freeze account';
+        default:
+          return
+      }
     }
   }
 }
