@@ -1,4 +1,4 @@
-import { changePassword, changeEmail, closeAccount, freezeAccount } from "~/api/account";
+import { changePassword, changeEmail, freezeOrCloseAccount } from "~/api/account";
 import { set2fa, checkFor2fa, disable2fa } from "~/api/twofa";
 import * as node2fa from 'node-2fa';
 
@@ -38,19 +38,12 @@ export default {
     }
   },
 
-  async fetchCloseAccount(ctx, value) {
-    const { status } = await closeAccount(value)
-    if (status === 1) {
-      localStorage.removeItem('token')
-      await this.$router.push({ path: '/' })
-    }
-  },
-
-  async fetchFreezeAccount(ctx, value) {
-    const { status } = await freezeAccount(value)
+  async fetchFreezeOrCloseAccount(ctx, value) {
+    const { status } = await freezeOrCloseAccount(value)
     if (status === 1) {
       localStorage.removeItem('token')
       await this.$router.push({ path: '/' })
     }
   }
+
 }

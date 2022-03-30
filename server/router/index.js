@@ -82,18 +82,9 @@ router.post('/c-p', async (req, res) => {
   }
 })
 
-router.post('/c-a', async (req, res) => {
+router.post('/f-o-c-a', async (req, res) => {
   try {
-    const data = await api.post('/close-account', req.body)
-    res.json(data.data)
-  } catch (e) {
-    res.status(e.response.status).json(e.response.data)
-  }
-})
-
-router.post('/f-a', async (req, res) => {
-  try {
-    const data = await api.post('/freeze-account', req.body)
+    const data = await api.post('/freeze-or-close-account', req.body)
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)

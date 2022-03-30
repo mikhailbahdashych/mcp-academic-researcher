@@ -215,10 +215,9 @@ export default {
       'fetchCheck2fa',
       'fetchChangePassword',
       'fetchChangeEmail',
-      'fetchCloseAccount',
       'fetchGenerate2fa',
       'fetchDisable2fa',
-      'fetchFreezeAccount'
+      'fetchFreezeOrCloseAccount'
     ]),
     'securityEmail.currentEmail': {
       handler: function () {
@@ -336,19 +335,21 @@ export default {
           })
           break;
         case 'closeaccount':
-          await this.$store.dispatch('fetchCloseAccount', {
+          await this.$store.dispatch('fetchFreezeOrCloseAccount', {
             token: localStorage.getItem('token'),
-            twofa: this.returnTwofa(this.securityTwofa.code)
+            twofa: this.returnTwofa(this.securityTwofa.code),
+            type
           })
           break;
         case 'freezeaccount':
-          await this.$store.dispatch('fetchFreezeAccount', {
+          await this.$store.dispatch('fetchFreezeOrCloseAccount', {
             token: localStorage.getItem('token'),
-            twofa: this.returnTwofa(this.securityTwofa.code)
+            twofa: this.returnTwofa(this.securityTwofa.code),
+            type
           })
           break;
         default:
-          break;
+          return
       }
     },
     handleAction(action) {

@@ -55,18 +55,9 @@ export const changePassword = async (payload) => {
   }
 }
 
-export const closeAccount = async (payload) => {
+export const freezeOrCloseAccount = async (payload) => {
   try {
-    const { data } = await api.post('/c-a', payload)
-    return data
-  } catch (e) {
-    return e.response.data
-  }
-}
-
-export const freezeAccount = async (payload) => {
-  try {
-    const { data } = await api.post('/f-a', payload)
+    const { data } = await api.post('/f-o-c-a', payload)
     return data
   } catch (e) {
     return e.response.data
