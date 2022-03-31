@@ -15,10 +15,6 @@
             :text="`Your ${this.$store.getters.getClientData.twofa ? 'have set' : 'haven\'t set'} Google Authenticator status`"
           />
         </div>
-        <h1>Wallets</h1>
-        <!--      <div class="account-container-info" v-for="wallet in client.wallets">-->
-        <!--        <Panel :title="`${wallet.shortname}`" :text="`${wallet.name}`" />-->
-        <!--      </div>-->
       </div>
     </div>
     <Footer :bright="true" />
@@ -32,7 +28,6 @@ export default {
   name: "account",
   async mounted() {
     this.$store.commit('setClientData', await verifyClientByToken(this.$router, localStorage.getItem('token')))
-    // this.client.wallets = await checkWallets({ token: localStorage.getItem('token') })
   }
 }
 </script>
