@@ -28,9 +28,11 @@ export const disable2fa = async (payload) => {
   }
 }
 
-export const checkFor2fa = async (payload) => {
+export const checkFor2fa = async ({ token }) => {
   try {
-    const { data } = await api.post('/v-2fa', payload)
+    const { data } = await api.get('/v-2fa', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     return data
   } catch (e) {
     return e.response.data

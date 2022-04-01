@@ -274,7 +274,7 @@ export default {
   },
   async mounted() {
     this.$store.commit('setClientData', await verifyClientByToken(this.$router, localStorage.getItem('token')))
-    await this.$store.dispatch('fetchCheck2fa', {token: localStorage.getItem('token')})
+    await this.$store.dispatch('fetchCheck2fa', { token: localStorage.getItem('token') })
   },
   data() {
     return {

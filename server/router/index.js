@@ -40,7 +40,7 @@ router.post('/c-r', async (req, res) => {
 router.get('/c-b-t', async (req, res) => {
   try {
     const data = await api.get('/client-by-token', {
-      headers: { 'Authorization': req.headers.authorization, }
+      headers: { 'Authorization': req.headers.authorization }
     })
     res.json(data.data)
   } catch (e) {
@@ -66,9 +66,11 @@ router.post('/d-2fa', async (req, res) => {
   }
 })
 
-router.post('/v-2fa', async (req, res) => {
+router.get('/v-2fa', async (req, res) => {
   try {
-    const data = await api.post('/verify-2fa', req.body)
+    const data = await api.get('/verify-2fa', {
+      headers: { 'Authorization': req.headers.authorization }
+    })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
@@ -123,7 +125,7 @@ router.post('/g-r-l', async (req, res) => {
 router.get('/get-r-l', async (req, res) => {
   try {
     const data = await api.get('/get-referral-link', {
-      headers: { 'Authorization': req.headers.authorization, }
+      headers: { 'Authorization': req.headers.authorization }
     })
     res.json(data.data)
   } catch (e) {
