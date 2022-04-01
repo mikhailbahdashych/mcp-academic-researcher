@@ -5,9 +5,12 @@ import mutations from "./mutations";
 const state = () => ({
   securityTwofa: { code: [], qr: null, status: null, secret: null },
   securityPassword: {
+    // continue here
     currentPassword: null,
+    currentPasswordRepeat: null,
     newPassword: null,
-    newPasswordRepeat: null
+    newPasswordRepeat: null,
+    error: false
   },
   securityEmail: {
     email: null,

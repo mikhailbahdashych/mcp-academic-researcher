@@ -10,7 +10,8 @@ export default {
     state.securityPassword = {
       currentPassword: null,
       newPassword: null,
-      newPasswordRepeat: null
+      newPasswordRepeat: null,
+      error: false
     }
     state.securityEmail = {
       currentEmail: null,

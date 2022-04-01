@@ -58,6 +58,8 @@
         :type="'password'"
         v-model="securityPassword.newPasswordRepeat"
       />
+      <p class="paragraph medium error" v-if="securityPassword.error">Passwords have to match!</p>
+      <!--      <p class="paragraph medium error">Wrong password!</p>-->
       <Button :label="'Change password'" @show="handleAction('changePassword')" />
     </basic-modal>
 
@@ -162,6 +164,8 @@
         :type="'password'"
         v-model="securityPassword.newPassword"
       />
+      <p class="paragraph medium error" v-if="securityPassword.error">Passwords have to match!</p>
+<!--      <p class="paragraph medium error">Wrong password!</p>-->
       <Button :label="'Freeze account'" @show="handleAction('freezeAccount')" />
     </basic-modal>
 
@@ -185,6 +189,8 @@
         :type="'password'"
         v-model="securityPassword.newPassword"
       />
+      <p class="paragraph medium error" v-if="securityPassword.error">Passwords have to match!</p>
+      <!--      <p class="paragraph medium error">Wrong password!</p>-->
       <Button :label="'Close account'" @show="handleAction('closingAccount')" />
     </basic-modal>
 
@@ -218,6 +224,16 @@ export default {
       'fetchDisable2fa',
       'fetchFreezeOrCloseAccount'
     ]),
+    'securityPassword.currentPassword': {
+      handler: function () {
+        this.securityPassword.error = this.securityPassword.currentPassword !== this.securityPassword.newPassword;
+      }
+    },
+    'securityPassword.newPassword': {
+      handler: function () {
+        this.securityPassword.error = this.securityPassword.currentPassword !== this.securityPassword.newPassword;
+      }
+    },
     'securityEmail.currentEmail': {
       handler: function () {
         if (!validateEmail(this.securityEmail.currentEmail)) this.securityEmail.currentEmailError = true
