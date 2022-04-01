@@ -120,9 +120,11 @@ router.post('/g-r-l', async (req, res) => {
   }
 })
 
-router.post('/get-r-l', async (req, res) => {
+router.get('/get-r-l', async (req, res) => {
   try {
-    const data = await api.post('/get-referral-link', req.body)
+    const data = await api.get('/get-referral-link', {
+      headers: { 'Authorization': req.headers.authorization, }
+    })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)

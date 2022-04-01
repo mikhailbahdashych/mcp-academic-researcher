@@ -19,9 +19,11 @@ export const generateReferralLink = async (payload) => {
   }
 }
 
-export const getReferralLink = async (payload) => {
+export const getReferralLink = async ({ token }) => {
   try {
-    const { data } = await api.post(`/get-r-l`, payload)
+    const { data } = await api.get(`/get-r-l`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     return data
   } catch (e) {
     return e.response.data
