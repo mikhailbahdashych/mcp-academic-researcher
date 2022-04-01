@@ -10,9 +10,11 @@ const api = axios.create({
   }
 })
 
-export const checkWallets = async (payload) => {
+export const checkWallets = async ({ token }) => {
   try {
-    const { data } = await api.post('/c-w', payload)
+    const { data } = await api.get('/c-w', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     return data
   } catch (e) {
     return e.response.data
