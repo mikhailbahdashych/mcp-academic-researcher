@@ -37,9 +37,11 @@ export const confirmRegistration = async (payload) => {
   }
 }
 
-export const getClientByToken = async (token) => {
+export const getClientByToken = async ({ token }) => {
   try {
-    const { data } = await api.post('/c-b-t', token)
+    const { data } = await api.get('/c-b-t', {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
     return data
   } catch (e) {
     return e.response.data

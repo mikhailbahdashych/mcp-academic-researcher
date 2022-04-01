@@ -37,9 +37,11 @@ router.post('/c-r', async (req, res) => {
   }
 })
 
-router.post('/c-b-t', async (req, res) => {
+router.get('/c-b-t', async (req, res) => {
   try {
-    const data = await api.post('/client-by-token', req.body)
+    const data = await api.get('/client-by-token', {
+      headers: { 'Authorization': req.headers.authorization, }
+    })
     res.json(data.data)
   } catch (e) {
     res.status(e.response.status).json(e.response.data)
