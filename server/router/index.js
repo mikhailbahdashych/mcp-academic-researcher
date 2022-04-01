@@ -142,4 +142,15 @@ router.get('/r-f-r-l/:reflink', async (req, res) => {
   }
 })
 
+router.get('/c-w', async (req, res) => {
+  try {
+    const data = await api.get('/check-wallets', {
+      headers: { 'Authorization': req.headers.authorization }
+    })
+    res.json(data.data)
+  } catch (e) {
+    res.status(e.response.status).json(e.response.data)
+  }
+})
+
 module.exports = router
