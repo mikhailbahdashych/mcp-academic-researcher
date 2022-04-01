@@ -194,8 +194,7 @@
       header="Provide 2FA code"
       :description="`Provide 2FA code to confirm ${actionName(twofaType)} action.`"
     >
-      <InputTwoFa :twofa="securityTwofa.code" @returnTwofa="returnTwofa" :onwhite="true" />
-      <Button :label="'Confirm'" @show="commit2fa(twofaType)" />
+      <InputTwoFa :twofa="securityTwofa.code" @returnTwofa="returnTwofa(securityTwofa.code, twofaType)" :onwhite="true" />
     </basic-modal>
 
     <Footer :bright="true" />
@@ -283,7 +282,45 @@ export default {
     }
   },
   methods: {
-    returnTwofa(twofa) { return twofa.join('') },
+    async returnTwofa(twofa, type) {
+      if (twofa.length !== 6 || twofa.join('').length !== 6) return
+      switch (type) {
+        case 'changePassword':
+          await this.$store.dispatch('fetchChangePassword', {
+            currentPassword: this.securityPassword.currentPassword,
+            newPassword: this.securityPassword.newPassword,
+            newPasswordRepeat: this.securityPassword.newPasswordRepeat,
+            token: localStorage.getItem('token'),
+            twofa: this.securityTwofa.code.join('')
+          })
+          break;
+        case 'changeEmail':
+          await this.$store.dispatch('fetchChangeEmail', {
+            currentEmail: this.securityEmail.currentEmail,
+            newEmail: this.securityEmail.newEmail,
+            newEmailRepeat: this.securityEmail.newEmailRepeat,
+            token: localStorage.getItem('token'),
+            twofa: this.securityTwofa.code.join('')
+          })
+          break;
+        case 'closingAccount':
+          await this.$store.dispatch('fetchFreezeOrCloseAccount', {
+            token: localStorage.getItem('token'),
+            twofa: this.securityTwofa.code.join(''),
+            type
+          })
+          break;
+        case 'freezeAccount':
+          await this.$store.dispatch('fetchFreezeOrCloseAccount', {
+            token: localStorage.getItem('token'),
+            twofa: this.securityTwofa.code.join(''),
+            type
+          })
+          break;
+        default:
+          return
+      }
+    },
     closeModal(modal) {
       this.$store.dispatch('fetchSecurityShowModal', {[modal]: false})
       this.$store.commit('setSecurityDefaultValues')
@@ -300,57 +337,19 @@ export default {
     },
     async set2fa() {
       await this.$store.dispatch('fetchSet2fa', {
-        twofa: this.returnTwofa(this.securityTwofa.code),
+        twofa: this.securityTwofa.code.join(''),
         tokenTwofa: this.securityTwofa.secret,
         token: localStorage.getItem('token')
       })
     },
     async deactivate2fa() {
       await this.$store.dispatch('fetchDisable2fa', {
-        twofa: this.returnTwofa(this.securityTwofa.code),
+        twofa: this.securityTwofa.code.join(''),
         token: localStorage.getItem('token')
       })
     },
     generate2fa() {
       this.$store.dispatch('fetchGenerate2fa', { name: 'CTD.com', account: localStorage.getItem('email') })
-    },
-    async commit2fa(type) {
-      switch (type) {
-        case 'changePassword':
-          await this.$store.dispatch('fetchChangePassword', {
-            currentPassword: this.securityPassword.currentPassword,
-            newPassword: this.securityPassword.newPassword,
-            newPasswordRepeat: this.securityPassword.newPasswordRepeat,
-            token: localStorage.getItem('token'),
-            twofa: this.returnTwofa(this.securityTwofa.code)
-          })
-          break;
-        case 'changeEmail':
-          await this.$store.dispatch('fetchChangeEmail', {
-            currentEmail: this.securityEmail.currentEmail,
-            newEmail: this.securityEmail.newEmail,
-            newEmailRepeat: this.securityEmail.newEmailRepeat,
-            token: localStorage.getItem('token'),
-            twofa: this.returnTwofa(this.securityTwofa.code)
-          })
-          break;
-        case 'closingAccount':
-          await this.$store.dispatch('fetchFreezeOrCloseAccount', {
-            token: localStorage.getItem('token'),
-            twofa: this.returnTwofa(this.securityTwofa.code),
-            type
-          })
-          break;
-        case 'freezeAccount':
-          await this.$store.dispatch('fetchFreezeOrCloseAccount', {
-            token: localStorage.getItem('token'),
-            twofa: this.returnTwofa(this.securityTwofa.code),
-            type
-          })
-          break;
-        default:
-          return
-      }
     },
     handleAction(action) {
       this.securityShowModal[action] = false
