@@ -1,0 +1,9 @@
+[project]
+name = "mcp-notes"
+version = "0.1.0"
+description = "Notes management MCP server"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.25.0",
+    "pydantic>=2.12.5",
+]

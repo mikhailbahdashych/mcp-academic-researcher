@@ -1,0 +1,31 @@
+[project]
+name = "mcp-academic-researcher"
+version = "0.1.0"
+description = "MCP Academic Researcher - Python workspace"
+readme = "README.md"
+requires-python = ">=3.11"
+
+[tool.uv]
+managed = true
+
+[tool.uv.workspace]
+members = [
+    "orchestrator",
+    "mcp_servers/papers",
+    "mcp_servers/notes",
+    "mcp_servers/citations",
+    "mcp_servers/files",
+    "shared",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
