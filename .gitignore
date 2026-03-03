@@ -60,6 +60,7 @@ ENV/
 env/
 .uv/
 uv.lock
+package-lock.json
 
 # Python testing
 .pytest_cache/
