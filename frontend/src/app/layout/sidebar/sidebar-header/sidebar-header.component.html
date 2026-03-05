@@ -1,0 +1,49 @@
+<div class="sidebar-header" [class.collapsed]="collapsed">
+  @if (!collapsed) {
+    <a class="logo" routerLink="/">
+      <mat-icon class="logo-icon">science</mat-icon>
+      <span class="logo-text">MCP Researcher</span>
+    </a>
+  } @else {
+    <button
+      mat-icon-button
+      class="logo-icon-btn"
+      routerLink="/"
+      matTooltip="Home"
+      matTooltipPosition="right"
+    >
+      <mat-icon class="logo-icon">science</mat-icon>
+    </button>
+  }
+
+  <div class="header-actions">
+    @if (!collapsed) {
+      <button
+        mat-icon-button
+        (click)="themeService.toggle()"
+        [matTooltip]="themeService.isDark() ? 'Light mode' : 'Dark mode'"
+        class="action-btn"
+      >
+        <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        (click)="newResearch.emit()"
+        matTooltip="New research"
+        routerLink="/"
+        class="action-btn accent"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+    }
+    <button
+      mat-icon-button
+      (click)="toggleCollapse.emit()"
+      [matTooltip]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+      matTooltipPosition="right"
+      class="action-btn collapse-btn"
+    >
+      <mat-icon>{{ collapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,10 @@
+.message-thread {
+  display: flex;
+  flex-direction: column;
+  padding: 0 4px;
+}
+
+.scroll-anchor {
+  height: 1px;
+  flex-shrink: 0;
+}

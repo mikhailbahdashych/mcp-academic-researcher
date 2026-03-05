@@ -1,0 +1,21 @@
+.top-bar {
+  height: var(--topbar-height);
+  background-color: var(--app-surface) !important;
+  border-bottom: 1px solid var(--app-border);
+  padding: 0 8px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--app-text-primary);
+  cursor: pointer;
+  margin-left: 4px;
+}
+
+.spacer {
+  flex: 1;
+}

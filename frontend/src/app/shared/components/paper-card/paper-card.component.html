@@ -1,0 +1,46 @@
+<mat-card class="paper-card">
+  <mat-card-header>
+    @if (index !== undefined) {
+      <span class="paper-index">{{ index + 1 }}</span>
+    }
+    <div class="paper-meta">
+      <mat-card-title class="paper-title">{{ paper.title }}</mat-card-title>
+      <mat-card-subtitle class="paper-authors">
+        {{ authorsDisplay }}
+        @if (paper.year) { · {{ paper.year }} }
+        @if (paper.venue) { · <em>{{ paper.venue }}</em> }
+      </mat-card-subtitle>
+    </div>
+  </mat-card-header>
+
+  @if (paper.abstract) {
+    <mat-card-content>
+      <p class="paper-abstract" [class.expanded]="expanded">
+        {{ paper.abstract }}
+      </p>
+      @if (paper.abstract.length > 180) {
+        <button mat-button class="expand-btn" (click)="expanded = !expanded">
+          {{ expanded ? 'Show less' : 'Show more' }}
+        </button>
+      }
+    </mat-card-content>
+  }
+
+  <mat-card-actions>
+    @if (paper.citationCount !== undefined) {
+      <span class="citation-count text-secondary">
+        <mat-icon>format_quote</mat-icon>
+        {{ paper.citationCount | number }} citations
+      </span>
+    }
+    <span class="spacer"></span>
+    <button mat-icon-button (click)="copyCitation()" matTooltip="Copy citation">
+      <mat-icon>content_copy</mat-icon>
+    </button>
+    @if (paper.url) {
+      <button mat-icon-button (click)="openUrl()" matTooltip="Open paper">
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    }
+  </mat-card-actions>
+</mat-card>

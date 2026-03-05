@@ -1,0 +1,10 @@
+{
+  "name": "mcp-academic-researcher",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "frontend": "npm start --prefix frontend",
+    "frontend:build": "npm run build --prefix frontend",
+    "frontend:test": "npm test --prefix frontend"
+  }
+}

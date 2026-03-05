@@ -1,0 +1,29 @@
+<div class="sources-panel">
+  <div class="panel-header">
+    <h3 class="panel-title">Sources</h3>
+    @if (papers().length) {
+      <span class="paper-count text-secondary">{{ papers().length }}</span>
+    }
+  </div>
+
+  @if (isStreaming() && !papers().length) {
+    <div class="loading-state">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-card"></div>
+      }
+    </div>
+  }
+
+  @if (!isStreaming() && !papers().length) {
+    <div class="empty-state">
+      <span class="material-icons empty-icon">article</span>
+      <p class="text-secondary">Sources will appear here as the AI responds.</p>
+    </div>
+  }
+
+  <div class="papers-list">
+    @for (paper of papers(); track paper.id; let i = $index) {
+      <app-paper-card [paper]="paper" [index]="i"></app-paper-card>
+    }
+  </div>
+</div>

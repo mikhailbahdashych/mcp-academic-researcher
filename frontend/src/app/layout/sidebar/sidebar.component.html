@@ -1,0 +1,38 @@
+<div class="sidebar" [class.collapsed]="collapsed">
+  <app-sidebar-header
+    [collapsed]="collapsed"
+    (newResearch)="closeSidenav.emit()"
+    (toggleCollapse)="toggleCollapse.emit()"
+  ></app-sidebar-header>
+
+  <nav class="sidebar-nav">
+    <a
+      class="nav-item"
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeSidenav.emit()"
+      [matTooltip]="collapsed ? 'Home' : ''"
+      matTooltipPosition="right"
+    >
+      <mat-icon>home</mat-icon>
+      @if (!collapsed) { <span>Home</span> }
+    </a>
+    <a
+      class="nav-item"
+      routerLink="/history"
+      routerLinkActive="active"
+      (click)="closeSidenav.emit()"
+      [matTooltip]="collapsed ? 'History' : ''"
+      matTooltipPosition="right"
+    >
+      <mat-icon>history</mat-icon>
+      @if (!collapsed) { <span>History</span> }
+    </a>
+  </nav>
+
+  @if (!collapsed) {
+    <div class="divider"></div>
+    <app-session-list></app-session-list>
+  }
+</div>

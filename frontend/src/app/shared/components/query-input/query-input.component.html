@@ -1,0 +1,31 @@
+<div class="query-input-wrapper" [class.hero]="size === 'hero'" [class.inline]="size === 'inline'">
+  <div class="input-container" [class.disabled]="disabled">
+    <textarea
+      #textarea
+      class="query-textarea"
+      [(ngModel)]="query"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      (keydown)="onKeydown($event)"
+      rows="1"
+      autocomplete="off"
+      autocorrect="off"
+      spellcheck="false"
+    ></textarea>
+
+    <div class="input-actions">
+      @if (size === 'hero') {
+        <span class="shortcut-hint text-secondary">&#8984;K</span>
+      }
+      <button
+        mat-icon-button
+        class="send-btn"
+        [disabled]="!query.trim() || disabled"
+        (click)="submit()"
+        matTooltip="Send (Enter)"
+      >
+        <mat-icon>arrow_upward</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
