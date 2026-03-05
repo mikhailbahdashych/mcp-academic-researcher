@@ -3,7 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ChatSession } from '../../../core/models/chat.models';
+import { ChatSession } from '@core/models/chat.models';
 
 @Component({
   selector: 'app-session-item',

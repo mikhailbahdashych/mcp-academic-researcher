@@ -2,7 +2,7 @@
   <div class="history-header">
     <div class="header-top">
       <h1 class="history-title">History</h1>
-      <button mat-flat-button color="primary" routerLink="/" class="new-btn">
+      <button mat-flat-button color="accent" routerLink="/" class="new-btn">
         <mat-icon>add</mat-icon>
         New research
       </button>
@@ -36,7 +36,7 @@
       } @else {
         <mat-icon>history</mat-icon>
         <p class="text-secondary">No research sessions yet</p>
-        <button mat-flat-button color="primary" (click)="goHome()">Start researching</button>
+        <button mat-flat-button color="accent" (click)="goHome()">Start researching</button>
       }
     </div>
   } @else {

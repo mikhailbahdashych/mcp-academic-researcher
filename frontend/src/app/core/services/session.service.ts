@@ -13,7 +13,6 @@ export class SessionService {
     this._sessions().find(s => s.id === this._activeSessionId())
   );
 
-  // ─── Storage ───────────────────────────────────────────────────────────────
   private loadFromStorage(): ChatSession[] {
     try {
       const raw = localStorage.getItem(this.STORAGE_KEY);
@@ -39,7 +38,6 @@ export class SessionService {
     }
   }
 
-  // ─── Session CRUD ──────────────────────────────────────────────────────────
   createSession(query: string): ChatSession {
     const session: ChatSession = {
       id: crypto.randomUUID(),
@@ -84,7 +82,6 @@ export class SessionService {
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
-  // ─── Message Operations ────────────────────────────────────────────────────
   addUserMessage(sessionId: string, content: string): void {
     this.updateSession(sessionId, session => ({
       ...session,
@@ -157,7 +154,6 @@ export class SessionService {
     this.saveToStorage();
   }
 
-  // ─── Helpers ───────────────────────────────────────────────────────────────
   private updateSession(
     id: string,
     updater: (s: ChatSession) => ChatSession

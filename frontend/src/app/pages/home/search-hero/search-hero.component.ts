@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { QueryInputComponent } from '../../../shared/components/query-input/query-input.component';
+import { QueryInputComponent } from '@shared/components/query-input/query-input.component';
 
 @Component({
   selector: 'app-search-hero',

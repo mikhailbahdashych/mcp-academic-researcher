@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { SessionService } from '../../core/services/session.service';
+import { SessionService } from '@core/services/session.service';
 import { SearchHeroComponent } from './search-hero/search-hero.component';
 import { SuggestedTopicsComponent } from './suggested-topics/suggested-topics.component';
 

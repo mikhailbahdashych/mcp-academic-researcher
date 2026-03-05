@@ -5,7 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Paper } from '../../../core/models/chat.models';
+import { Paper } from '@core/models/chat.models';
 
 @Component({
   selector: 'app-paper-card',

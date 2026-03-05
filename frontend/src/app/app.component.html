@@ -1,4 +1,4 @@
-<mat-sidenav-container class="app-container">
+<mat-sidenav-container class="app-container" [class.sidebar-collapsed]="sidebarCollapsed()">
   <mat-sidenav
     #sidenav
     [mode]="isHandset() ? 'over' : 'side'"
@@ -9,7 +9,7 @@
     <app-sidebar
       [collapsed]="sidebarCollapsed()"
       (toggleCollapse)="toggleCollapse()"
-      (closeSidenav)="sidenav.close()"
+      (closeSidenav)="onSidenavClose()"
     ></app-sidebar>
   </mat-sidenav>
 

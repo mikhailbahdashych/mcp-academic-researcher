@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Message } from '../../../../core/models/chat.models';
+import { Message } from '@core/models/chat.models';
 import { MarkdownViewerComponent } from '../markdown-viewer/markdown-viewer.component';
 import { StreamingCursorComponent } from '../streaming-cursor/streaming-cursor.component';
 

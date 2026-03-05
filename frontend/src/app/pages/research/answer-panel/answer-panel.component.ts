@@ -12,11 +12,11 @@ import { Subscription } from 'rxjs';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { SessionService } from '../../../core/services/session.service';
-import { StreamingService } from '../../../core/services/streaming.service';
-import { Paper, SSEEvent } from '../../../core/models/chat.models';
+import { SessionService } from '@core/services/session.service';
+import { StreamingService } from '@core/services/streaming.service';
+import { Paper, SSEEvent } from '@core/models/chat.models';
 import { MessageThreadComponent } from './message-thread/message-thread.component';
-import { QueryInputComponent } from '../../../shared/components/query-input/query-input.component';
+import { QueryInputComponent } from '@shared/components/query-input/query-input.component';
 
 @Component({
   selector: 'app-answer-panel',

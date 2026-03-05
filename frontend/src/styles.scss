@@ -1,14 +1,11 @@
 @use '@angular/material' as mat;
 
-// ─── Material Core ───────────────────────────────────────────────────────────
 @include mat.core();
 
-// ─── Palettes ────────────────────────────────────────────────────────────────
 $primary: mat.define-palette(mat.$blue-palette, 700);
 $accent:  mat.define-palette(mat.$teal-palette, A400, A200, A700);
 $warn:    mat.define-palette(mat.$red-palette);
 
-// ─── Themes ──────────────────────────────────────────────────────────────────
 $dark-theme: mat.define-dark-theme((
   color: (primary: $primary, accent: $accent, warn: $warn),
   typography: mat.define-typography-config($font-family: 'Inter, sans-serif'),
@@ -38,7 +35,6 @@ $light-theme: mat.define-light-theme((
   --app-shadow:           0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-// ─── CSS Custom Properties (dark default) ────────────────────────────────────
 :root {
   --app-bg:               #0f1117;
   --app-surface:          #1a1d27;
@@ -65,7 +61,6 @@ $light-theme: mat.define-light-theme((
   --font-mono:            'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
 }
 
-// ─── Base Reset ──────────────────────────────────────────────────────────────
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -80,7 +75,6 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-// ─── Scrollbar ───────────────────────────────────────────────────────────────
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
@@ -89,13 +83,11 @@ html, body {
   &:hover { background: rgba(255, 255, 255, 0.2); }
 }
 
-// ─── Typography ──────────────────────────────────────────────────────────────
 h1, h2, h3, h4, h5, h6 { margin: 0; font-weight: 600; line-height: 1.3; }
 p { margin: 0; }
 a { color: var(--accent-color); text-decoration: none; &:hover { text-decoration: underline; } }
 code, pre { font-family: var(--font-mono); font-size: 0.875em; }
 
-// ─── Markdown Content ────────────────────────────────────────────────────────
 .markdown-content {
   line-height: 1.7;
   color: var(--app-text-primary);
@@ -147,7 +139,6 @@ code, pre { font-family: var(--font-mono); font-size: 0.875em; }
   code { background: rgba(0, 0, 0, 0.06); }
 }
 
-// ─── Material Component Overrides ────────────────────────────────────────────
 .mat-mdc-card {
   background-color: var(--app-surface) !important;
   border: 1px solid var(--app-border) !important;
@@ -158,7 +149,6 @@ code, pre { font-family: var(--font-mono); font-size: 0.875em; }
   border-right: 1px solid var(--app-border) !important;
 }
 
-// ─── Utilities ───────────────────────────────────────────────────────────────
 .text-secondary { color: var(--app-text-secondary); }
 .text-accent { color: var(--accent-color); }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

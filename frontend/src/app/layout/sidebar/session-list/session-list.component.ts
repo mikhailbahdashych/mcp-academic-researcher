@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { SessionItemComponent } from '../session-item/session-item.component';
-import { SessionService } from '../../../core/services/session.service';
-import { ChatSession } from '../../../core/models/chat.models';
+import { SessionService } from '@core/services/session.service';
+import { ChatSession } from '@core/models/chat.models';
 
 interface SessionGroup {
   label: string;

@@ -5,7 +5,7 @@ import {
   ViewChild,
   AfterViewChecked,
 } from '@angular/core';
-import { Message } from '../../../../core/models/chat.models';
+import { Message } from '@core/models/chat.models';
 import { MessageBubbleComponent } from '../message-bubble/message-bubble.component';
 
 @Component({
