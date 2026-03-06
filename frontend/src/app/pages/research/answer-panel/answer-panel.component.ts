@@ -107,12 +107,26 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   onFollowUp(query: string): void {
+    this._stream(query);
+  }
+
+  submitWithForcedTool(
+    displayMessage: string,
+    forceTool: { name: string; args: Record<string, unknown> },
+  ): void {
+    this._stream(displayMessage, forceTool);
+  }
+
+  private _stream(
+    query: string,
+    forceTool?: { name: string; args: Record<string, unknown> },
+  ): void {
     this.sessionService.addUserMessage(this.sessionId, query);
     this.currentMessageId = this.sessionService.addAssistantMessage(this.sessionId);
 
     this.subscription?.unsubscribe();
     this.subscription = this.streamingService
-      .streamChat(this.sessionId, query)
+      .streamChat(this.sessionId, query, forceTool)
       .subscribe({
         next: event => this.handleEvent(event),
         error: err => {

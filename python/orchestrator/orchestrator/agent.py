@@ -91,38 +91,53 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 ollama_tools.append(_mcp_tool_to_ollama(tool))
 
         accumulated_papers: list[dict] = []
-
-        # --- Pre-search: always run search tools before the LLM turn ---
-        # This guarantees papers are populated regardless of whether the model
-        # decides to call tools on its own.
         messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
         for msg in request.history:
             messages.append({"role": msg.role, "content": msg.content})
 
-        pre_search_tools = ["search_arxiv", "search_openalex"]
-        for tool_name in pre_search_tools:
-            if tool_name not in tool_session:
-                continue
+        if request.force_tool:
+            # --- Forced tool call: skip pre-search, call the specified tool directly ---
+            tool_name = request.force_tool.name
+            tool_args = request.force_tool.args
+            session = tool_session.get(tool_name, citations_session)
             try:
-                result = await tool_session[tool_name].call_tool(
-                    tool_name, {"query": request.message, "max_results": 5}
-                )
-                papers = _parse_papers(result)
-                accumulated_papers.extend(papers)
-                # Inject as if the model called the tool, so LLM has full context
+                result = await session.call_tool(tool_name, tool_args)
+                accumulated_papers.extend(_parse_papers(result))
                 messages.append({
                     "role": "assistant",
                     "content": "",
-                    "tool_calls": [
-                        {"function": {"name": tool_name, "arguments": {"query": request.message, "max_results": 5}}}
-                    ],
+                    "tool_calls": [{"function": {"name": tool_name, "arguments": tool_args}}],
                 })
                 messages.append({
                     "role": "tool",
                     "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
                 })
-            except Exception:
-                pass
+            except Exception as e:
+                messages.append({"role": "user", "content": f"Tool call failed: {e}"})
+        else:
+            # --- Pre-search: always run search tools before the LLM turn ---
+            pre_search_tools = ["search_arxiv", "search_openalex"]
+            for tool_name in pre_search_tools:
+                if tool_name not in tool_session:
+                    continue
+                try:
+                    result = await tool_session[tool_name].call_tool(
+                        tool_name, {"query": request.message, "max_results": 5}
+                    )
+                    accumulated_papers.extend(_parse_papers(result))
+                    messages.append({
+                        "role": "assistant",
+                        "content": "",
+                        "tool_calls": [
+                            {"function": {"name": tool_name, "arguments": {"query": request.message, "max_results": 5}}}
+                        ],
+                    })
+                    messages.append({
+                        "role": "tool",
+                        "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
+                    })
+                except Exception:
+                    pass
 
         messages.append({"role": "user", "content": request.message})
 

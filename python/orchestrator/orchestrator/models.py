@@ -6,7 +6,13 @@ class Message(BaseModel):
     content: str
 
 
+class ForceTool(BaseModel):
+    name: str
+    args: dict
+
+
 class ChatRequest(BaseModel):
     conversation_id: str
     message: str
     history: list[Message]
+    force_tool: ForceTool | None = None

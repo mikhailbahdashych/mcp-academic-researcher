@@ -6,7 +6,11 @@ import { SSEEvent } from '../models/chat.models';
 export class StreamingService {
   readonly isStreaming = signal(false);
 
-  streamChat(conversationId: string, query: string): Observable<SSEEvent> {
+  streamChat(
+    conversationId: string,
+    query: string,
+    forceTool?: { name: string; args: Record<string, unknown> },
+  ): Observable<SSEEvent> {
     return new Observable<SSEEvent>(subscriber => {
       const controller = new AbortController();
       this.isStreaming.set(true);
@@ -14,7 +18,7 @@ export class StreamingService {
       fetch(`/api/conversations/${conversationId}/messages/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, ...(forceTool ? { forceTool } : {}) }),
         signal: controller.signal,
       })
         .then(async response => {

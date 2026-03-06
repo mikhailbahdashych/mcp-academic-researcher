@@ -15,7 +15,12 @@ export class ChatService {
     private readonly conversationsService: ConversationsService,
   ) {}
 
-  async streamChat(conversationId: string, query: string, res: Response) {
+  async streamChat(
+    conversationId: string,
+    query: string,
+    res: Response,
+    forceTool?: { name: string; args: Record<string, unknown> },
+  ) {
     const conversation = await this.conversationsService.findOne(conversationId);
 
     // Save user message
@@ -46,7 +51,7 @@ export class ChatService {
     try {
       const orchestratorRes = await axios.post(
         `${this.orchestratorUrl}/chat`,
-        { conversation_id: conversationId, message: query, history },
+        { conversation_id: conversationId, message: query, history, force_tool: forceTool ?? null },
         { responseType: 'stream', timeout: 60000 },
       );
 

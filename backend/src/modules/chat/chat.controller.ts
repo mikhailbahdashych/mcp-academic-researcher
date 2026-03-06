@@ -13,6 +13,6 @@ export class ChatController {
     @Body() dto: StreamChatDto,
     @Res() res: Response,
   ) {
-    return this.service.streamChat(id, dto.query, res);
+    return this.service.streamChat(id, dto.query, res, dto.forceTool);
   }
 }

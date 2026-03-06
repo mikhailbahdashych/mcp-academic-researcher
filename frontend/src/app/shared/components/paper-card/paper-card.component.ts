@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,6 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Paper } from '@core/models/chat.models';
+
+export interface CitationLookup {
+  type: 'citations' | 'references';
+  paperId: string;
+  paperTitle: string;
+}
 
 @Component({
   selector: 'app-paper-card',
@@ -17,8 +23,21 @@ import { Paper } from '@core/models/chat.models';
 export class PaperCardComponent {
   @Input({ required: true }) paper!: Paper;
   @Input() index?: number;
+  @Output() citationLookup = new EventEmitter<CitationLookup>();
 
   private readonly snackBar = inject(MatSnackBar);
+
+  get isOpenAlex(): boolean {
+    return this.paper.source === 'openalex' && !!this.paper.id;
+  }
+
+  onCitationsClick(): void {
+    this.citationLookup.emit({ type: 'citations', paperId: this.paper.id, paperTitle: this.paper.title });
+  }
+
+  onReferencesClick(): void {
+    this.citationLookup.emit({ type: 'references', paperId: this.paper.id, paperTitle: this.paper.title });
+  }
 
   expanded = false;
 

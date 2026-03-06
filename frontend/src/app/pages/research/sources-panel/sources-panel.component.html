@@ -23,7 +23,7 @@
 
   <div class="papers-list">
     @for (paper of papers(); track paper.id; let i = $index) {
-      <app-paper-card [paper]="paper" [index]="i"></app-paper-card>
+      <app-paper-card [paper]="paper" [index]="i" (citationLookup)="citationLookup.emit($event)"></app-paper-card>
     }
   </div>
 </div>

@@ -1,8 +1,8 @@
-import { Component, Input, computed, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, computed, inject } from '@angular/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { SessionService } from '@core/services/session.service';
 import { StreamingService } from '@core/services/streaming.service';
-import { PaperCardComponent } from '@shared/components/paper-card/paper-card.component';
+import { PaperCardComponent, CitationLookup } from '@shared/components/paper-card/paper-card.component';
 
 @Component({
   selector: 'app-sources-panel',
@@ -13,6 +13,7 @@ import { PaperCardComponent } from '@shared/components/paper-card/paper-card.com
 })
 export class SourcesPanelComponent {
   @Input({ required: true }) sessionId!: string;
+  @Output() citationLookup = new EventEmitter<CitationLookup>();
 
   protected readonly sessionService = inject(SessionService);
   protected readonly streamingService = inject(StreamingService);

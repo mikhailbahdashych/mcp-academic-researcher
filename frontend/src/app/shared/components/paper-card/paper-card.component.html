@@ -34,6 +34,14 @@
       </span>
     }
     <span class="spacer"></span>
+    @if (isOpenAlex) {
+      <button mat-icon-button class="action-button" (click)="onCitationsClick()" matTooltip="Find citing papers">
+        <mat-icon>call_made</mat-icon>
+      </button>
+      <button mat-icon-button class="action-button" (click)="onReferencesClick()" matTooltip="Find references">
+        <mat-icon>call_received</mat-icon>
+      </button>
+    }
     <button mat-icon-button class="action-button" (click)="copyCitation()" matTooltip="Copy citation">
       <mat-icon>content_copy</mat-icon>
     </button>
