@@ -16,17 +16,14 @@ MODEL = "qwen2.5:7b"
 
 SYSTEM_PROMPT = (
     "You are an academic research assistant. "
-    "When the user asks about a research topic, use the available tools to search for relevant "
-    "academic papers from arXiv and OpenAlex. "
-    "When the user asks about citations or references for a specific paper, use get_citations "
-    "or get_references with the paper's OpenAlex ID or DOI. "
-    "After searching, summarize the key findings and present the papers you found. "
-    "Always search before answering research questions."
+    "You will be provided with search results from arXiv and OpenAlex. "
+    "Summarize the key findings from the provided papers and present them clearly. "
+    "You may use the available tools to search for additional papers if needed. "
+    "Always base your answer on the actual papers provided."
 )
 
 
 def _resolve_bin(name: str) -> str:
-    """Find a script in the current venv, falling back to PATH."""
     candidate = Path(sys.executable).parent / name
     return str(candidate) if candidate.exists() else name
 
@@ -42,6 +39,22 @@ def _mcp_tool_to_ollama(tool) -> dict:
     }
 
 
+def _parse_papers(result) -> list[dict]:
+    papers = []
+    for content_item in result.content:
+        raw = getattr(content_item, "text", None)
+        if raw:
+            try:
+                parsed = json.loads(raw)
+                if isinstance(parsed, list):
+                    papers.extend(parsed)
+                elif isinstance(parsed, dict):
+                    papers.append(parsed)
+            except (json.JSONDecodeError, TypeError):
+                pass
+    return papers
+
+
 def _sse_token(text: str) -> str:
     return f"data: {json.dumps({'type': 'token', 'data': text})}\n\n"
 
@@ -55,7 +68,6 @@ def _sse_done() -> str:
 
 
 async def _open_session(stack: AsyncExitStack, bin_name: str) -> ClientSession:
-    """Spawn an MCP server subprocess and return an initialised ClientSession."""
     read, write = await stack.enter_async_context(
         stdio_client(StdioServerParameters(command=_resolve_bin(bin_name), args=[]))
     )
@@ -66,28 +78,56 @@ async def _open_session(stack: AsyncExitStack, bin_name: str) -> ClientSession:
 
 async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
     async with AsyncExitStack() as stack:
-        # Open both MCP servers
         papers_session = await _open_session(stack, "mcp-papers")
         citations_session = await _open_session(stack, "mcp-citations")
 
-        # Collect tools from both servers, mapping name → session
+        # Build tool registry
         tool_session: dict[str, ClientSession] = {}
         ollama_tools: list[dict] = []
-
         for session in (papers_session, citations_session):
             result = await session.list_tools()
             for tool in result.tools:
                 tool_session[tool.name] = session
                 ollama_tools.append(_mcp_tool_to_ollama(tool))
 
-        # Build initial message list
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+        accumulated_papers: list[dict] = []
+
+        # --- Pre-search: always run search tools before the LLM turn ---
+        # This guarantees papers are populated regardless of whether the model
+        # decides to call tools on its own.
+        messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
         for msg in request.history:
             messages.append({"role": msg.role, "content": msg.content})
+
+        pre_search_tools = ["search_arxiv", "search_openalex"]
+        for tool_name in pre_search_tools:
+            if tool_name not in tool_session:
+                continue
+            try:
+                result = await tool_session[tool_name].call_tool(
+                    tool_name, {"query": request.message, "max_results": 5}
+                )
+                papers = _parse_papers(result)
+                accumulated_papers.extend(papers)
+                # Inject as if the model called the tool, so LLM has full context
+                messages.append({
+                    "role": "assistant",
+                    "content": "",
+                    "tool_calls": [
+                        {"function": {"name": tool_name, "arguments": {"query": request.message, "max_results": 5}}}
+                    ],
+                })
+                messages.append({
+                    "role": "tool",
+                    "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
+                })
+            except Exception:
+                pass
+
         messages.append({"role": "user", "content": request.message})
 
+        # --- LLM loop: model summarizes results, may call more tools ---
         client = ollama.AsyncClient(host=OLLAMA_BASE_URL)
-        accumulated_papers: list[dict] = []
 
         while True:
             response = await client.chat(
@@ -114,24 +154,15 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 yield "data: [DONE]\n\n"
                 break
 
-            # Append assistant turn with tool calls
-            messages.append(
-                {
-                    "role": "assistant",
-                    "content": full_content,
-                    "tool_calls": [
-                        {
-                            "function": {
-                                "name": tc.function.name,
-                                "arguments": tc.function.arguments,
-                            }
-                        }
-                        for tc in tool_calls
-                    ],
-                }
-            )
+            messages.append({
+                "role": "assistant",
+                "content": full_content,
+                "tool_calls": [
+                    {"function": {"name": tc.function.name, "arguments": tc.function.arguments}}
+                    for tc in tool_calls
+                ],
+            })
 
-            # Execute each tool call via the correct MCP session
             for tc in tool_calls:
                 tool_name = tc.function.name
                 tool_args = tc.function.arguments or {}
@@ -141,21 +172,9 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 session = tool_session.get(tool_name, papers_session)
                 result = await session.call_tool(tool_name, tool_args)
 
-                for content_item in result.content:
-                    raw = getattr(content_item, "text", None)
-                    if raw:
-                        try:
-                            papers = json.loads(raw)
-                            if isinstance(papers, list):
-                                accumulated_papers.extend(papers)
-                        except (json.JSONDecodeError, TypeError):
-                            pass
+                accumulated_papers.extend(_parse_papers(result))
 
-                messages.append(
-                    {
-                        "role": "tool",
-                        "content": json.dumps(
-                            [getattr(c, "text", str(c)) for c in result.content]
-                        ),
-                    }
-                )
+                messages.append({
+                    "role": "tool",
+                    "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
+                })

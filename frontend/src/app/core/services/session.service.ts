@@ -30,19 +30,26 @@ export class SessionService {
   }
 
   private hydrateSession(c: ApiConversation): ChatSession {
+    const messages = (c.messages ?? []).map(m => ({
+      id: m.id,
+      role: m.role,
+      content: m.content,
+      timestamp: new Date(m.createdAt),
+      papers: m.papers ? (JSON.parse(m.papers) as Paper[]) : undefined,
+    }));
+
+    // Restore session-level papers from the last assistant message that has them
+    const lastPapers = messages
+      .filter(m => m.role === 'assistant' && m.papers?.length)
+      .at(-1)?.papers ?? [];
+
     return {
       id: c.id,
       title: c.title,
       createdAt: new Date(c.createdAt),
       updatedAt: new Date(c.updatedAt),
-      papers: [],
-      messages: (c.messages ?? []).map(m => ({
-        id: m.id,
-        role: m.role,
-        content: m.content,
-        timestamp: new Date(m.createdAt),
-        papers: m.papers ? (JSON.parse(m.papers) as Paper[]) : undefined,
-      })),
+      papers: lastPapers,
+      messages,
     };
   }
 

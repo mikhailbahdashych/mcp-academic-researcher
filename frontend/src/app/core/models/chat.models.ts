@@ -2,12 +2,13 @@ export interface Paper {
   id: string;
   title: string;
   authors: string[];
-  year: number;
+  year: number | null;
   abstract: string;
   url?: string;
   doi?: string;
   venue?: string;
   citationCount?: number;
+  source?: string;
 }
 
 export interface Message {
