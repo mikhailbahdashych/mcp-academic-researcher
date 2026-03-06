@@ -5,6 +5,8 @@
   "scripts": {
     "frontend": "npm start --prefix frontend",
     "frontend:build": "npm run build --prefix frontend",
-    "frontend:test": "npm test --prefix frontend"
+    "frontend:test": "npm test --prefix frontend",
+    "backend": "npm run start:dev --prefix backend",
+    "backend:build": "npm run build --prefix backend"
   }
 }

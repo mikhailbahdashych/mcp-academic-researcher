@@ -8,7 +8,8 @@
       "@core/*": ["src/app/core/*"],
       "@shared/*": ["src/app/shared/*"],
       "@layout/*": ["src/app/layout/*"],
-      "@pages/*": ["src/app/pages/*"]
+      "@pages/*": ["src/app/pages/*"],
+      "@api-types/*": ["src/app/types/*"]
     },
     "strict": true,
     "noImplicitOverride": true,

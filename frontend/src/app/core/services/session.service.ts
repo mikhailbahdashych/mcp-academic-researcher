@@ -1,9 +1,13 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
+import { catchError, of } from 'rxjs';
 import { ChatSession, Message, Paper } from '../models/chat.models';
+import { ApiConversation } from '@api-types/api.types';
+import { ApiService } from './api.service';
 
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private readonly STORAGE_KEY = 'mcp_sessions';
+  private readonly api = inject(ApiService);
 
   private _sessions = signal<ChatSession[]>(this.loadFromStorage());
   private _activeSessionId = signal<string | null>(null);
@@ -13,12 +17,40 @@ export class SessionService {
     this._sessions().find(s => s.id === this._activeSessionId())
   );
 
+  constructor() {
+    this.api
+      .getConversations()
+      .pipe(catchError(() => of(null)))
+      .subscribe(conversations => {
+        if (conversations) {
+          this._sessions.set(conversations.map(c => this.hydrateSession(c)));
+          this.saveToStorage();
+        }
+      });
+  }
+
+  private hydrateSession(c: ApiConversation): ChatSession {
+    return {
+      id: c.id,
+      title: c.title,
+      createdAt: new Date(c.createdAt),
+      updatedAt: new Date(c.updatedAt),
+      papers: [],
+      messages: (c.messages ?? []).map(m => ({
+        id: m.id,
+        role: m.role,
+        content: m.content,
+        timestamp: new Date(m.createdAt),
+        papers: m.papers ? (JSON.parse(m.papers) as Paper[]) : undefined,
+      })),
+    };
+  }
+
   private loadFromStorage(): ChatSession[] {
     try {
       const raw = localStorage.getItem(this.STORAGE_KEY);
       if (!raw) return [];
       const parsed = JSON.parse(raw) as ChatSession[];
-      // Rehydrate Date fields
       return parsed.map(s => ({
         ...s,
         createdAt: new Date(s.createdAt),
@@ -34,7 +66,7 @@ export class SessionService {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this._sessions()));
     } catch {
-      // Ignore storage errors (e.g. private browsing quota)
+      // Ignore storage errors
     }
   }
 
@@ -43,17 +75,19 @@ export class SessionService {
       id: crypto.randomUUID(),
       title: query,
       messages: [
-        {
-          id: crypto.randomUUID(),
-          role: 'user',
-          content: query,
-          timestamp: new Date(),
-        },
+        { id: crypto.randomUUID(), role: 'user', content: query, timestamp: new Date() },
       ],
       papers: [],
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+
+    // Fire-and-forget: backend creates conversation with the same client-generated UUID
+    this.api
+      .createConversation(session.id, query)
+      .pipe(catchError(() => of(null)))
+      .subscribe();
+
     this._sessions.update(sessions => [session, ...sessions]);
     this._activeSessionId.set(session.id);
     this.saveToStorage();
@@ -69,6 +103,11 @@ export class SessionService {
   }
 
   deleteSession(id: string): void {
+    this.api
+      .deleteConversation(id)
+      .pipe(catchError(() => of(null)))
+      .subscribe();
+
     this._sessions.update(sessions => sessions.filter(s => s.id !== id));
     if (this._activeSessionId() === id) {
       this._activeSessionId.set(null);
@@ -87,12 +126,7 @@ export class SessionService {
       ...session,
       messages: [
         ...session.messages,
-        {
-          id: crypto.randomUUID(),
-          role: 'user' as const,
-          content,
-          timestamp: new Date(),
-        },
+        { id: crypto.randomUUID(), role: 'user' as const, content, timestamp: new Date() },
       ],
       updatedAt: new Date(),
     }));
@@ -105,13 +139,7 @@ export class SessionService {
       ...session,
       messages: [
         ...session.messages,
-        {
-          id: messageId,
-          role: 'assistant' as const,
-          content: '',
-          timestamp: new Date(),
-          isStreaming: true,
-        },
+        { id: messageId, role: 'assistant' as const, content: '', timestamp: new Date(), isStreaming: true },
       ],
       updatedAt: new Date(),
     }));
@@ -125,13 +153,12 @@ export class SessionService {
           ? s
           : {
               ...s,
-              messages: s.messages.map(m =>
+              messages: s.messages.map((m: Message) =>
                 m.id !== messageId ? m : { ...m, content: m.content + token }
               ),
             }
       )
     );
-    // Don't save on every token — save on finalize
   }
 
   finalizeMessage(sessionId: string, messageId: string): void {
@@ -154,10 +181,7 @@ export class SessionService {
     this.saveToStorage();
   }
 
-  private updateSession(
-    id: string,
-    updater: (s: ChatSession) => ChatSession
-  ): void {
+  private updateSession(id: string, updater: (s: ChatSession) => ChatSession): void {
     this._sessions.update(sessions =>
       sessions.map(s => (s.id === id ? updater(s) : s))
     );

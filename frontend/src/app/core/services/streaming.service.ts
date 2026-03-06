@@ -1,20 +1,20 @@
 import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ChatRequest, SSEEvent } from '../models/chat.models';
+import { SSEEvent } from '../models/chat.models';
 
 @Injectable({ providedIn: 'root' })
 export class StreamingService {
   readonly isStreaming = signal(false);
 
-  streamChat(request: ChatRequest): Observable<SSEEvent> {
+  streamChat(conversationId: string, query: string): Observable<SSEEvent> {
     return new Observable<SSEEvent>(subscriber => {
       const controller = new AbortController();
       this.isStreaming.set(true);
 
-      fetch('/api/chat/stream', {
+      fetch(`/api/conversations/${conversationId}/messages/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request),
+        body: JSON.stringify({ query }),
         signal: controller.signal,
       })
         .then(async response => {
@@ -80,7 +80,6 @@ export class StreamingService {
           this.isStreaming.set(false);
         });
 
-      // Teardown: abort the fetch on unsubscribe
       return () => {
         controller.abort();
         this.isStreaming.set(false);

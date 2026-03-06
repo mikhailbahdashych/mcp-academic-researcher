@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SessionService } from '@core/services/session.service';
 import { StreamingService } from '@core/services/streaming.service';
 import { Paper, SSEEvent } from '@core/models/chat.models';
+
 import { MessageThreadComponent } from './message-thread/message-thread.component';
 import { QueryInputComponent } from '@shared/components/query-input/query-input.component';
 
@@ -76,7 +77,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
     this.currentMessageId = this.sessionService.addAssistantMessage(this.sessionId);
 
     this.subscription = this.streamingService
-      .streamChat({ query: last.content, sessionId: this.sessionId })
+      .streamChat(this.sessionId, last.content)
       .subscribe({
         next: event => this.handleEvent(event),
         error: err => {
@@ -111,7 +112,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
 
     this.subscription?.unsubscribe();
     this.subscription = this.streamingService
-      .streamChat({ query, sessionId: this.sessionId })
+      .streamChat(this.sessionId, query)
       .subscribe({
         next: event => this.handleEvent(event),
         error: err => {
