@@ -8,9 +8,11 @@ services:
       - app_data:/app/data
     environment:
       DATABASE_URL: "file:/app/data/app.db"
-      ORCHESTRATOR_URL: "http://localhost:8000"
+      ORCHESTRATOR_URL: "http://orchestrator:8000"
       PORT: "3000"
       CORS_ORIGIN: "http://localhost"
+    depends_on:
+      - orchestrator
     restart: unless-stopped
 
   frontend:
@@ -20,6 +22,18 @@ services:
       - "80:80"
     depends_on:
       - backend
+    restart: unless-stopped
+
+  orchestrator:
+    build:
+      context: ./python
+      dockerfile: orchestrator/Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
 volumes:
