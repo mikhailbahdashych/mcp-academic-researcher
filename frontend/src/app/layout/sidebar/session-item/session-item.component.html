@@ -8,8 +8,9 @@
   <button
     mat-icon-button
     class="delete-btn"
-    (click)="$event.preventDefault(); $event.stopPropagation(); deleteSession.emit(session.id)"
-    matTooltip="Delete"
+    [disabled]="isStreaming()"
+    (click)="$event.preventDefault(); $event.stopPropagation(); !isStreaming() && deleteSession.emit(session.id)"
+    [matTooltip]="isStreaming() ? 'Cannot delete while responding' : 'Delete'"
   >
     <mat-icon>close</mat-icon>
   </button>

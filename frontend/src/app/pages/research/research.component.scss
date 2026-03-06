@@ -9,6 +9,7 @@
 .research-layout {
   display: grid;
   grid-template-columns: 1fr 380px;
+  grid-template-rows: 1fr;
   flex: 1;
   min-height: 0;
   overflow: hidden;
