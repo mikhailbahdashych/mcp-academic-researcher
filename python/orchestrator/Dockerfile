@@ -9,9 +9,9 @@ COPY pyproject.toml uv.lock ./
 COPY shared ./shared
 COPY orchestrator ./orchestrator
 COPY mcp_servers/papers ./mcp_servers/papers
+COPY mcp_servers/citations ./mcp_servers/citations
 # Stub packages required by uv workspace resolution
 COPY mcp_servers/notes/pyproject.toml ./mcp_servers/notes/pyproject.toml
-COPY mcp_servers/citations/pyproject.toml ./mcp_servers/citations/pyproject.toml
 COPY mcp_servers/files/pyproject.toml ./mcp_servers/files/pyproject.toml
 
 # Install all workspace members and their deps

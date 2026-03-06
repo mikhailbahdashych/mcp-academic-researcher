@@ -4,7 +4,7 @@
 
 .input-container {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
   background: var(--app-surface);
   border: 1px solid var(--app-border);
@@ -34,15 +34,13 @@
   border: none;
   outline: none;
   resize: none;
+  overflow: hidden;
   color: var(--app-text-primary);
   font-family: var(--font-sans);
   font-size: 0.9375rem;
   line-height: 1.5;
-  max-height: 200px;
-  overflow-y: auto;
   padding: 0;
-  // Align text to top when multi-line, but vertically centered for single line
-  align-self: center;
+  padding-bottom: 4px;
 
   &::placeholder {
     color: var(--app-text-secondary);

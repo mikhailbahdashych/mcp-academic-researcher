@@ -9,6 +9,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -16,7 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 @Component({
   selector: 'app-query-input',
   standalone: true,
-  imports: [FormsModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [FormsModule, TextFieldModule, MatButtonModule, MatIconModule, MatTooltipModule],
   templateUrl: './query-input.component.html',
   styleUrl: './query-input.component.scss',
 })

@@ -2,12 +2,15 @@
   <div class="input-container" [class.disabled]="disabled">
     <textarea
       #textarea
+      cdkTextareaAutosize
+      cdkAutosizeMinRows="1"
+      cdkAutosizeMaxRows="8"
       class="query-textarea"
+      [style.overflow-y]="query ? 'auto' : 'hidden'"
       [(ngModel)]="query"
       [placeholder]="placeholder"
       [disabled]="disabled"
       (keydown)="onKeydown($event)"
-      rows="1"
       autocomplete="off"
       autocorrect="off"
       spellcheck="false"
