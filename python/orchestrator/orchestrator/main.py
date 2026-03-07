@@ -8,6 +8,7 @@ from fastapi.responses import StreamingResponse
 
 from . import agent
 from .models import ChatRequest
+from .notes_router import router as notes_router
 
 app = FastAPI(title="MCP Academic Researcher Orchestrator")
 
@@ -17,6 +18,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.include_router(notes_router, prefix="/notes")
 
 
 @app.post("/chat")

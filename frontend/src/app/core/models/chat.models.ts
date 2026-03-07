@@ -34,6 +34,17 @@ export interface ChatRequest {
   sessionId?: string;
 }
 
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  paper_id: string | null;
+  tags: string[];
+  created_at: string;
+  updated_at: string;
+  score?: number;
+}
+
 export interface SSEEvent {
   type: 'token' | 'papers' | 'done' | 'error';
   data: string | Paper[] | null;

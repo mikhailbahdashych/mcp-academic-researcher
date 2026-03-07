@@ -28,6 +28,17 @@
       <mat-icon>history</mat-icon>
       @if (!collapsed) { <span>History</span> }
     </a>
+    <a
+      class="nav-item"
+      routerLink="/notes"
+      routerLinkActive="active"
+      (click)="closeSidenav.emit()"
+      [matTooltip]="collapsed ? 'Notes' : ''"
+      matTooltipPosition="right"
+    >
+      <mat-icon>sticky_note_2</mat-icon>
+      @if (!collapsed) { <span>Notes</span> }
+    </a>
   </nav>
 
   @if (!collapsed) {
