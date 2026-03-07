@@ -2,10 +2,30 @@ import { Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { SSEEvent } from '../models/chat.models';
 
+/**
+ * Handles SSE streaming for chat responses.
+ *
+ * Uses `fetch()` + `ReadableStream` instead of the browser's `EventSource` API
+ * because SSE requires a POST body (EventSource only supports GET).
+ *
+ * Returns an RxJS Observable that emits parsed SSEEvent objects. Unsubscribing
+ * from the Observable aborts the underlying fetch request.
+ */
 @Injectable({ providedIn: 'root' })
 export class StreamingService {
+  /** Whether a chat stream is currently in progress. */
   readonly isStreaming = signal(false);
 
+  /**
+   * Initiates a streaming POST request to the chat endpoint.
+   *
+   * @param conversationId - The conversation UUID.
+   * @param query - The user's query text.
+   * @param forceTool - Optional forced MCP tool call (e.g., for citation lookups).
+   * @returns Observable that emits SSEEvent objects (token, papers, done, error).
+   *          Completes on `done` events; errors on `error` events.
+   *          Unsubscribing aborts the fetch via AbortController.
+   */
   streamChat(
     conversationId: string,
     query: string,

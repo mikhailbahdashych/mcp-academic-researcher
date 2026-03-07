@@ -4,6 +4,13 @@ import { SessionService } from '@core/services/session.service';
 import { StreamingService } from '@core/services/streaming.service';
 import { PaperCardComponent, CitationLookup } from '@shared/components/paper-card/paper-card.component';
 
+/**
+ * Displays accumulated paper sources for the current research session.
+ *
+ * Shows skeleton cards while streaming, an empty state when no papers exist,
+ * and PaperCard instances for each discovered paper. Emits CitationLookup
+ * events when the user clicks citation/reference buttons on a paper card.
+ */
 @Component({
   selector: 'app-sources-panel',
   standalone: true,

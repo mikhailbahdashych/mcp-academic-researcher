@@ -5,6 +5,13 @@ import { AnswerPanelComponent } from './answer-panel/answer-panel.component';
 import { SourcesPanelComponent } from './sources-panel/sources-panel.component';
 import { CitationLookup } from '../../shared/components/paper-card/paper-card.component';
 
+/**
+ * Two-column research view with a conversation thread (left) and paper sources (right).
+ *
+ * Routes to /research/:sessionId. Handles citation/reference lookups by forwarding
+ * CitationLookup events from the SourcesPanel to the AnswerPanel as forced tool calls.
+ * Navigates back to home if the session is deleted while viewing.
+ */
 @Component({
   selector: 'app-research',
   standalone: true,

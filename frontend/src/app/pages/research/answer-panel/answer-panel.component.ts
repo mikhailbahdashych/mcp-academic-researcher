@@ -19,6 +19,16 @@ import { Paper, SSEEvent } from '@core/models/chat.models';
 import { MessageThreadComponent } from './message-thread/message-thread.component';
 import { QueryInputComponent } from '@shared/components/query-input/query-input.component';
 
+/**
+ * Core chat panel that manages the SSE streaming lifecycle.
+ *
+ * On initialization, checks whether the session's last message is an unanswered
+ * user message and automatically starts streaming a response. Handles follow-up
+ * queries and forced tool calls (for citation/reference lookups).
+ *
+ * Coordinates between SessionService (state), StreamingService (SSE transport),
+ * and child components (message thread, query input).
+ */
 @Component({
   selector: 'app-answer-panel',
   standalone: true,

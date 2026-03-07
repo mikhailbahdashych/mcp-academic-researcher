@@ -10,6 +10,16 @@ ARXIV_NS = "http://www.w3.org/2005/Atom"
 
 
 def _in_year_range(year: int | None, year_from: int | None, year_to: int | None) -> bool:
+    """Check whether a publication year falls within the specified range.
+
+    Args:
+        year: Publication year to check, or None if unknown.
+        year_from: Start of year range (inclusive), or None for no lower bound.
+        year_to: End of year range (inclusive), or None for no upper bound.
+
+    Returns:
+        True if the year is within range; False if year is None or out of range.
+    """
     if year is None:
         return False
     if year_from is not None and year < year_from:
@@ -27,8 +37,22 @@ async def search_arxiv(
     year_from: int | None = None,
     year_to: int | None = None,
 ) -> list[dict]:
-    """Search academic papers on arXiv. Use sort_by_date=True for latest papers.
-    Use year_from/year_to to restrict results to a publication year range."""
+    """Search academic papers on arXiv.
+
+    Queries the arXiv API and returns paper metadata. When year filters are
+    active, fetches extra results (4x max_results) to compensate for filtering.
+
+    Args:
+        query: Search query string.
+        max_results: Maximum number of results to return (default 5).
+        sort_by_date: If True, sort by submission date descending.
+        year_from: Only include papers published in or after this year.
+        year_to: Only include papers published in or before this year.
+
+    Returns:
+        List of paper dicts with keys: id (arXiv ID), title, authors,
+        abstract, year, url, source ("arxiv").
+    """
     # Fetch extra results when year-filtering so we have enough after the filter
     fetch_count = max_results * 4 if (year_from or year_to) else max_results
 
@@ -77,7 +101,18 @@ async def search_arxiv(
 
 
 def _reconstruct_abstract(inverted_index: dict | None) -> str:
-    """OpenAlex stores abstracts as {word: [position, ...]} — reconstruct to plain text."""
+    """Reconstruct plain text from OpenAlex's inverted index abstract format.
+
+    OpenAlex stores abstracts as {word: [position, ...]} dictionaries.
+    This function sorts words by position and joins them into a sentence.
+
+    Args:
+        inverted_index: Dict mapping words to lists of integer positions,
+            or None if no abstract is available.
+
+    Returns:
+        Reconstructed abstract text, or empty string if input is None.
+    """
     if not inverted_index:
         return ""
     positions: dict[int, str] = {}
@@ -95,8 +130,22 @@ async def search_openalex(
     year_from: int | None = None,
     year_to: int | None = None,
 ) -> list[dict]:
-    """Search academic papers on OpenAlex. Use sort_by_date=True for latest papers.
-    Use year_from/year_to to restrict results to a publication year range."""
+    """Search academic papers on OpenAlex.
+
+    Queries the OpenAlex API and returns paper metadata. Abstracts are
+    reconstructed from OpenAlex's inverted index format.
+
+    Args:
+        query: Search query string.
+        max_results: Maximum number of results to return (default 5).
+        sort_by_date: If True, sort by publication date descending.
+        year_from: Only include papers published in or after this year.
+        year_to: Only include papers published in or before this year.
+
+    Returns:
+        List of paper dicts with keys: id (DOI or OpenAlex URL), title,
+        authors, abstract, year, url, source ("openalex").
+    """
     params: dict = {
         "search": query,
         "per-page": max_results,

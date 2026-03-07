@@ -31,11 +31,32 @@ SYSTEM_PROMPT = (
 
 
 def _resolve_bin(name: str) -> str:
+    """Resolve a binary name to an absolute path within the current venv.
+
+    Checks if the binary exists in the same directory as the running Python
+    interpreter (handles virtual environments). Falls back to the bare name
+    for PATH resolution.
+
+    Args:
+        name: Binary name (e.g., "mcp-papers").
+
+    Returns:
+        Absolute path if found in the venv bin dir, otherwise the bare name.
+    """
     candidate = Path(sys.executable).parent / name
     return str(candidate) if candidate.exists() else name
 
 
 def _mcp_tool_to_ollama(tool) -> dict:
+    """Convert an MCP tool schema to Ollama's tool-calling format.
+
+    Args:
+        tool: MCP Tool object with name, description, and inputSchema attributes.
+
+    Returns:
+        Dictionary in Ollama's expected tool format with type, function.name,
+        function.description, and function.parameters.
+    """
     return {
         "type": "function",
         "function": {
@@ -47,6 +68,17 @@ def _mcp_tool_to_ollama(tool) -> dict:
 
 
 def _parse_papers(result) -> list[dict]:
+    """Extract paper dictionaries from an MCP tool call result.
+
+    Iterates over the result's content items, extracts JSON text, and parses
+    it into paper dictionaries. Handles both single objects and arrays.
+
+    Args:
+        result: MCP CallToolResult from session.call_tool().
+
+    Returns:
+        List of paper dictionaries parsed from the result's text content.
+    """
     papers = []
     for content_item in result.content:
         raw = getattr(content_item, "text", None)
@@ -63,14 +95,17 @@ def _parse_papers(result) -> list[dict]:
 
 
 def _sse_token(text: str) -> str:
+    """Format a text token as an SSE data line."""
     return f"data: {json.dumps({'type': 'token', 'data': text})}\n\n"
 
 
 def _sse_papers(papers: list[dict]) -> str:
+    """Format a list of paper dicts as an SSE data line."""
     return f"data: {json.dumps({'type': 'papers', 'data': papers})}\n\n"
 
 
 def _sse_done() -> str:
+    """Format a done event as an SSE data line."""
     return f"data: {json.dumps({'type': 'done', 'data': None})}\n\n"
 
 
@@ -184,6 +219,18 @@ async def _extract_search_query(
 
 
 async def _open_session(stack: AsyncExitStack, bin_name: str) -> ClientSession:
+    """Open an MCP client session by spawning a server subprocess.
+
+    Resolves the binary path within the current venv, establishes a stdio
+    connection, and initializes the MCP protocol handshake.
+
+    Args:
+        stack: AsyncExitStack for managing subprocess lifecycle cleanup.
+        bin_name: Executable name (e.g., "mcp-papers").
+
+    Returns:
+        Initialized ClientSession ready for list_tools() and call_tool().
+    """
     read, write = await stack.enter_async_context(
         stdio_client(StdioServerParameters(command=_resolve_bin(bin_name), args=[]))
     )
@@ -193,6 +240,22 @@ async def _open_session(stack: AsyncExitStack, bin_name: str) -> ClientSession:
 
 
 async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
+    """Main agentic loop -- the core entry point for processing chat requests.
+
+    This async generator orchestrates the full request lifecycle:
+    1. Spawns MCP server subprocesses (papers, citations, notes)
+    2. Builds a tool registry mapping tool names to MCP sessions
+    3. Classifies user intent (search vs. non-search) via LLM
+    4. Pre-calls search tools if a search intent is detected
+    5. Runs the LLM loop, handling any additional tool calls
+    6. Yields SSE-formatted strings for each token, paper, and done event
+
+    Args:
+        request: ChatRequest with message, history, and optional force_tool.
+
+    Yields:
+        SSE-formatted strings (e.g., 'data: {"type":"token","data":"..."}\n\n').
+    """
     async with AsyncExitStack() as stack:
         papers_session = await _open_session(stack, "mcp-papers")
         citations_session = await _open_session(stack, "mcp-citations")

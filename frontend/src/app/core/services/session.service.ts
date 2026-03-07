@@ -4,6 +4,15 @@ import { ChatSession, Message, Paper } from '../models/chat.models';
 import { ApiConversation } from '@api-types/api.types';
 import { ApiService } from './api.service';
 
+/**
+ * Signal-based session state manager for research conversations.
+ *
+ * Acts as the single source of truth for conversation sessions on the client.
+ * Hydrates from the backend on startup, caches to localStorage for instant display,
+ * and syncs mutations (create, delete) back to the backend via ApiService.
+ *
+ * Uses Angular Signals for synchronous reactive state and RxJS for HTTP operations.
+ */
 @Injectable({ providedIn: 'root' })
 export class SessionService {
   private readonly STORAGE_KEY = 'mcp_sessions';
@@ -29,6 +38,12 @@ export class SessionService {
       });
   }
 
+  /**
+   * Maps a raw backend ApiConversation to a frontend ChatSession.
+   * Converts ISO date strings to Date objects and parses JSON-serialized papers.
+   * @param c - Raw conversation from the backend API.
+   * @returns Hydrated ChatSession with proper Date objects and parsed Paper arrays.
+   */
   private hydrateSession(c: ApiConversation): ChatSession {
     const messages = (c.messages ?? []).map(m => ({
       id: m.id,
@@ -77,6 +92,13 @@ export class SessionService {
     }
   }
 
+  /**
+   * Creates a new session with a client-generated UUID.
+   * Sends a fire-and-forget POST to the backend to persist the conversation.
+   * The first user message is added as the initial message.
+   * @param query - The initial user query, also used as the session title.
+   * @returns The newly created ChatSession.
+   */
   createSession(query: string): ChatSession {
     const session: ChatSession = {
       id: crypto.randomUUID(),
@@ -101,14 +123,21 @@ export class SessionService {
     return session;
   }
 
+  /** Sets the currently active session by ID. */
   setActiveSession(id: string): void {
     this._activeSessionId.set(id);
   }
 
+  /** Retrieves a session by ID from the in-memory store. */
   getSession(id: string): ChatSession | undefined {
     return this._sessions().find(s => s.id === id);
   }
 
+  /**
+   * Deletes a session locally and on the backend.
+   * Clears the active session if it matches the deleted one.
+   * @param id - Session UUID to delete.
+   */
   deleteSession(id: string): void {
     this.api
       .deleteConversation(id)
@@ -122,12 +151,14 @@ export class SessionService {
     this.saveToStorage();
   }
 
+  /** Removes all sessions from memory and localStorage. */
   clearAll(): void {
     this._sessions.set([]);
     this._activeSessionId.set(null);
     localStorage.removeItem(this.STORAGE_KEY);
   }
 
+  /** Appends a user message to the specified session and persists to localStorage. */
   addUserMessage(sessionId: string, content: string): void {
     this.updateSession(sessionId, session => ({
       ...session,
@@ -140,6 +171,11 @@ export class SessionService {
     this.saveToStorage();
   }
 
+  /**
+   * Creates a placeholder assistant message with isStreaming=true.
+   * @param sessionId - Session to add the message to.
+   * @returns The generated message UUID (used to append tokens during streaming).
+   */
   addAssistantMessage(sessionId: string): string {
     const messageId = crypto.randomUUID();
     this.updateSession(sessionId, session => ({
@@ -153,6 +189,13 @@ export class SessionService {
     return messageId;
   }
 
+  /**
+   * Appends a text token to an in-progress assistant message.
+   * Does not persist to localStorage during streaming for performance.
+   * @param sessionId - Session containing the message.
+   * @param messageId - ID of the streaming assistant message.
+   * @param token - Text fragment to append.
+   */
   appendToken(sessionId: string, messageId: string, token: string): void {
     this._sessions.update(sessions =>
       sessions.map(s =>
@@ -168,6 +211,10 @@ export class SessionService {
     );
   }
 
+  /**
+   * Marks a message as no longer streaming and persists to localStorage.
+   * Called when the SSE stream completes or errors.
+   */
   finalizeMessage(sessionId: string, messageId: string): void {
     this.updateSession(sessionId, session => ({
       ...session,
@@ -179,6 +226,12 @@ export class SessionService {
     this.saveToStorage();
   }
 
+  /**
+   * Deduplicates and appends papers to the session-level paper list.
+   * Deduplication is by both paper ID and normalized (lowercased) title.
+   * @param sessionId - Session to add papers to.
+   * @param incoming - New papers from the stream.
+   */
   addPapers(sessionId: string, incoming: Paper[]): void {
     this.updateSession(sessionId, session => {
       const existing = session.papers;

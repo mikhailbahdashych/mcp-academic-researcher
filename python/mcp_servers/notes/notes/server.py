@@ -66,7 +66,20 @@ async def save_note(
     tags: list[str] | None = None,
 ) -> dict:
     """Save a research note with semantic embedding for future retrieval.
-    paper_id must be the EXACT ID from search results (arXiv ID or DOI). Never invent IDs."""
+
+    Generates a vector embedding of the note's title and content via Ollama,
+    then stores both the note metadata and embedding in SQLite.
+
+    Args:
+        title: Note title.
+        content: Full note body text.
+        paper_id: Associated paper IDs from search results (arXiv ID or DOI).
+            Must be exact IDs, comma-separated for multiple papers. Never invent IDs.
+        tags: List of tag strings for categorization.
+
+    Returns:
+        Dict with id (UUID), title, and created_at (ISO timestamp).
+    """
     note_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc).isoformat()
     tags_json = json.dumps(tags or [])
@@ -99,7 +112,16 @@ async def get_notes(
     tags: list[str] | None = None,
     limit: int = 20,
 ) -> list[dict]:
-    """List saved notes, optionally filtered by paper_id or tags."""
+    """List saved notes, optionally filtered by paper_id or tags.
+
+    Args:
+        paper_id: Filter by associated paper ID.
+        tags: Filter by tags (AND logic -- all tags must match).
+        limit: Maximum number of results (default 20).
+
+    Returns:
+        List of note dicts ordered by created_at descending, with parsed tags.
+    """
     conn = _get_conn()
     try:
         query = "SELECT id, title, content, paper_id, tags, created_at, updated_at FROM notes"
@@ -141,7 +163,19 @@ async def get_notes(
 
 @mcp.tool()
 async def search_notes(query: str, limit: int = 5) -> list[dict]:
-    """Semantically search notes using vector similarity."""
+    """Semantically search notes using vector similarity.
+
+    Generates an embedding for the query via Ollama and performs KNN search
+    on the notes_vec virtual table using sqlite-vec.
+
+    Args:
+        query: Search text to embed and compare against stored note embeddings.
+        limit: Maximum number of results (default 5).
+
+    Returns:
+        List of note dicts with an additional 'score' field (vector distance;
+        lower values indicate higher similarity).
+    """
     embedding = await _get_embedding(query)
     serialized = sqlite_vec.serialize_float32(embedding)
 
@@ -183,7 +217,14 @@ async def search_notes(query: str, limit: int = 5) -> list[dict]:
 
 @mcp.tool()
 async def delete_note(note_id: str) -> dict:
-    """Delete a note and its embedding by ID."""
+    """Delete a note and its embedding by ID.
+
+    Args:
+        note_id: The note's UUID.
+
+    Returns:
+        Dict with id and deleted (True if a row was actually removed).
+    """
     conn = _get_conn()
     try:
         cur = conn.execute("DELETE FROM notes WHERE id = ?", (note_id,))

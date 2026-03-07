@@ -17,11 +17,13 @@ EMBED_DIM = 768
 
 
 def _db_path() -> str:
+    """Return the path to the notes SQLite database, creating the directory if needed."""
     Path(NOTES_DIR).mkdir(parents=True, exist_ok=True)
     return str(Path(NOTES_DIR) / "notes.db")
 
 
 def _get_conn() -> sqlite3.Connection:
+    """Create a SQLite connection with sqlite-vec loaded and tables auto-created."""
     conn = sqlite3.connect(_db_path())
     conn.enable_load_extension(True)
     sqlite_vec.load(conn)
@@ -48,6 +50,17 @@ def _get_conn() -> sqlite3.Connection:
 
 
 async def _get_embedding(text: str) -> list[float]:
+    """Generate a 768-dimensional embedding vector via Ollama's /api/embeddings endpoint.
+
+    Args:
+        text: Text to embed.
+
+    Returns:
+        List of 768 float values representing the text embedding.
+
+    Raises:
+        httpx.HTTPStatusError: If the Ollama API returns a non-2xx status.
+    """
     async with httpx.AsyncClient(timeout=30.0) as client:
         resp = await client.post(
             f"{OLLAMA_BASE_URL}/api/embeddings",
@@ -58,6 +71,7 @@ async def _get_embedding(text: str) -> list[float]:
 
 
 def _row_to_dict(row: tuple) -> dict:
+    """Convert a SQLite row tuple to a note dictionary, parsing JSON tags."""
     return {
         "id": row[0],
         "title": row[1],
@@ -75,6 +89,16 @@ async def list_notes(
     tags: Optional[str] = Query(None),
     limit: int = Query(50, ge=1, le=200),
 ):
+    """List notes with optional filters.
+
+    Args:
+        paper_id: Filter by associated paper ID.
+        tags: Comma-separated tag filter (AND logic).
+        limit: Maximum number of results (1-200, default 50).
+
+    Returns:
+        List of note dictionaries ordered by created_at descending.
+    """
     conn = _get_conn()
     try:
         query = "SELECT id, title, content, paper_id, tags, created_at, updated_at FROM notes"
@@ -110,6 +134,21 @@ async def search_notes(
     q: str = Query(..., min_length=1),
     limit: int = Query(5, ge=1, le=50),
 ):
+    """Semantic vector search over notes.
+
+    Generates an embedding for the query via Ollama and performs KNN search
+    using the sqlite-vec extension.
+
+    Args:
+        q: Search query text (minimum 1 character).
+        limit: Maximum number of results (1-50, default 5).
+
+    Returns:
+        List of note dicts with an additional 'score' field (distance).
+
+    Raises:
+        HTTPException: 503 if the embedding service is unavailable.
+    """
     try:
         embedding = await _get_embedding(q)
     except Exception as e:
@@ -147,6 +186,17 @@ async def search_notes(
 
 @router.delete("/{note_id}")
 async def delete_note(note_id: str):
+    """Delete a note and its embedding vector by ID.
+
+    Args:
+        note_id: The note's UUID.
+
+    Returns:
+        Dict with id and deleted=True.
+
+    Raises:
+        HTTPException: 404 if the note is not found.
+    """
     conn = _get_conn()
     try:
         cur = conn.execute("DELETE FROM notes WHERE id = ?", (note_id,))

@@ -2,6 +2,17 @@ import { Injectable, signal } from '@angular/core';
 
 type Theme = 'dark-theme' | 'light-theme';
 
+/**
+ * Manages dark/light theme state with localStorage persistence.
+ *
+ * On initialization, resolves the theme from (in priority order):
+ * 1. localStorage value (if previously set)
+ * 2. OS preference via `prefers-color-scheme: dark`
+ * 3. Dark theme as fallback
+ *
+ * Applies the theme by toggling CSS classes on document.body,
+ * which controls Angular Material theming and CSS custom properties.
+ */
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly STORAGE_KEY = 'mcp_theme';
