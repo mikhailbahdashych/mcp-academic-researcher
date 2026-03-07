@@ -179,10 +179,6 @@ export class SessionService {
     this.saveToStorage();
   }
 
-  clearPapers(sessionId: string): void {
-    this.updateSession(sessionId, session => ({ ...session, papers: [], updatedAt: new Date() }));
-  }
-
   addPapers(sessionId: string, incoming: Paper[]): void {
     this.updateSession(sessionId, session => {
       const existing = session.papers;

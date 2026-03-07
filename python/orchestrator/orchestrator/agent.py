@@ -74,8 +74,9 @@ def _sse_done() -> str:
     return f"data: {json.dumps({'type': 'done', 'data': None})}\n\n"
 
 
-def _dedup_papers(papers: list[dict]) -> list[dict]:
-    """Deduplicate papers by normalised title, keeping the first occurrence."""
+def _dedup_papers(papers: list[dict], limit: int | None = None) -> list[dict]:
+    """Deduplicate papers by normalised title, keeping the first occurrence.
+    If limit is given, return at most that many papers."""
     seen: set[str] = set()
     result: list[dict] = []
     for p in papers:
@@ -84,12 +85,18 @@ def _dedup_papers(papers: list[dict]) -> list[dict]:
             continue
         seen.add(key)
         result.append(p)
+        if limit and len(result) >= limit:
+            break
     return result
+
+
+DEFAULT_MAX_RESULTS = 5
 
 
 @dataclass
 class SearchIntent:
     query: str
+    max_results: int = DEFAULT_MAX_RESULTS
     sort_by_date: bool = False
     year_from: int | None = None
     year_to: int | None = None
@@ -121,26 +128,28 @@ async def _extract_search_query(
         "Reply ONLY in this exact format (no other text):\n"
         "SEARCH: yes|no\n"
         "QUERY: <3-8 keyword academic search query, empty if SEARCH is no>\n"
+        "MAX_RESULTS: <integer, how many papers the user wants, default 5>\n"
         "SORT_BY_DATE: yes|no\n"
         "YEAR_FROM: <4-digit year or empty>\n"
         "YEAR_TO: <4-digit year or empty>\n\n"
         "Rules:\n"
+        "- MAX_RESULTS: extract the number of papers the user explicitly requests. If not specified, default to 5.\n"
         "- SORT_BY_DATE yes if user says 'latest', 'recent', 'newest', 'most recent'\n"
         "- YEAR_FROM / YEAR_TO if user specifies a year range like 'from 2022 to 2024' or 'since 2023' or 'before 2020'\n"
         "- QUERY must contain ONLY topic/subject keywords. NEVER put years, dates, or time references in QUERY — use YEAR_FROM / YEAR_TO instead.\n\n"
         "Examples:\n"
         "message: 'Provide me with 5 papers on transformer architectures from 2023'\n"
-        "SEARCH: yes\nQUERY: transformer architecture\nSORT_BY_DATE: no\nYEAR_FROM: 2023\nYEAR_TO: 2023\n\n"
+        "SEARCH: yes\nQUERY: transformer architecture\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM: 2023\nYEAR_TO: 2023\n\n"
         "message: 'Can you please provide me with the latest papers on transformer architectures?'\n"
-        "SEARCH: yes\nQUERY: transformer architecture\nSORT_BY_DATE: yes\nYEAR_FROM:\nYEAR_TO:\n\n"
-        "message: 'find papers on RL from 2022 to 2024'\n"
-        "SEARCH: yes\nQUERY: reinforcement learning\nSORT_BY_DATE: no\nYEAR_FROM: 2022\nYEAR_TO: 2024\n\n"
-        "message: 'recent work on diffusion models since 2023'\n"
-        "SEARCH: yes\nQUERY: diffusion models\nSORT_BY_DATE: yes\nYEAR_FROM: 2023\nYEAR_TO:\n\n"
+        "SEARCH: yes\nQUERY: transformer architecture\nMAX_RESULTS: 5\nSORT_BY_DATE: yes\nYEAR_FROM:\nYEAR_TO:\n\n"
+        "message: 'find 10 papers on RL from 2022 to 2024'\n"
+        "SEARCH: yes\nQUERY: reinforcement learning\nMAX_RESULTS: 10\nSORT_BY_DATE: no\nYEAR_FROM: 2022\nYEAR_TO: 2024\n\n"
+        "message: 'give me 3 recent papers on diffusion models since 2023'\n"
+        "SEARCH: yes\nQUERY: diffusion models\nMAX_RESULTS: 3\nSORT_BY_DATE: yes\nYEAR_FROM: 2023\nYEAR_TO:\n\n"
         "message: 'Could you please make notes out of it?'\n"
-        "SEARCH: no\nQUERY:\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n\n"
+        "SEARCH: no\nQUERY:\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n\n"
         "message: 'What were the main findings?'\n"
-        "SEARCH: no\nQUERY:\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n"
+        "SEARCH: no\nQUERY:\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n"
     )
 
     response = await client.chat(
@@ -160,6 +169,10 @@ async def _extract_search_query(
     if not query:
         return None
 
+    max_results_match = re.search(r"MAX_RESULTS:\s*(\d+)", text)
+    max_results = int(max_results_match.group(1)) if max_results_match else DEFAULT_MAX_RESULTS
+    max_results = max(1, min(max_results, 20))  # clamp to [1, 20]
+
     sort_by_date = bool(re.search(r"SORT_BY_DATE:\s*yes", text, re.IGNORECASE))
 
     year_from_match = re.search(r"YEAR_FROM:\s*(\d{4})", text)
@@ -167,7 +180,7 @@ async def _extract_search_query(
     year_from = int(year_from_match.group(1)) if year_from_match else None
     year_to = int(year_to_match.group(1)) if year_to_match else None
 
-    return SearchIntent(query=query, sort_by_date=sort_by_date, year_from=year_from, year_to=year_to)
+    return SearchIntent(query=query, max_results=max_results, sort_by_date=sort_by_date, year_from=year_from, year_to=year_to)
 
 
 async def _open_session(stack: AsyncExitStack, bin_name: str) -> ClientSession:
@@ -195,6 +208,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 ollama_tools.append(_mcp_tool_to_ollama(tool))
 
         accumulated_papers: list[dict] = []
+        requested_max_results: int | None = None
         messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
         for msg in request.history:
             messages.append({"role": msg.role, "content": msg.content})
@@ -228,7 +242,8 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
 
             if search_query:
                 # --- Pre-search: only when the message is actually a paper search request ---
-                tool_args: dict = {"query": search_query.query, "max_results": 5}
+                requested_max_results = search_query.max_results
+                tool_args: dict = {"query": search_query.query, "max_results": requested_max_results}
                 if search_query.sort_by_date:
                     tool_args["sort_by_date"] = True
                 if search_query.year_from is not None:
@@ -302,7 +317,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                     tool_calls.extend(msg.tool_calls)
 
             if not tool_calls:
-                yield _sse_papers(_dedup_papers(accumulated_papers))
+                yield _sse_papers(_dedup_papers(accumulated_papers, requested_max_results))
                 yield _sse_done()
                 yield "data: [DONE]\n\n"
                 break
