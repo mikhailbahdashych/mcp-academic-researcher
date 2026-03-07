@@ -28,10 +28,10 @@
 
   <div class="note-footer">
     <div class="note-meta">
-      @if (note.paper_id) {
-        <span class="paper-badge" matTooltip="Related paper ID">
+      @for (doi of paperIds; track doi) {
+        <span class="paper-badge" matTooltip="Click to copy DOI" (click)="copyDoi(doi, $event)">
           <mat-icon class="paper-icon">article</mat-icon>
-          {{ note.paper_id }}
+          {{ doi }}
         </span>
       }
       <span class="note-date text-secondary">{{ formatDate(note.created_at) }}</span>

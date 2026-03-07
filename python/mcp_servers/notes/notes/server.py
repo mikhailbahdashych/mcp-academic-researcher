@@ -51,11 +51,11 @@ def _get_conn() -> sqlite3.Connection:
 async def _get_embedding(text: str) -> list[float]:
     async with httpx.AsyncClient(timeout=30.0) as client:
         resp = await client.post(
-            f"{OLLAMA_BASE_URL}/api/embeddings",
-            json={"model": EMBED_MODEL, "prompt": text},
+            f"{OLLAMA_BASE_URL}/api/embed",
+            json={"model": EMBED_MODEL, "input": text},
         )
         resp.raise_for_status()
-        return resp.json()["embedding"]
+        return resp.json()["embeddings"][0]
 
 
 @mcp.tool()
@@ -146,17 +146,22 @@ async def search_notes(query: str, limit: int = 5) -> list[dict]:
 
     conn = _get_conn()
     try:
-        rows = conn.execute(
-            """
-            SELECT n.id, n.title, n.content, n.paper_id, n.tags, n.created_at, n.updated_at, v.distance
-            FROM notes_vec v
-            JOIN notes n ON n.id = v.note_id
-            WHERE v.embedding MATCH ?
-            ORDER BY v.distance
-            LIMIT ?
-            """,
+        knn_rows = conn.execute(
+            "SELECT note_id, distance FROM notes_vec WHERE embedding MATCH ? AND k = ?",
             (serialized, limit),
         ).fetchall()
+
+        if not knn_rows:
+            return []
+
+        distance_map = {row[0]: row[1] for row in knn_rows}
+        note_ids = list(distance_map.keys())
+        placeholders = ",".join("?" * len(note_ids))
+        rows = conn.execute(
+            f"SELECT id, title, content, paper_id, tags, created_at, updated_at FROM notes WHERE id IN ({placeholders})",
+            note_ids,
+        ).fetchall()
+        rows.sort(key=lambda r: distance_map.get(r[0], 0))
     finally:
         conn.close()
 
@@ -169,7 +174,7 @@ async def search_notes(query: str, limit: int = 5) -> list[dict]:
             "tags": json.loads(row[4] or "[]"),
             "created_at": row[5],
             "updated_at": row[6],
-            "score": row[7],
+            "score": distance_map.get(row[0], 0),
         }
         for row in rows
     ]

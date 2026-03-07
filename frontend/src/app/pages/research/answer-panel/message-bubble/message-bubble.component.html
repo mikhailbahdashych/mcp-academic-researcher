@@ -19,6 +19,11 @@
         @if (!message.content && message.isStreaming) {
           <span class="thinking text-secondary">Thinking...</span>
         }
+        @if (!message.isStreaming && message.content) {
+          <button mat-icon-button class="copy-btn" (click)="copyContent()" matTooltip="Copy">
+            <mat-icon>content_copy</mat-icon>
+          </button>
+        }
       </div>
     }
   </div>

@@ -21,9 +21,10 @@ SYSTEM_PROMPT = (
     "You will be provided with search results from arXiv and OpenAlex. "
     "Summarize the key findings from the provided papers and present them clearly. "
     "You may use the available tools to search for additional papers if needed. "
-    "Use save_note to capture important insights after research sessions. "
-    "At the start of a relevant query, call search_notes to retrieve semantically related prior notes. "
-    "Always base your answer on the actual papers provided."
+    "When the user explicitly asks you to save or make notes, you MUST call save_note immediately — do not just describe what you would save. "
+    "Related prior notes are automatically retrieved and provided to you at the start of each paper search — do not call search_notes for paper search queries. "
+    "Always base your answer on the actual papers provided. "
+    "When calling save_note about specific papers, set the paper_id field to the paper DOIs (comma-separated if multiple papers are covered by one note). "
 )
 
 
@@ -110,8 +111,11 @@ async def _extract_search_query(
         "YEAR_TO: <4-digit year or empty>\n\n"
         "Rules:\n"
         "- SORT_BY_DATE yes if user says 'latest', 'recent', 'newest', 'most recent'\n"
-        "- YEAR_FROM / YEAR_TO if user specifies a year range like 'from 2022 to 2024' or 'since 2023' or 'before 2020'\n\n"
+        "- YEAR_FROM / YEAR_TO if user specifies a year range like 'from 2022 to 2024' or 'since 2023' or 'before 2020'\n"
+        "- QUERY must contain ONLY topic/subject keywords. NEVER put years, dates, or time references in QUERY — use YEAR_FROM / YEAR_TO instead.\n\n"
         "Examples:\n"
+        "message: 'Provide me with 5 papers on transformer architectures from 2023'\n"
+        "SEARCH: yes\nQUERY: transformer architecture\nSORT_BY_DATE: no\nYEAR_FROM: 2023\nYEAR_TO: 2023\n\n"
         "message: 'Can you please provide me with the latest papers on transformer architectures?'\n"
         "SEARCH: yes\nQUERY: transformer architecture\nSORT_BY_DATE: yes\nYEAR_FROM:\nYEAR_TO:\n\n"
         "message: 'find papers on RL from 2022 to 2024'\n"
@@ -182,6 +186,8 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
 
         client = ollama.AsyncClient(host=OLLAMA_BASE_URL)
 
+        search_query: SearchIntent | None = None
+
         if request.force_tool:
             # --- Forced tool call: skip pre-search, call the specified tool directly ---
             tool_name = request.force_tool.name
@@ -233,15 +239,39 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                     except Exception:
                         pass
 
+                # --- Pre-fetch related notes so LLM has context without calling the tool itself ---
+                if "search_notes" in tool_session:
+                    try:
+                        notes_result = await tool_session["search_notes"].call_tool(
+                            "search_notes", {"query": search_query.query, "limit": 5}
+                        )
+                        messages.append({
+                            "role": "assistant",
+                            "content": "",
+                            "tool_calls": [{"function": {"name": "search_notes", "arguments": {"query": search_query.query, "limit": 5}}}],
+                        })
+                        messages.append({
+                            "role": "tool",
+                            "content": json.dumps([getattr(c, "text", str(c)) for c in notes_result.content]),
+                        })
+                    except Exception:
+                        pass
+
         messages.append({"role": "user", "content": request.message})
 
         # --- LLM loop: model summarizes results, may call more tools ---
+        # After pre-search, exclude search tools and search_notes to prevent duplicate calls
+        SEARCH_TOOL_NAMES = {"search_arxiv", "search_openalex", "search_notes"}
+        if search_query:
+            llm_tools = [t for t in ollama_tools if t["function"]["name"] not in SEARCH_TOOL_NAMES]
+        else:
+            llm_tools = ollama_tools
 
         while True:
             response = await client.chat(
                 model=MODEL,
                 messages=messages,
-                tools=ollama_tools,
+                tools=llm_tools,
                 stream=True,
             )
 
@@ -280,7 +310,8 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 session = tool_session.get(tool_name, papers_session)
                 result = await session.call_tool(tool_name, tool_args)
 
-                accumulated_papers.extend(_parse_papers(result))
+                if tool_name in SEARCH_TOOL_NAMES:
+                    accumulated_papers.extend(_parse_papers(result))
 
                 messages.append({
                     "role": "tool",

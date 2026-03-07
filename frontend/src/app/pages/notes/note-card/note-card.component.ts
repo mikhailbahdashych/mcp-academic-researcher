@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Note } from '@core/models/chat.models';
 
 @Component({
@@ -16,7 +17,21 @@ export class NoteCardComponent {
   @Input({ required: true }) note!: Note;
   @Output() deleted = new EventEmitter<string>();
 
+  private readonly snackBar = inject(MatSnackBar);
   readonly expanded = signal(false);
+
+  get paperIds(): string[] {
+    return this.note.paper_id
+      ? this.note.paper_id.split(',').map(s => s.trim()).filter(Boolean)
+      : [];
+  }
+
+  copyDoi(doi: string, event: Event): void {
+    event.stopPropagation();
+    navigator.clipboard.writeText(doi).then(() => {
+      this.snackBar.open('DOI copied', '', { duration: 1500 });
+    });
+  }
 
   toggleExpand(): void {
     this.expanded.set(!this.expanded());

@@ -74,6 +74,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
     // Only stream if the last message is a user message (no assistant reply yet)
     if (!last || last.role !== 'user') return;
 
+    this.sessionService.clearPapers(this.sessionId);
     this.currentMessageId = this.sessionService.addAssistantMessage(this.sessionId);
 
     this.subscription = this.streamingService
@@ -102,7 +103,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
         event.data as string
       );
     } else if (event.type === 'papers') {
-      this.sessionService.setPapers(this.sessionId, event.data as Paper[]);
+      this.sessionService.addPapers(this.sessionId, event.data as Paper[]);
     }
   }
 
@@ -122,6 +123,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
     forceTool?: { name: string; args: Record<string, unknown> },
   ): void {
     this.sessionService.addUserMessage(this.sessionId, query);
+    this.sessionService.clearPapers(this.sessionId);
     this.currentMessageId = this.sessionService.addAssistantMessage(this.sessionId);
 
     this.subscription?.unsubscribe();

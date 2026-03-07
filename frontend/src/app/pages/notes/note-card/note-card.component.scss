@@ -123,10 +123,17 @@
   border: 1px solid var(--app-border);
   border-radius: var(--radius-sm);
   padding: 2px 8px;
-  max-width: 180px;
+  max-width: 220px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+  }
 }
 
 .paper-icon {

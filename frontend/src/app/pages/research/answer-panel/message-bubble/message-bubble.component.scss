@@ -54,6 +54,30 @@
 
 .assistant-message {
   font-size: 0.9375rem;
+  position: relative;
+}
+
+.copy-btn {
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: var(--app-text-secondary) !important;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.message-bubble:hover .copy-btn {
+  opacity: 1;
 }
 
 .thinking {

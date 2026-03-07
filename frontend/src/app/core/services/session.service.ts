@@ -179,12 +179,20 @@ export class SessionService {
     this.saveToStorage();
   }
 
-  setPapers(sessionId: string, papers: Paper[]): void {
-    this.updateSession(sessionId, session => ({
-      ...session,
-      papers,
-      updatedAt: new Date(),
-    }));
+  clearPapers(sessionId: string): void {
+    this.updateSession(sessionId, session => ({ ...session, papers: [], updatedAt: new Date() }));
+  }
+
+  addPapers(sessionId: string, incoming: Paper[]): void {
+    this.updateSession(sessionId, session => {
+      const existing = session.papers;
+      const seenIds = new Set(existing.map(p => p.id));
+      const seenTitles = new Set(existing.map(p => p.title.toLowerCase().trim()));
+      const novel = incoming.filter(
+        p => !seenIds.has(p.id) && !seenTitles.has(p.title.toLowerCase().trim())
+      );
+      return { ...session, papers: [...existing, ...novel], updatedAt: new Date() };
+    });
     this.saveToStorage();
   }
 
