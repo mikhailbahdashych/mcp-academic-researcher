@@ -1,0 +1,48 @@
+<div class="note-card" [class.expanded]="expanded()">
+  <div class="note-header" (click)="toggleExpand()">
+    <div class="note-title-row">
+      <h3 class="note-title">{{ note.title }}</h3>
+      @if (note.score != null) {
+        <span class="score-badge" matTooltip="Semantic similarity">{{ scorePercent(note.score) }}</span>
+      }
+    </div>
+    <button
+      mat-icon-button
+      class="delete-btn"
+      matTooltip="Delete note"
+      (click)="onDelete($event)"
+      aria-label="Delete note"
+    >
+      <mat-icon>delete_outline</mat-icon>
+    </button>
+  </div>
+
+  <p class="note-content" [class.clamped]="!expanded()">{{ note.content }}</p>
+
+  @if (!expanded() && note.content.length > 200) {
+    <button class="expand-btn" (click)="toggleExpand()">Show more</button>
+  }
+  @if (expanded() && note.content.length > 200) {
+    <button class="expand-btn" (click)="toggleExpand()">Show less</button>
+  }
+
+  <div class="note-footer">
+    <div class="note-meta">
+      @for (doi of paperIds; track doi) {
+        <span class="paper-badge" matTooltip="Click to copy DOI" (click)="copyDoi(doi, $event)">
+          <mat-icon class="paper-icon">article</mat-icon>
+          {{ doi }}
+        </span>
+      }
+      <span class="note-date text-secondary">{{ formatDate(note.created_at) }}</span>
+    </div>
+
+    @if (note.tags.length) {
+      <div class="note-tags">
+        @for (tag of note.tags; track tag) {
+          <span class="tag-chip">{{ tag }}</span>
+        }
+      </div>
+    }
+  </div>
+</div>

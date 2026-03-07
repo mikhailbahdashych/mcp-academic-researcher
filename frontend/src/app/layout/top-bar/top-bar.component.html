@@ -1,0 +1,10 @@
+<mat-toolbar class="top-bar">
+  <button mat-icon-button (click)="menuClick.emit()" aria-label="Toggle menu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="app-title" routerLink="/">MCP Researcher</span>
+  <span class="spacer"></span>
+  <button mat-icon-button (click)="themeService.toggle()" [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+    <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+</mat-toolbar>

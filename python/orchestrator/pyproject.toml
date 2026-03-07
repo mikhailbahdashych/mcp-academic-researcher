@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "orchestrator"
 version = "0.1.0"
@@ -8,4 +12,14 @@ dependencies = [
     "httpx>=0.28.1",
     "pydantic>=2.12.5",
     "uvicorn>=0.40.0",
+    "ollama>=0.4.0",
+    "mcp>=1.25.0",
+    "python-dotenv>=1.0.0",
+    "shared",
 ]
+
+[tool.uv.sources]
+shared = { workspace = true }
+
+[project.scripts]
+orchestrator = "orchestrator.main:start"

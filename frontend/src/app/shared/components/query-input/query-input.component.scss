@@ -1,0 +1,96 @@
+.query-input-wrapper {
+  width: 100%;
+}
+
+.input-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-xl);
+  padding: 10px 10px 10px 20px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(29, 233, 182, 0.12);
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.hero .input-container {
+  padding: 14px 12px 14px 24px;
+  border-radius: 24px;
+}
+
+.query-textarea {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  overflow: hidden;
+  color: var(--app-text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  padding: 0;
+  padding-bottom: 4px;
+
+  &::placeholder {
+    color: var(--app-text-secondary);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.hero .query-textarea {
+  font-size: 1rem;
+}
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.shortcut-hint {
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border: 1px solid var(--app-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  color: var(--app-text-secondary);
+  display: none;
+
+  @media (min-width: 768px) {
+    display: inline-block;
+  }
+}
+
+.send-btn {
+  color: var(--accent-color) !important;
+  width: 32px !important;
+  height: 32px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  ::ng-deep {
+    .mat-mdc-button-touch-target { width: 22px !important; height: 22px !important; }
+    .mat-icon { font-size: 20px; width: 20px; height: 20px; line-height: 20px; }
+  }
+
+  &:disabled {
+    color: var(--app-text-secondary) !important;
+  }
+}

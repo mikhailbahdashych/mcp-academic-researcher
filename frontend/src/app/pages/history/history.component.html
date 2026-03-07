@@ -1,0 +1,77 @@
+<div class="history-page">
+  <div class="history-header">
+    <div class="header-top">
+      <h1 class="history-title">History</h1>
+      <button mat-flat-button color="accent" routerLink="/" class="new-btn">
+        <mat-icon>add</mat-icon>
+        New research
+      </button>
+    </div>
+
+    <!-- Search — UI only; will connect to backend search + pagination -->
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search your sessions..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        autocomplete="off"
+      />
+      @if (searchQuery()) {
+        <button mat-icon-button class="clear-btn" (click)="searchQuery.set('')" matTooltip="Clear">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (!filteredSessions().length) {
+    <div class="empty-state">
+      @if (searchQuery()) {
+        <mat-icon>search_off</mat-icon>
+        <p>No sessions match <strong>"{{ searchQuery() }}"</strong></p>
+        <button mat-button (click)="searchQuery.set('')">Clear search</button>
+      } @else {
+        <mat-icon>history</mat-icon>
+        <p class="text-secondary">No research sessions yet</p>
+        <button mat-flat-button color="accent" (click)="goHome()">Start researching</button>
+      }
+    </div>
+  } @else {
+    <div class="session-count text-secondary">
+      {{ filteredSessions().length }} session{{ filteredSessions().length !== 1 ? 's' : '' }}
+    </div>
+
+    <ul class="session-list">
+      @for (session of filteredSessions(); track session.id) {
+        <li class="session-row" [routerLink]="['/research', session.id]">
+          <div class="session-body">
+            <p class="session-title truncate">{{ session.title }}</p>
+            @if (getSnippet(session); as snippet) {
+              <p class="session-snippet truncate">{{ snippet }}</p>
+            }
+            <div class="session-meta text-secondary">
+              <mat-icon class="meta-icon">schedule</mat-icon>
+              <span>{{ formatDate(session) }}</span>
+              @if (session.papers.length) {
+                <span class="meta-sep">·</span>
+                <mat-icon class="meta-icon">article</mat-icon>
+                <span>{{ session.papers.length }} sources</span>
+              }
+            </div>
+          </div>
+          <button
+            mat-icon-button
+            class="delete-btn"
+            matTooltip="Delete"
+            (click)="onDelete($event, session.id)"
+          >
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</div>

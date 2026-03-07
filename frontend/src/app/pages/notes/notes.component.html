@@ -1,0 +1,56 @@
+<div class="notes-page">
+  <div class="notes-header">
+    <h1 class="notes-title">Notes</h1>
+
+    <div class="search-bar">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Search your notes..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="searchQuery.set($event)"
+        autocomplete="off"
+      />
+      @if (searchQuery()) {
+        <button mat-icon-button class="clear-btn" (click)="clearSearch()" matTooltip="Clear">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="36"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <div class="empty-state">
+      <mat-icon>error_outline</mat-icon>
+      <p class="text-secondary">{{ error() }}</p>
+    </div>
+  } @else if (!notes().length) {
+    <div class="empty-state">
+      @if (searchQuery()) {
+        <mat-icon>search_off</mat-icon>
+        <p>No notes match <strong>"{{ searchQuery() }}"</strong></p>
+        <button mat-button (click)="clearSearch()">Clear search</button>
+      } @else {
+        <mat-icon>sticky_note_2</mat-icon>
+        <p class="text-secondary">No notes yet.</p>
+        <p class="text-secondary hint">Ask the AI to save research insights during a conversation.</p>
+      }
+    </div>
+  } @else {
+    <div class="notes-count text-secondary">
+      {{ notes().length }} note{{ notes().length !== 1 ? 's' : '' }}
+      @if (searchQuery()) { <span> matching "{{ searchQuery() }}"</span> }
+    </div>
+
+    <div class="notes-list">
+      @for (note of notes(); track note.id) {
+        <app-note-card [note]="note" (deleted)="onDelete($event)" />
+      }
+    </div>
+  }
+</div>

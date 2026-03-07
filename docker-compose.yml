@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - app_data:/app/data
+    environment:
+      DATABASE_URL: "file:/app/data/app.db"
+      ORCHESTRATOR_URL: "http://orchestrator:8000"
+      PORT: "3000"
+      CORS_ORIGIN: "http://localhost"
+    depends_on:
+      - orchestrator
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  orchestrator:
+    build:
+      context: ./python
+      dockerfile: orchestrator/Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./python/.env
+    environment:
+      OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+      NOTES_DIR: "/data/notes"
+      EMBED_MODEL: "nomic-embed-text"
+    volumes:
+      - notes_data:/data/notes
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  app_data:
+  notes_data:

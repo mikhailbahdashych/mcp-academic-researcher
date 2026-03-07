@@ -1,5 +1,4 @@
 # Project-specific
-internal_docs/
 CLAUDE.md
 .claude/
 
@@ -31,6 +30,13 @@ frontend/.sass-cache/
 # NestJS
 backend/dist/
 backend/.nest/
+backend/generated/
+backend/data/*.db
+backend/data/*.db-journal
+backend/data/*.db-wal
+backend/data/*.db-shm
+backend/tsconfig.build.tsbuildinfo
+backend/**/*.db
 
 # Python
 __pycache__/
@@ -60,6 +66,7 @@ ENV/
 env/
 .uv/
 uv.lock
+package-lock.json
 
 # Python testing
 .pytest_cache/

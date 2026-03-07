@@ -1,0 +1,18 @@
+<div class="answer-panel">
+  <div class="messages-area">
+    @if (session(); as sess) {
+      <app-message-thread
+        [messages]="sess.messages"
+        [isStreaming]="isStreaming()"
+      ></app-message-thread>
+    }
+  </div>
+
+  <div class="input-area">
+    <app-query-input
+      size="inline"
+      [disabled]="isStreaming()"
+      (querySubmit)="onFollowUp($event)"
+    ></app-query-input>
+  </div>
+</div>

@@ -14,7 +14,6 @@ members = [
     "mcp_servers/papers",
     "mcp_servers/notes",
     "mcp_servers/citations",
-    "mcp_servers/files",
     "shared",
 ]
 

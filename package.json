@@ -1,0 +1,14 @@
+{
+  "name": "mcp-academic-researcher",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "frontend": "npm start --prefix frontend",
+    "frontend:build": "npm run build --prefix frontend",
+    "frontend:test": "npm test --prefix frontend",
+    "backend": "npm run start:dev --prefix backend",
+    "backend:build": "npm run build --prefix backend",
+    "orchestrator": "cd python && uv sync --all-packages --quiet && uv run uvicorn orchestrator.main:app --host 0.0.0.0 --port 8000 --reload",
+    "orchestrator:install": "cd python && uv sync --all-packages"
+  }
+}

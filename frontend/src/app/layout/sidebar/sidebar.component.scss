@@ -1,0 +1,56 @@
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--app-surface);
+}
+
+.sidebar-nav {
+  padding: 8px;
+  flex-shrink: 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--app-text-secondary);
+  font-size: 0.875rem;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: var(--app-surface-hover);
+    color: var(--app-text-primary);
+    text-decoration: none;
+  }
+
+  &.active {
+    background: rgba(29, 233, 182, 0.08);
+    color: var(--accent-color);
+  }
+}
+
+// When collapsed, center icons
+.collapsed .nav-item {
+  justify-content: center;
+  padding: 8px;
+}
+
+.divider {
+  height: 1px;
+  background: var(--app-border);
+  margin: 4px 12px;
+  flex-shrink: 0;
+}

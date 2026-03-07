@@ -1,0 +1,12 @@
+<div class="research-layout">
+  <div class="answer-col">
+    @if (sessionId) {
+      <app-answer-panel [sessionId]="sessionId"></app-answer-panel>
+    }
+  </div>
+  <div class="sources-col">
+    @if (sessionId) {
+      <app-sources-panel [sessionId]="sessionId" (citationLookup)="onCitationLookup($event)"></app-sources-panel>
+    }
+  </div>
+</div>

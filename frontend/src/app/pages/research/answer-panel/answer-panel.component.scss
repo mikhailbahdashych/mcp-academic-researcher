@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.answer-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.messages-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 24px 16px;
+}
+
+.input-area {
+  flex-shrink: 0;
+  padding: 12px 24px 24px;
+  border-top: 1px solid var(--app-border);
+  background: var(--app-bg);
+}
