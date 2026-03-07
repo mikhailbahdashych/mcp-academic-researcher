@@ -119,22 +119,28 @@ async def search_notes(
 
     conn = _get_conn()
     try:
-        rows = conn.execute(
-            """
-            SELECT n.id, n.title, n.content, n.paper_id, n.tags, n.created_at, n.updated_at, v.distance
-            FROM notes_vec v
-            JOIN notes n ON n.id = v.note_id
-            WHERE v.embedding MATCH ?
-            ORDER BY v.distance
-            LIMIT ?
-            """,
+        # vec0 requires 'k = ?' in WHERE clause for KNN queries (LIMIT alone fails)
+        knn_rows = conn.execute(
+            "SELECT note_id, distance FROM notes_vec WHERE embedding MATCH ? AND k = ?",
             (serialized, limit),
         ).fetchall()
+
+        if not knn_rows:
+            return []
+
+        distance_map = {row[0]: row[1] for row in knn_rows}
+        note_ids = list(distance_map.keys())
+        placeholders = ",".join("?" * len(note_ids))
+        rows = conn.execute(
+            f"SELECT id, title, content, paper_id, tags, created_at, updated_at FROM notes WHERE id IN ({placeholders})",
+            note_ids,
+        ).fetchall()
+        rows.sort(key=lambda r: distance_map.get(r[0], 0))
     finally:
         conn.close()
 
     return [
-        {**_row_to_dict(row[:7]), "score": row[7]}
+        {**_row_to_dict(row), "score": distance_map.get(row[0], 0)}
         for row in rows
     ]
 

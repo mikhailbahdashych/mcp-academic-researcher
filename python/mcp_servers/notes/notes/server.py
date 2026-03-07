@@ -65,7 +65,8 @@ async def save_note(
     paper_id: str | None = None,
     tags: list[str] | None = None,
 ) -> dict:
-    """Save a research note with semantic embedding for future retrieval."""
+    """Save a research note with semantic embedding for future retrieval.
+    paper_id must be the EXACT ID from search results (arXiv ID or DOI). Never invent IDs."""
     note_id = str(uuid.uuid4())
     now = datetime.now(timezone.utc).isoformat()
     tags_json = json.dumps(tags or [])

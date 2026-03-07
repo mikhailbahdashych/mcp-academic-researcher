@@ -24,7 +24,9 @@ SYSTEM_PROMPT = (
     "When the user explicitly asks you to save or make notes, you MUST call save_note immediately — do not just describe what you would save. "
     "Related prior notes are automatically retrieved and provided to you at the start of each paper search — do not call search_notes for paper search queries. "
     "Always base your answer on the actual papers provided. "
-    "When calling save_note about specific papers, set the paper_id field to the paper DOIs (comma-separated if multiple papers are covered by one note). "
+    "When calling save_note about specific papers, set the paper_id field to the EXACT paper IDs from the search results (the 'id' field). "
+    "For arXiv papers use the arXiv ID (e.g. '2301.12345v1'). For OpenAlex papers use the DOI or OpenAlex URL from the 'id' field. "
+    "NEVER invent or guess DOIs — only use IDs that appear in the search results. Comma-separate multiple IDs. "
 )
 
 
@@ -70,6 +72,19 @@ def _sse_papers(papers: list[dict]) -> str:
 
 def _sse_done() -> str:
     return f"data: {json.dumps({'type': 'done', 'data': None})}\n\n"
+
+
+def _dedup_papers(papers: list[dict]) -> list[dict]:
+    """Deduplicate papers by normalised title, keeping the first occurrence."""
+    seen: set[str] = set()
+    result: list[dict] = []
+    for p in papers:
+        key = p.get("title", "").strip().lower()
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        result.append(p)
+    return result
 
 
 @dataclass
@@ -287,7 +302,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                     tool_calls.extend(msg.tool_calls)
 
             if not tool_calls:
-                yield _sse_papers(accumulated_papers)
+                yield _sse_papers(_dedup_papers(accumulated_papers))
                 yield _sse_done()
                 yield "data: [DONE]\n\n"
                 break
