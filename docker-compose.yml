@@ -34,9 +34,14 @@ services:
       - ./python/.env
     environment:
       OLLAMA_BASE_URL: "http://host.docker.internal:11434"
+      NOTES_DIR: "/data/notes"
+      EMBED_MODEL: "nomic-embed-text"
+    volumes:
+      - notes_data:/data/notes
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
 
 volumes:
   app_data:
+  notes_data:

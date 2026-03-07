@@ -19,6 +19,8 @@ SYSTEM_PROMPT = (
     "You will be provided with search results from arXiv and OpenAlex. "
     "Summarize the key findings from the provided papers and present them clearly. "
     "You may use the available tools to search for additional papers if needed. "
+    "Use save_note to capture important insights after research sessions. "
+    "At the start of a relevant query, call search_notes to retrieve semantically related prior notes. "
     "Always base your answer on the actual papers provided."
 )
 
@@ -80,11 +82,12 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
     async with AsyncExitStack() as stack:
         papers_session = await _open_session(stack, "mcp-papers")
         citations_session = await _open_session(stack, "mcp-citations")
+        notes_session = await _open_session(stack, "mcp-notes")
 
         # Build tool registry
         tool_session: dict[str, ClientSession] = {}
         ollama_tools: list[dict] = []
-        for session in (papers_session, citations_session):
+        for session in (papers_session, citations_session, notes_session):
             result = await session.list_tools()
             for tool in result.tools:
                 tool_session[tool.name] = session
