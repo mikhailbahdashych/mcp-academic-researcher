@@ -9,12 +9,36 @@ mcp = FastMCP("papers")
 ARXIV_NS = "http://www.w3.org/2005/Atom"
 
 
+def _in_year_range(year: int | None, year_from: int | None, year_to: int | None) -> bool:
+    if year is None:
+        return False
+    if year_from is not None and year < year_from:
+        return False
+    if year_to is not None and year > year_to:
+        return False
+    return True
+
+
 @mcp.tool()
-async def search_arxiv(query: str, max_results: int = 5) -> list[dict]:
-    """Search academic papers on arXiv."""
-    url = f"https://export.arxiv.org/api/query?search_query={query}&max_results={max_results}"
+async def search_arxiv(
+    query: str,
+    max_results: int = 5,
+    sort_by_date: bool = False,
+    year_from: int | None = None,
+    year_to: int | None = None,
+) -> list[dict]:
+    """Search academic papers on arXiv. Use sort_by_date=True for latest papers.
+    Use year_from/year_to to restrict results to a publication year range."""
+    # Fetch extra results when year-filtering so we have enough after the filter
+    fetch_count = max_results * 4 if (year_from or year_to) else max_results
+
+    params: dict = {"search_query": query, "max_results": fetch_count}
+    if sort_by_date:
+        params["sortBy"] = "submittedDate"
+        params["sortOrder"] = "descending"
+
     async with httpx.AsyncClient(timeout=30.0) as client:
-        resp = await client.get(url)
+        resp = await client.get("https://export.arxiv.org/api/query", params=params)
         resp.raise_for_status()
 
     root = ET.fromstring(resp.text)
@@ -31,6 +55,9 @@ async def search_arxiv(query: str, max_results: int = 5) -> list[dict]:
         published = entry.findtext(f"{{{ARXIV_NS}}}published", "")
         year = int(published[:4]) if published else None
 
+        if (year_from or year_to) and not _in_year_range(year, year_from, year_to):
+            continue
+
         papers.append(
             {
                 "id": arxiv_id,
@@ -42,6 +69,10 @@ async def search_arxiv(query: str, max_results: int = 5) -> list[dict]:
                 "source": "arxiv",
             }
         )
+
+        if len(papers) == max_results:
+            break
+
     return papers
 
 
@@ -57,13 +88,34 @@ def _reconstruct_abstract(inverted_index: dict | None) -> str:
 
 
 @mcp.tool()
-async def search_openalex(query: str, max_results: int = 5) -> list[dict]:
-    """Search academic papers on OpenAlex."""
+async def search_openalex(
+    query: str,
+    max_results: int = 5,
+    sort_by_date: bool = False,
+    year_from: int | None = None,
+    year_to: int | None = None,
+) -> list[dict]:
+    """Search academic papers on OpenAlex. Use sort_by_date=True for latest papers.
+    Use year_from/year_to to restrict results to a publication year range."""
     params: dict = {
         "search": query,
         "per-page": max_results,
         "select": "id,title,authorships,abstract_inverted_index,publication_year,doi,primary_location",
     }
+
+    if sort_by_date:
+        params["sort"] = "publication_date:desc"
+
+    filters: list[str] = []
+    if year_from and year_to:
+        filters.append(f"publication_year:{year_from}-{year_to}")
+    elif year_from:
+        filters.append(f"publication_year:>{year_from - 1}")
+    elif year_to:
+        filters.append(f"publication_year:<{year_to + 1}")
+    if filters:
+        params["filter"] = ",".join(filters)
+
     api_key = os.environ.get("OPENALEX_API_KEY")
     if api_key:
         params["api_key"] = api_key

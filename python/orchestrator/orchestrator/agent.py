@@ -1,7 +1,9 @@
 import json
 import os
+import re
 import sys
 from contextlib import AsyncExitStack
+from dataclasses import dataclass
 from pathlib import Path
 from typing import AsyncGenerator
 
@@ -69,6 +71,86 @@ def _sse_done() -> str:
     return f"data: {json.dumps({'type': 'done', 'data': None})}\n\n"
 
 
+@dataclass
+class SearchIntent:
+    query: str
+    sort_by_date: bool = False
+    year_from: int | None = None
+    year_to: int | None = None
+
+
+async def _extract_search_query(
+    client: ollama.AsyncClient,
+    message: str,
+    history: list[dict],
+) -> SearchIntent | None:
+    """
+    Returns a SearchIntent if the message warrants searching for papers (with optional
+    date constraints), or None if the message is not a paper search request.
+    """
+    recent_context = ""
+    for m in history[-6:]:
+        role = m.get("role", "")
+        content = str(m.get("content", ""))[:300]
+        if role in ("user", "assistant") and content:
+            recent_context += f"{role}: {content}\n"
+
+    prompt = (
+        "You are a query classifier for an academic paper search system.\n"
+        "Decide whether the user's message is requesting a search for academic papers.\n"
+        "Reply NO for: saving/making notes, citing papers, summarizing already-found results, "
+        "follow-up questions about existing content, or any non-search requests.\n\n"
+        + (f"Recent conversation:\n{recent_context}\n" if recent_context else "")
+        + f"User message: {message}\n\n"
+        "Reply ONLY in this exact format (no other text):\n"
+        "SEARCH: yes|no\n"
+        "QUERY: <3-8 keyword academic search query, empty if SEARCH is no>\n"
+        "SORT_BY_DATE: yes|no\n"
+        "YEAR_FROM: <4-digit year or empty>\n"
+        "YEAR_TO: <4-digit year or empty>\n\n"
+        "Rules:\n"
+        "- SORT_BY_DATE yes if user says 'latest', 'recent', 'newest', 'most recent'\n"
+        "- YEAR_FROM / YEAR_TO if user specifies a year range like 'from 2022 to 2024' or 'since 2023' or 'before 2020'\n\n"
+        "Examples:\n"
+        "message: 'Can you please provide me with the latest papers on transformer architectures?'\n"
+        "SEARCH: yes\nQUERY: transformer architecture\nSORT_BY_DATE: yes\nYEAR_FROM:\nYEAR_TO:\n\n"
+        "message: 'find papers on RL from 2022 to 2024'\n"
+        "SEARCH: yes\nQUERY: reinforcement learning\nSORT_BY_DATE: no\nYEAR_FROM: 2022\nYEAR_TO: 2024\n\n"
+        "message: 'recent work on diffusion models since 2023'\n"
+        "SEARCH: yes\nQUERY: diffusion models\nSORT_BY_DATE: yes\nYEAR_FROM: 2023\nYEAR_TO:\n\n"
+        "message: 'Could you please make notes out of it?'\n"
+        "SEARCH: no\nQUERY:\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n\n"
+        "message: 'What were the main findings?'\n"
+        "SEARCH: no\nQUERY:\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n"
+    )
+
+    response = await client.chat(
+        model=MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        stream=False,
+    )
+
+    text = response.message.content or ""
+
+    is_search = bool(re.search(r"SEARCH:\s*yes", text, re.IGNORECASE))
+    if not is_search:
+        return None
+
+    query_match = re.search(r"QUERY:\s*(.+)", text)
+    query = query_match.group(1).strip() if query_match else ""
+    if not query:
+        return None
+
+    sort_by_date = bool(re.search(r"SORT_BY_DATE:\s*yes", text, re.IGNORECASE))
+
+    year_from_match = re.search(r"YEAR_FROM:\s*(\d{4})", text)
+    year_to_match = re.search(r"YEAR_TO:\s*(\d{4})", text)
+    year_from = int(year_from_match.group(1)) if year_from_match else None
+    year_to = int(year_to_match.group(1)) if year_to_match else None
+
+    return SearchIntent(query=query, sort_by_date=sort_by_date, year_from=year_from, year_to=year_to)
+
+
 async def _open_session(stack: AsyncExitStack, bin_name: str) -> ClientSession:
     read, write = await stack.enter_async_context(
         stdio_client(StdioServerParameters(command=_resolve_bin(bin_name), args=[]))
@@ -98,6 +180,8 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
         for msg in request.history:
             messages.append({"role": msg.role, "content": msg.content})
 
+        client = ollama.AsyncClient(host=OLLAMA_BASE_URL)
+
         if request.force_tool:
             # --- Forced tool call: skip pre-search, call the specified tool directly ---
             tool_name = request.force_tool.name
@@ -118,34 +202,40 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
             except Exception as e:
                 messages.append({"role": "user", "content": f"Tool call failed: {e}"})
         else:
-            # --- Pre-search: always run search tools before the LLM turn ---
-            pre_search_tools = ["search_arxiv", "search_openalex"]
-            for tool_name in pre_search_tools:
-                if tool_name not in tool_session:
-                    continue
-                try:
-                    result = await tool_session[tool_name].call_tool(
-                        tool_name, {"query": request.message, "max_results": 5}
-                    )
-                    accumulated_papers.extend(_parse_papers(result))
-                    messages.append({
-                        "role": "assistant",
-                        "content": "",
-                        "tool_calls": [
-                            {"function": {"name": tool_name, "arguments": {"query": request.message, "max_results": 5}}}
-                        ],
-                    })
-                    messages.append({
-                        "role": "tool",
-                        "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
-                    })
-                except Exception:
-                    pass
+            # --- Classify intent and extract a clean search query ---
+            search_query = await _extract_search_query(client, request.message, messages)
+
+            if search_query:
+                # --- Pre-search: only when the message is actually a paper search request ---
+                tool_args: dict = {"query": search_query.query, "max_results": 5}
+                if search_query.sort_by_date:
+                    tool_args["sort_by_date"] = True
+                if search_query.year_from is not None:
+                    tool_args["year_from"] = search_query.year_from
+                if search_query.year_to is not None:
+                    tool_args["year_to"] = search_query.year_to
+
+                for tool_name in ["search_arxiv", "search_openalex"]:
+                    if tool_name not in tool_session:
+                        continue
+                    try:
+                        result = await tool_session[tool_name].call_tool(tool_name, tool_args)
+                        accumulated_papers.extend(_parse_papers(result))
+                        messages.append({
+                            "role": "assistant",
+                            "content": "",
+                            "tool_calls": [{"function": {"name": tool_name, "arguments": tool_args}}],
+                        })
+                        messages.append({
+                            "role": "tool",
+                            "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
+                        })
+                    except Exception:
+                        pass
 
         messages.append({"role": "user", "content": request.message})
 
         # --- LLM loop: model summarizes results, may call more tools ---
-        client = ollama.AsyncClient(host=OLLAMA_BASE_URL)
 
         while True:
             response = await client.chat(
