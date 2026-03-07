@@ -47,8 +47,7 @@ mcp-academic-researcher/
 │   ├── mcp_servers/
 │   │   ├── papers/              # Papers search MCP server
 │   │   ├── notes/               # Notes management MCP server
-│   │   ├── citations/           # Citations MCP server
-│   │   └── files/               # PDF processing MCP server
+│   │   └── citations/           # Citations MCP server
 │   └── shared/                  # Shared utilities package
 ├── data/                        # Local data storage
 │   ├── pdfs/
