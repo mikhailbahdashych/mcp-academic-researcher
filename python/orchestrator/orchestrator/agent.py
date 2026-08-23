@@ -26,6 +26,9 @@ SYSTEM_PROMPT = (
     "When calling save_note about specific papers, set the paper_id field to the EXACT paper IDs from the search results (the 'id' field). "
     "For arXiv papers use the arXiv ID (e.g. '2301.12345v1'). For OpenAlex papers use the DOI or OpenAlex URL from the 'id' field. "
     "NEVER invent or guess DOIs — only use IDs that appear in the search results. Comma-separate multiple IDs. "
+    "When your answer draws on specific papers from the search results, cite them "
+    "inline with bracketed numbers like [1] in the order the papers appear in your "
+    "final source list. "
 )
 
 
@@ -340,7 +343,14 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 tool_session[tool.name] = session
                 all_tools.append(_mcp_tool_to_canonical(tool))
 
-        accumulated_papers: list[dict] = []
+        # Papers are kept in two buckets because they are not equally trustworthy.
+        # The pre-search runs off the classifier's guess at a query, so a request
+        # like "recent papers on X" can return the newest arXiv entries rather than
+        # relevant ones. When the model notices that and searches again itself, its
+        # results are the deliberate ones — they lead the source list, and under a
+        # max_results cap they are what survives.
+        presearch_papers: list[dict] = []
+        loop_papers: list[dict] = []
         requested_max_results: int | None = None
         messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
         for msg in request.history:
@@ -376,7 +386,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                         )
                     )
                 else:
-                    accumulated_papers.extend(_parse_papers(result))
+                    presearch_papers.extend(_parse_papers(result))
                     messages.extend(
                         _build_tool_exchange(tool_name, tool_args, _result_texts(result))
                     )
@@ -401,7 +411,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                         # One dead source must not sink the answer the other found.
                         logger.exception("Pre-search tool %s failed", tool_name)
                         continue
-                    accumulated_papers.extend(_parse_papers(result))
+                    presearch_papers.extend(_parse_papers(result))
                     messages.extend(
                         _build_tool_exchange(tool_name, search_args, _result_texts(result))
                     )
@@ -465,7 +475,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                         content = json.dumps({"error": str(exc)})
                     else:
                         if tc.name in SEARCH_TOOL_NAMES:
-                            accumulated_papers.extend(_parse_papers(result))
+                            loop_papers.extend(_parse_papers(result))
                         content = json.dumps(_result_texts(result))
 
                     messages.append({
@@ -485,6 +495,8 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
             )
             yield _sse_token(f"\u26a0\ufe0f {detail}")
 
-        yield _sse_papers(_dedup_papers(accumulated_papers, requested_max_results))
+        # Model-initiated searches first: _dedup_papers keeps first occurrences, so
+        # this decides both the order and, under a cap, which papers survive.
+        yield _sse_papers(_dedup_papers(loop_papers + presearch_papers, requested_max_results))
         yield _sse_done()
         yield "data: [DONE]\n\n"

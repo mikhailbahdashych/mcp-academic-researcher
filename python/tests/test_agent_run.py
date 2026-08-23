@@ -25,9 +25,14 @@ from orchestrator.models import ChatRequest
 from orchestrator import agent
 
 PAPER = {"id": "2301.00001v1", "title": "A Fake Paper", "source": "arxiv"}
+#: What a search the model runs itself finds, as opposed to the pre-search's PAPER.
+RELEVANT_PAPER = {"id": "2302.00002v1", "title": "The Relevant Paper", "source": "arxiv"}
 
 NO_SEARCH = "SEARCH: no\nQUERY:\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:"
 YES_SEARCH = "SEARCH: yes\nQUERY: llm\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:"
+#: The shape of the bug report: "recent papers on X" sends the classifier down a
+#: sort-by-date pre-search that returns the newest entries rather than the apt ones.
+RECENT_SEARCH = "SEARCH: yes\nQUERY: rag\nMAX_RESULTS: {n}\nSORT_BY_DATE: yes\nYEAR_FROM:\nYEAR_TO:"
 
 TOOL_NAMES = ["search_arxiv", "search_openalex", "search_notes", "get_citations"]
 
@@ -47,8 +52,11 @@ def _result(payload) -> SimpleNamespace:
 class FakeSession:
     """Stands in for all three MCP servers and records every tool it is asked to run."""
 
-    def __init__(self, names: list[str] = TOOL_NAMES) -> None:
+    def __init__(
+        self, names: list[str] = TOOL_NAMES, papers_by_query: dict[str, dict] | None = None
+    ) -> None:
         self._tools = [_tool(n) for n in names]
+        self._papers_by_query = papers_by_query or {}
         self.calls: list[tuple[str, dict]] = []
 
     async def list_tools(self):
@@ -57,7 +65,7 @@ class FakeSession:
     async def call_tool(self, name: str, args: dict):
         self.calls.append((name, args))
         if name in ("search_arxiv", "search_openalex"):
-            return _result([PAPER])
+            return _result([self._papers_by_query.get(args.get("query"), PAPER)])
         return _result({"ok": name})
 
     @property
@@ -233,6 +241,54 @@ async def test_run_forced_tool_runs_before_the_model_and_after_the_user(monkeypa
     assert user_idx < call_idx
     assert messages[call_idx + 1]["tool_call_id"] == messages[call_idx]["tool_calls"][0]["id"]
     assert messages[call_idx]["tool_calls"][0]["function"]["name"] == "get_citations"
+
+
+def _model_searches_again(max_results: int) -> tuple[FakeSession, "FakeLLM"]:
+    """Pre-search finds PAPER; the model then searches itself and finds RELEVANT_PAPER."""
+    session = FakeSession(papers_by_query={"rag relevance": RELEVANT_PAPER})
+    llm = FakeLLM(
+        RECENT_SEARCH.format(n=max_results),
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_1", name="search_arxiv", arguments={"query": "rag relevance"}
+                    )
+                )
+            ],
+            [StreamEvent(text="Here is the paper that actually fits.")],
+        ],
+    )
+    return session, llm
+
+
+async def test_run_lists_model_initiated_papers_before_pre_search_ones(monkeypatch):
+    """The pre-search is a guess; a search the model chose to run outranks it."""
+    session, llm = _model_searches_again(max_results=5)
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find 5 recent papers on RAG"))
+
+    _assert_closes_cleanly(events)
+    # Pre-search hit both sources plus notes, then the model searched arXiv itself.
+    assert session.call_names == [
+        "search_arxiv",
+        "search_openalex",
+        "search_notes",
+        "search_arxiv",
+    ]
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER, PAPER]
+
+
+async def test_run_drops_pre_search_papers_first_under_a_cap(monkeypatch):
+    """With max_results=1 the model's own result is the one that survives."""
+    session, llm = _model_searches_again(max_results=1)
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find 1 recent paper on RAG"))
+
+    _assert_closes_cleanly(events)
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER]
 
 
 async def test_run_reports_a_provider_failure_as_answer_text(monkeypatch):
