@@ -3,6 +3,7 @@ import { Response } from 'express';
 import axios from 'axios';
 import { PrismaService } from '../../common/database/prisma.service';
 import { ConversationsService } from '../conversations/conversations.service';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class ChatService {
@@ -13,6 +14,7 @@ export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly conversationsService: ConversationsService,
+    private readonly settingsService: SettingsService,
   ) {}
 
   async streamChat(
@@ -59,6 +61,7 @@ export class ChatService {
           history,
           force_tool: forceTool ?? null,
           sources: sources ?? null,
+          llm: await this.settingsService.getLlmConfig(),
         },
         { responseType: 'stream', timeout: 60000 },
       );

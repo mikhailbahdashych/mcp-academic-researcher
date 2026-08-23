@@ -28,3 +28,15 @@ model Message {
 
   @@map("messages")
 }
+
+model Setting {
+  id              String   @id @default("default")
+  llmProvider     String   @default("ollama") @map("llm_provider")
+  ollamaBaseUrl   String   @default("http://localhost:11434") @map("ollama_base_url")
+  ollamaModel     String   @default("qwen2.5:7b") @map("ollama_model")
+  anthropicModel  String   @default("claude-opus-5") @map("anthropic_model")
+  anthropicApiKey String?  @map("anthropic_api_key")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
