@@ -70,6 +70,11 @@ export class MarkdownViewerComponent implements OnChanges {
   }
 
   private apply(html: string): void {
+    // Safe to bypass: `html` comes from MarkdownService.parse(), which has
+    // already run Angular's sanitizer (SecurityContext.HTML — the
+    // provideMarkdown() default; nothing here sets disableSanitizer), and
+    // wrapCitations() only inserts fixed <a data-cite="N"> anchors whose N is
+    // digit-only. Do not feed this method HTML from any other source.
     this.rendered = this.sanitizer.bypassSecurityTrustHtml(
       wrapCitations(html, this.maxCitations)
     );
