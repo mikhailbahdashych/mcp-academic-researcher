@@ -47,6 +47,12 @@ def test_select_search_tools_ignores_unknown_sources():
     assert _select_search_tools(["arxiv", "pubmed"], AVAILABLE) == ["search_arxiv"]
 
 
+def test_select_search_tools_matches_sources_loosely():
+    """Casing and stray whitespace come from a UI, not from our own constants."""
+    assert _select_search_tools([" ArXiv "], AVAILABLE) == ["search_arxiv"]
+    assert _select_search_tools(["OPENALEX"], AVAILABLE) == ["search_openalex"]
+
+
 def test_select_search_tools_with_no_sources_selects_nothing():
     assert _select_search_tools([], AVAILABLE) == []
 

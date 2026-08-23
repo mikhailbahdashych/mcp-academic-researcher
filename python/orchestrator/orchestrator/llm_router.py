@@ -6,12 +6,15 @@ transport failure. Responses therefore carry an ``error`` string rather than a
 status code — and never echo the submitted API key back.
 """
 
+import logging
 import time
 
 from fastapi import APIRouter
 
 from .llm import LLMSettings, build_client, env_anthropic_key
 from .models import LLMConfig
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -31,6 +34,8 @@ async def list_models(config: LLMConfig) -> dict:
         client = build_client(LLMSettings(**config.model_dump()))
         return {"models": await client.list_models()}
     except Exception as exc:
+        # Provider name only: the settings object carries the API key.
+        logger.exception("Listing models failed for provider %s", config.provider)
         return {"models": [], "error": str(exc)}
 
 
@@ -53,6 +58,8 @@ async def test_provider(config: LLMConfig) -> dict:
             max_tokens=16,
         )
     except Exception as exc:
+        # Provider name only: the settings object carries the API key.
+        logger.exception("Provider test failed for provider %s", config.provider)
         return {"ok": False, "error": str(exc)}
 
     return {

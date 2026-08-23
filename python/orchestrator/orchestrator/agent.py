@@ -110,17 +110,19 @@ def _select_search_tools(sources: list[str] | None, available: Container[str]) -
     """Pick the pre-search tools to run for the sources a request asked for.
 
     Args:
-        sources: Source suffixes ("arxiv", "openalex"); None means every source.
+        sources: Source suffixes ("arxiv", "openalex"), matched case- and
+            whitespace-insensitively; None means every source.
         available: Tool names the connected MCP servers actually offer.
 
     Returns:
         Tool names to pre-call, in a stable order. Unknown source names select
         nothing rather than raising.
     """
+    wanted = None if sources is None else {s.strip().lower() for s in sources}
     return [
         name
         for name in PRE_SEARCH_TOOLS
-        if name in available and (sources is None or name.split("_", 1)[1] in sources)
+        if name in available and (wanted is None or name.split("_", 1)[1] in wanted)
     ]
 
 

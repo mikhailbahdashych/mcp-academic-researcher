@@ -52,10 +52,6 @@ class LLMConfig(BaseModel):
     base_url: str | None = None
 
 
-#: The /llm/models and /llm/test endpoints take a bare provider config.
-ModelsRequest = LLMConfig
-TestRequest = LLMConfig
-
 
 class ChatRequest(BaseModel):
     """Request payload for the /chat endpoint.

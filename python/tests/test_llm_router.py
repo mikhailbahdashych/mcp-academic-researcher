@@ -8,7 +8,7 @@ rule that a provider failure is still an HTTP 200 carrying an ``error`` string.
 import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from orchestrator.llm import LLMError
+from orchestrator.llm import LLMError, LLMSettings
 
 from orchestrator import llm_router
 
@@ -45,11 +45,27 @@ def _use(monkeypatch, factory) -> None:
     monkeypatch.setattr(llm_router, "build_client", factory)
 
 
+def _capturing(monkeypatch, client: FakeClient) -> list:
+    """Install ``client`` and return the list that records each settings object."""
+    seen: list = []
+
+    def factory(settings):
+        seen.append(settings)
+        return client
+
+    _use(monkeypatch, factory)
+    return seen
+
+
 def test_models_returns_provider_list(api, monkeypatch):
-    _use(monkeypatch, lambda settings: FakeClient())
-    response = api.post("/llm/models", json={"provider": "ollama"})
+    seen = _capturing(monkeypatch, FakeClient())
+
+    response = api.post("/llm/models", json={"provider": "ollama", "model": "qwen2.5:7b"})
+
     assert response.status_code == 200
     assert response.json() == {"models": [{"id": "m1", "name": "Model One"}]}
+    # The request body must arrive as LLMSettings, not as a raw dict.
+    assert seen == [LLMSettings(provider="ollama", model="qwen2.5:7b")]
 
 
 def test_models_reports_missing_key_as_error(api, monkeypatch):
@@ -73,8 +89,11 @@ def test_models_reports_provider_failure_as_error(api, monkeypatch):
 
 
 def test_test_endpoint_round_trips_a_completion(api, monkeypatch):
-    _use(monkeypatch, lambda settings: FakeClient(reply="pong"))
+    seen = _capturing(monkeypatch, FakeClient(reply="pong"))
+
     body = api.post("/llm/test", json={"provider": "ollama", "model": "qwen2.5:7b"}).json()
+
+    assert seen == [LLMSettings(provider="ollama", model="qwen2.5:7b")]
     assert body["ok"] is True
     assert body["model"] == "fake-model"
     assert body["reply"] == "pong"
