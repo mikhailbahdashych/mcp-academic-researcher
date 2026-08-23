@@ -50,9 +50,13 @@
       }
     </div>
   } @else {
-    <p class="mono-label count">
-      {{ notes().length }} note{{ notes().length === 1 ? '' : 's' }}
-      @if (searchQuery()) { <span>matching "{{ searchQuery() }}"</span> }
+    <p class="count">
+      <span class="mono-label">
+        {{ notes().length }} note{{ notes().length === 1 ? '' : 's' }}
+      </span>
+      @if (searchQuery()) {
+        <span class="match-note text-faint">matching "{{ searchQuery() }}"</span>
+      }
     </p>
 
     <div class="notes-list">

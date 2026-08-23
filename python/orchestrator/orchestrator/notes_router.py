@@ -53,7 +53,12 @@ def _get_conn() -> sqlite3.Connection:
 
 
 async def _get_embedding(text: str) -> list[float]:
-    """Generate a 768-dimensional embedding vector via Ollama's /api/embeddings endpoint.
+    """Generate a 768-dimensional embedding vector via Ollama's /api/embed endpoint.
+
+    Uses the same endpoint and payload as the notes MCP server's `_get_embedding`
+    (`mcp_servers/notes/notes/server.py`) so that notes and queries embedded here
+    land on the same (L2-normalized) scale as the ones written by the MCP tool --
+    both share the `notes_vec` index.
 
     Args:
         text: Text to embed.
@@ -66,11 +71,11 @@ async def _get_embedding(text: str) -> list[float]:
     """
     async with httpx.AsyncClient(timeout=30.0) as client:
         resp = await client.post(
-            f"{OLLAMA_BASE_URL}/api/embeddings",
-            json={"model": EMBED_MODEL, "prompt": text},
+            f"{OLLAMA_BASE_URL}/api/embed",
+            json={"model": EMBED_MODEL, "input": text},
         )
         resp.raise_for_status()
-        return resp.json()["embedding"]
+        return resp.json()["embeddings"][0]
 
 
 def _row_to_dict(row: tuple) -> dict:

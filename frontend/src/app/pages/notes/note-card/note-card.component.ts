@@ -29,9 +29,10 @@ export class NoteCardComponent {
 
   copyDoi(doi: string, event: Event): void {
     event.stopPropagation();
-    navigator.clipboard.writeText(doi).then(() => {
-      this.snackBar.open('DOI copied', '', { duration: 1500 });
-    });
+    navigator.clipboard
+      .writeText(doi)
+      .then(() => this.snackBar.open('DOI copied', '', { duration: 1500 }))
+      .catch(() => this.snackBar.open('Copy failed', '', { duration: 1600 }));
   }
 
   toggleExpand(): void {
