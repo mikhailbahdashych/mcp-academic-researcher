@@ -1,15 +1,16 @@
 import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Note } from '@core/models/chat.models';
 
+/**
+ * A saved note: title, similarity score (search results only), clamped body
+ * with a show more/less toggle, and a footer of paper-id badges, date and tags.
+ */
 @Component({
   selector: 'app-note-card',
   standalone: true,
-  imports: [MatButtonModule, MatChipsModule, MatIconModule, MatTooltipModule],
+  imports: [MatTooltipModule],
   templateUrl: './note-card.component.html',
   styleUrl: './note-card.component.scss',
 })

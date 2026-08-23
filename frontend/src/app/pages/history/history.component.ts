@@ -1,16 +1,18 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SessionService } from '@core/services/session.service';
 import { ChatSession } from '@core/models/chat.models';
 
+/**
+ * History page: search over saved research threads, with a row per thread
+ * (title, answer snippet, date and source count) and a hover delete action.
+ */
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [FormsModule, RouterLink, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [FormsModule, RouterLink, MatTooltipModule],
   templateUrl: './history.component.html',
   styleUrl: './history.component.scss',
 })
