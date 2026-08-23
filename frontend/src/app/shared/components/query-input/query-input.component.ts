@@ -10,9 +10,11 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SearchScopeService } from '@core/services/search-scope.service';
+import { SettingsService } from '@core/services/settings.service';
 
 /**
  * Shared composer used both as the home hero input and as the follow-up bar.
@@ -23,7 +25,7 @@ import { SearchScopeService } from '@core/services/search-scope.service';
 @Component({
   selector: 'app-query-input',
   standalone: true,
-  imports: [FormsModule, TextFieldModule, MatTooltipModule],
+  imports: [FormsModule, RouterLink, TextFieldModule, MatTooltipModule],
   templateUrl: './query-input.component.html',
   styleUrl: './query-input.component.scss',
 })
@@ -38,8 +40,14 @@ export class QueryInputComponent implements AfterViewInit {
   @ViewChild('textarea') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
   protected readonly scope = inject(SearchScopeService);
+  protected readonly settings = inject(SettingsService);
 
   query = '';
+
+  /** Matches the provider radio-cards on the Settings page. */
+  protected get providerIcon(): string {
+    return this.settings.currentProvider() === 'anthropic' ? 'auto_awesome' : 'memory';
+  }
 
   protected get placeholderText(): string {
     if (this.placeholder) return this.placeholder;

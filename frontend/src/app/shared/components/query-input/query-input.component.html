@@ -42,6 +42,15 @@
         >
           <span class="material-icons">hub</span>OpenAlex
         </button>
+
+        <a
+          routerLink="/settings"
+          class="model-chip mono"
+          matTooltip="Change model in Settings"
+        >
+          <span class="material-icons" aria-hidden="true">{{ providerIcon }}</span>
+          <span class="truncate">{{ settings.currentModelLabel() }}</span>
+        </a>
       </div>
 
       <div class="composer-right">
@@ -59,6 +68,15 @@
       </div>
     </div>
   } @else {
+    <a
+      routerLink="/settings"
+      class="model-chip mono"
+      matTooltip="Change model in Settings"
+    >
+      <span class="material-icons" aria-hidden="true">{{ providerIcon }}</span>
+      <span class="truncate">{{ settings.currentModelLabel() }}</span>
+    </a>
+
     <button
       type="button"
       class="send-btn"

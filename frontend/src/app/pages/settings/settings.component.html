@@ -1,0 +1,223 @@
+<div class="page">
+  <h1 class="page-title">Settings</h1>
+
+  @if (settings(); as view) {
+    <p class="mono-label section-label">Model provider</p>
+
+    <div class="provider-grid" role="radiogroup" aria-label="Model provider">
+      @for (p of providers; track p.id) {
+        <button
+          #providerCard
+          type="button"
+          role="radio"
+          class="provider-card"
+          [class.selected]="provider() === p.id"
+          [attr.aria-checked]="provider() === p.id"
+          [attr.tabindex]="provider() === p.id ? 0 : -1"
+          (click)="selectProvider(p.id)"
+          (keydown)="onProviderKeydown($event, $index)"
+        >
+          <span class="material-icons card-icon" aria-hidden="true">{{ p.icon }}</span>
+          <span class="card-text">
+            <span class="card-title">{{ p.title }}</span>
+            <span class="card-sub">{{ p.sub }}</span>
+          </span>
+        </button>
+      }
+    </div>
+
+    @if (provider() === 'ollama') {
+      <div class="field">
+        <label class="field-label" for="ollama-url">Base URL</label>
+        <input
+          id="ollama-url"
+          class="text-input"
+          type="text"
+          placeholder="http://localhost:11434"
+          autocomplete="off"
+          spellcheck="false"
+          [ngModel]="ollamaBaseUrl()"
+          (ngModelChange)="ollamaBaseUrl.set($event)"
+          (blur)="onBaseUrlBlur()"
+        />
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label class="field-label" for="ollama-model">Model</label>
+          <button
+            type="button"
+            class="icon-action"
+            [disabled]="ollamaModelsLoading()"
+            (click)="loadOllamaModels()"
+            matTooltip="Reload the model list"
+          >
+            <span class="material-icons">refresh</span>Refresh
+          </button>
+        </div>
+
+        @if (ollamaSelectMode()) {
+          <div class="select-wrap">
+            <select
+              id="ollama-model"
+              [disabled]="ollamaModelsLoading()"
+              [ngModel]="ollamaModel()"
+              (ngModelChange)="ollamaModel.set($event)"
+            >
+              @if (ollamaModelsLoading()) {
+                <option value="">&hellip;</option>
+              } @else {
+                @for (m of ollamaOptions(); track m.id) {
+                  <option [value]="m.id">{{ m.name }}</option>
+                }
+              }
+            </select>
+            <span class="material-icons select-chevron" aria-hidden="true">expand_more</span>
+          </div>
+        } @else {
+          <input
+            id="ollama-model"
+            class="text-input"
+            type="text"
+            placeholder="qwen2.5:7b"
+            autocomplete="off"
+            spellcheck="false"
+            [ngModel]="ollamaModel()"
+            (ngModelChange)="ollamaModel.set($event)"
+          />
+        }
+
+        @if (ollamaModelsError(); as error) {
+          <p class="status mono danger">{{ error }}</p>
+        }
+      </div>
+    } @else {
+      <div class="field">
+        <label class="field-label" for="anthropic-key">API key</label>
+        <input
+          id="anthropic-key"
+          class="text-input"
+          type="password"
+          placeholder="sk-ant-…"
+          autocomplete="off"
+          spellcheck="false"
+          [ngModel]="anthropicApiKey()"
+          (ngModelChange)="anthropicApiKey.set($event)"
+        />
+
+        <div class="status mono key-status">
+          @if (clearKey()) {
+            <span class="danger">Key will be removed on save</span>
+          } @else if (view.anthropicApiKeySet) {
+            <span>Stored key {{ view.anthropicApiKeyHint }}</span>
+            <button type="button" class="icon-action clear-key" (click)="clearKey.set(true)">
+              <span class="material-icons">key_off</span>Clear key
+            </button>
+          } @else if (view.anthropicEnvKeyPresent) {
+            <span>Using ANTHROPIC_API_KEY / CLAUDE_API_KEY from the server environment</span>
+          } @else {
+            <span>No key configured</span>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label class="field-label" for="anthropic-model">Model</label>
+          <button
+            type="button"
+            class="icon-action"
+            [disabled]="anthropicModelsLoading()"
+            (click)="loadAnthropicModels()"
+            matTooltip="Fetch the models this key can use"
+          >
+            <span class="material-icons">refresh</span>Load models
+          </button>
+        </div>
+
+        @if (anthropicSelectMode()) {
+          <div class="select-wrap">
+            <select
+              id="anthropic-model"
+              [disabled]="anthropicModelsLoading()"
+              [ngModel]="anthropicModel()"
+              (ngModelChange)="anthropicModel.set($event)"
+            >
+              @if (anthropicModelsLoading()) {
+                <option value="">&hellip;</option>
+              } @else {
+                @for (m of anthropicOptions(); track m.id) {
+                  <option [value]="m.id">{{ m.name }}</option>
+                }
+              }
+            </select>
+            <span class="material-icons select-chevron" aria-hidden="true">expand_more</span>
+          </div>
+        } @else {
+          <input
+            id="anthropic-model"
+            class="text-input"
+            type="text"
+            list="anthropic-model-suggestions"
+            placeholder="claude-opus-5"
+            autocomplete="off"
+            spellcheck="false"
+            [ngModel]="anthropicModel()"
+            (ngModelChange)="anthropicModel.set($event)"
+          />
+          <datalist id="anthropic-model-suggestions">
+            @for (suggestion of anthropicSuggestions; track suggestion) {
+              <option [value]="suggestion"></option>
+            }
+          </datalist>
+        }
+
+        @if (anthropicModelsError(); as error) {
+          <p class="status mono danger">{{ error }}</p>
+        }
+      </div>
+    }
+
+    <div class="footer">
+      <button
+        type="button"
+        class="icon-action"
+        [disabled]="testing()"
+        (click)="runTest()"
+        matTooltip="Send a one-word prompt to the selected model"
+      >
+        <span class="material-icons">bolt</span>Test connection
+      </button>
+
+      @if (testing()) {
+        <mat-spinner diameter="16"></mat-spinner>
+      } @else {
+        @if (testResult(); as result) {
+          @if (result.ok) {
+            <p class="status mono accent">
+              &#10003; {{ result.model
+              }}@if (result.latencyMs != null) { · {{ result.latencyMs }} ms }
+            </p>
+          } @else {
+            <p class="status mono danger">&#10007; {{ result.error }}</p>
+          }
+        }
+      }
+
+      <span class="spacer"></span>
+
+      <button type="button" class="pill-btn" [disabled]="saving()" (click)="save()">Save</button>
+    </div>
+  } @else if (loading()) {
+    <div class="page-state">
+      <mat-spinner diameter="24"></mat-spinner>
+    </div>
+  } @else {
+    <div class="page-state">
+      <p class="status mono danger">Could not load settings</p>
+      <button type="button" class="icon-action" (click)="retry()">
+        <span class="material-icons">refresh</span>Retry
+      </button>
+    </div>
+  }
+</div>

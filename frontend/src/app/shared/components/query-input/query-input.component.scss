@@ -161,3 +161,35 @@
     font-size: 18px;
   }
 }
+
+// Read-only badge for the active LLM model; links to the Settings page.
+.model-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  max-width: 180px;
+  padding: 3px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--app-text-faint);
+  font-size: 11.5px;
+  line-height: 1.4;
+  text-decoration: none !important;
+  transition: color 0.15s, border-color 0.15s;
+
+  .material-icons {
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    color: var(--app-text-secondary);
+    border-color: var(--app-border);
+  }
+}
+
+.inline .model-chip {
+  margin-right: 2px;
+  margin-bottom: 6px;
+}
