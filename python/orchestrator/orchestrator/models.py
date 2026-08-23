@@ -40,9 +40,11 @@ class ChatRequest(BaseModel):
         message: The current user message to process.
         history: Complete conversation history (all prior messages).
         force_tool: Optional directive to force a specific tool call.
+        sources: Paper sources to search ("arxiv", "openalex"); None means all.
     """
 
     conversation_id: str
     message: str
     history: list[Message]
     force_tool: ForceTool | None = None
+    sources: list[str] | None = None

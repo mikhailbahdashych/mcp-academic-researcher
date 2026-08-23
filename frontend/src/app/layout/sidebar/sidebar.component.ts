@@ -1,9 +1,8 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SidebarHeaderComponent } from './sidebar-header/sidebar-header.component';
+import { SidebarFooterComponent } from './sidebar-footer/sidebar-footer.component';
 import { SessionListComponent } from './session-list/session-list.component';
 
 @Component({
@@ -12,10 +11,9 @@ import { SessionListComponent } from './session-list/session-list.component';
   imports: [
     RouterLink,
     RouterLinkActive,
-    MatButtonModule,
-    MatIconModule,
     MatTooltipModule,
     SidebarHeaderComponent,
+    SidebarFooterComponent,
     SessionListComponent,
   ],
   templateUrl: './sidebar.component.html',

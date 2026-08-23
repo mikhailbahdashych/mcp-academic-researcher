@@ -1,8 +1,5 @@
 <div class="sidebar" [class.collapsed]="collapsed">
-  <app-sidebar-header
-    [collapsed]="collapsed"
-    (toggleCollapse)="toggleCollapse.emit()"
-  ></app-sidebar-header>
+  <app-sidebar-header [collapsed]="collapsed"></app-sidebar-header>
 
   <nav class="sidebar-nav">
     <a
@@ -11,11 +8,14 @@
       routerLinkActive="active"
       [routerLinkActiveOptions]="{ exact: true }"
       (click)="closeSidenav.emit()"
-      [matTooltip]="collapsed ? 'Home' : ''"
+      [matTooltip]="collapsed ? 'New thread' : ''"
       matTooltipPosition="right"
     >
-      <mat-icon>home</mat-icon>
-      @if (!collapsed) { <span>Home</span> }
+      <span class="material-icons">add</span>
+      @if (!collapsed) {
+        <span class="label">New thread</span>
+        <span class="kbd mono">&#8984;K</span>
+      }
     </a>
     <a
       class="nav-item"
@@ -25,8 +25,8 @@
       [matTooltip]="collapsed ? 'History' : ''"
       matTooltipPosition="right"
     >
-      <mat-icon>history</mat-icon>
-      @if (!collapsed) { <span>History</span> }
+      <span class="material-icons">history</span>
+      @if (!collapsed) { <span class="label">History</span> }
     </a>
     <a
       class="nav-item"
@@ -36,13 +36,28 @@
       [matTooltip]="collapsed ? 'Notes' : ''"
       matTooltipPosition="right"
     >
-      <mat-icon>sticky_note_2</mat-icon>
-      @if (!collapsed) { <span>Notes</span> }
+      <span class="material-icons">sticky_note_2</span>
+      @if (!collapsed) { <span class="label">Notes</span> }
+    </a>
+    <a
+      class="nav-item"
+      routerLink="/settings"
+      routerLinkActive="active"
+      (click)="closeSidenav.emit()"
+      [matTooltip]="collapsed ? 'Settings' : ''"
+      matTooltipPosition="right"
+    >
+      <span class="material-icons">tune</span>
+      @if (!collapsed) { <span class="label">Settings</span> }
     </a>
   </nav>
 
   @if (!collapsed) {
-    <div class="divider"></div>
-    <app-session-list></app-session-list>
+    <app-session-list class="session-list-host"></app-session-list>
   }
+
+  <app-sidebar-footer
+    [collapsed]="collapsed"
+    (toggleCollapse)="toggleCollapse.emit()"
+  ></app-sidebar-footer>
 </div>

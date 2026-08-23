@@ -1,33 +1,61 @@
-<div class="query-input-wrapper" [class.hero]="size === 'hero'" [class.inline]="size === 'inline'">
-  <div class="input-container" [class.disabled]="disabled">
-    <textarea
-      #textarea
-      cdkTextareaAutosize
-      cdkAutosizeMinRows="1"
-      cdkAutosizeMaxRows="8"
-      class="query-textarea"
-      [style.overflow-y]="query ? 'auto' : 'hidden'"
-      [(ngModel)]="query"
-      [placeholder]="placeholder"
-      [disabled]="disabled"
-      (keydown)="onKeydown($event)"
-      autocomplete="off"
-      autocorrect="off"
-      spellcheck="false"
-    ></textarea>
+<div
+  class="composer"
+  [class.hero]="size === 'hero'"
+  [class.inline]="size === 'inline'"
+  [class.disabled]="disabled"
+>
+  <textarea
+    #textarea
+    cdkTextareaAutosize
+    cdkAutosizeMinRows="1"
+    cdkAutosizeMaxRows="8"
+    class="composer-textarea"
+    [(ngModel)]="query"
+    [placeholder]="placeholderText"
+    [disabled]="disabled"
+    (keydown)="onKeydown($event)"
+    autocomplete="off"
+    spellcheck="false"
+    [attr.aria-label]="placeholderText"
+  ></textarea>
 
-    <div class="input-actions">
+  <div class="composer-row">
+    <div class="composer-left">
       @if (size === 'hero') {
-        <span class="shortcut-hint text-secondary">&#8984;K</span>
+        <button
+          type="button"
+          class="scope-chip"
+          [class.active]="scope.isEnabled('arxiv')"
+          (click)="scope.toggle('arxiv')"
+          matTooltip="Search arXiv"
+        >
+          <span class="material-icons">travel_explore</span>arXiv
+        </button>
+        <button
+          type="button"
+          class="scope-chip"
+          [class.active]="scope.isEnabled('openalex')"
+          (click)="scope.toggle('openalex')"
+          matTooltip="Search OpenAlex"
+        >
+          <span class="material-icons">hub</span>OpenAlex
+        </button>
+      }
+    </div>
+
+    <div class="composer-right">
+      @if (size === 'hero') {
+        <span class="kbd mono">&#8984;K</span>
       }
       <button
-        mat-icon-button
+        type="button"
         class="send-btn"
         [disabled]="!query.trim() || disabled"
         (click)="submit()"
+        aria-label="Send"
         matTooltip="Send (Enter)"
       >
-        <mat-icon>arrow_upward</mat-icon>
+        <span class="material-icons">arrow_upward</span>
       </button>
     </div>
   </div>

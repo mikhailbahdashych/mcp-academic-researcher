@@ -314,7 +314,12 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                 if search_query.year_to is not None:
                     tool_args["year_to"] = search_query.year_to
 
-                for tool_name in ["search_arxiv", "search_openalex"]:
+                search_tool_names = [
+                    n
+                    for n in ["search_arxiv", "search_openalex"]
+                    if request.sources is None or n.split("_", 1)[1] in request.sources
+                ]
+                for tool_name in search_tool_names:
                     if tool_name not in tool_session:
                         continue
                     try:

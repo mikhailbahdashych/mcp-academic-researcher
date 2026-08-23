@@ -1,0 +1,26 @@
+<div class="sidebar-footer" [class.collapsed]="collapsed">
+  <button
+    type="button"
+    class="footer-row theme-btn"
+    (click)="themeService.toggle()"
+    [matTooltip]="collapsed ? (themeService.isDark() ? 'Light mode' : 'Dark mode') : ''"
+    matTooltipPosition="right"
+    [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+  >
+    <span class="material-icons">{{ themeService.isDark() ? 'dark_mode' : 'light_mode' }}</span>
+    @if (!collapsed) {
+      <span class="label">{{ themeService.isDark() ? 'Dark' : 'Light' }}</span>
+    }
+  </button>
+
+  <button
+    type="button"
+    class="footer-row collapse-btn"
+    (click)="toggleCollapse.emit()"
+    [matTooltip]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+    matTooltipPosition="right"
+    [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+  >
+    <span class="material-icons">{{ collapsed ? 'chevron_right' : 'chevron_left' }}</span>
+  </button>
+</div>

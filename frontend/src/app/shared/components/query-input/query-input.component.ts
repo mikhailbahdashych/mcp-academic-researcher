@@ -2,50 +2,56 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  HostListener,
   Input,
-  OnInit,
   Output,
   ViewChild,
-  HostListener,
+  inject,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { SearchScopeService } from '@core/services/search-scope.service';
 
+/**
+ * Shared composer used both as the home hero input and as the follow-up bar.
+ *
+ * `size='hero'` adds the source-scope chips, the ⌘K hint and the global ⌘K
+ * focus shortcut; `size='inline'` renders the compact follow-up variant.
+ */
 @Component({
   selector: 'app-query-input',
   standalone: true,
-  imports: [FormsModule, TextFieldModule, MatButtonModule, MatIconModule, MatTooltipModule],
+  imports: [FormsModule, TextFieldModule, MatTooltipModule],
   templateUrl: './query-input.component.html',
   styleUrl: './query-input.component.scss',
 })
-export class QueryInputComponent implements OnInit {
+export class QueryInputComponent {
   @Input() size: 'hero' | 'inline' = 'hero';
-  @Input() placeholder = 'Ask a research question...';
+  /** Overrides the size-derived default placeholder when set. */
+  @Input() placeholder = '';
   @Input() disabled = false;
 
   @Output() querySubmit = new EventEmitter<string>();
 
   @ViewChild('textarea') textareaRef!: ElementRef<HTMLTextAreaElement>;
 
+  protected readonly scope = inject(SearchScopeService);
+
   query = '';
 
-  ngOnInit(): void {
-    if (this.size === 'hero') {
-      this.placeholder = 'Ask anything about research papers...';
-    } else {
-      this.placeholder = 'Ask a follow-up question...';
-    }
+  protected get placeholderText(): string {
+    if (this.placeholder) return this.placeholder;
+    return this.size === 'hero' ? 'Ask a research question...' : 'Ask a follow-up...';
   }
 
-  /** Cmd+K global shortcut focuses the hero input */
+  /** ⌘K / Ctrl+K focuses the hero composer (the follow-up bar never steals focus). */
   @HostListener('document:keydown', ['$event'])
   onGlobalKey(event: KeyboardEvent): void {
+    if (this.size !== 'hero') return;
     if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
       event.preventDefault();
-      this.textareaRef?.nativeElement.focus();
+      this.focus();
     }
   }
 

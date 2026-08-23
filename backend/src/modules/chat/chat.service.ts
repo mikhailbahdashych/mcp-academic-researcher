@@ -20,8 +20,10 @@ export class ChatService {
     query: string,
     res: Response,
     forceTool?: { name: string; args: Record<string, unknown> },
+    sources?: string[],
   ) {
-    const conversation = await this.conversationsService.findOne(conversationId);
+    const conversation =
+      await this.conversationsService.findOne(conversationId);
 
     // Save user message
     await this.prisma.message.create({
@@ -40,7 +42,7 @@ export class ChatService {
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    const history = conversation.messages.map(m => ({
+    const history = conversation.messages.map((m) => ({
       role: m.role,
       content: m.content,
     }));
@@ -51,7 +53,13 @@ export class ChatService {
     try {
       const orchestratorRes = await axios.post(
         `${this.orchestratorUrl}/chat`,
-        { conversation_id: conversationId, message: query, history, force_tool: forceTool ?? null },
+        {
+          conversation_id: conversationId,
+          message: query,
+          history,
+          force_tool: forceTool ?? null,
+          sources: sources ?? null,
+        },
         { responseType: 'stream', timeout: 60000 },
       );
 
@@ -69,7 +77,8 @@ export class ChatService {
             try {
               const event = JSON.parse(payload);
               if (event.type === 'token') accumulatedContent += event.data;
-              if (event.type === 'papers') accumulatedPapers = JSON.stringify(event.data);
+              if (event.type === 'papers')
+                accumulatedPapers = JSON.stringify(event.data);
             } catch {
               // Ignore malformed lines
             }
@@ -80,7 +89,9 @@ export class ChatService {
         orchestratorRes.data.on('error', reject);
       });
     } catch (err) {
-      this.logger.warn(`Orchestrator unreachable, using mock stream: ${(err as Error).message}`);
+      this.logger.warn(
+        `Orchestrator unreachable, using mock stream: ${(err as Error).message}`,
+      );
       await this.sendMockStream(res, query);
       accumulatedContent = `[Mock response] You asked: "${query}". The Python Orchestrator is not running yet.`;
     }
@@ -110,7 +121,7 @@ export class ChatService {
 
     for (const token of tokens) {
       res.write(`data: ${JSON.stringify({ type: 'token', data: token })}\n\n`);
-      await new Promise(r => setTimeout(r, 80));
+      await new Promise((r) => setTimeout(r, 80));
     }
 
     res.write(`data: ${JSON.stringify({ type: 'done', data: null })}\n\n`);

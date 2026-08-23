@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { SessionService } from '@core/services/session.service';
 import { StreamingService } from '@core/services/streaming.service';
+import { SearchScopeService } from '@core/services/search-scope.service';
 import { Paper, SSEEvent } from '@core/models/chat.models';
 
 import { MessageThreadComponent } from './message-thread/message-thread.component';
@@ -47,6 +48,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
 
   protected readonly sessionService = inject(SessionService);
   protected readonly streamingService = inject(StreamingService);
+  private readonly searchScope = inject(SearchScopeService);
 
   protected readonly session = computed(() =>
     this.sessionService.getSession(this.sessionId)
@@ -87,7 +89,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
     this.currentMessageId = this.sessionService.addAssistantMessage(this.sessionId);
 
     this.subscription = this.streamingService
-      .streamChat(this.sessionId, last.content)
+      .streamChat(this.sessionId, last.content, undefined, this.searchScope.sources())
       .subscribe({
         next: event => this.handleEvent(event),
         error: err => {
@@ -139,7 +141,7 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
 
     this.subscription?.unsubscribe();
     this.subscription = this.streamingService
-      .streamChat(this.sessionId, query, forceTool)
+      .streamChat(this.sessionId, query, forceTool, this.searchScope.sources())
       .subscribe({
         next: event => this.handleEvent(event),
         error: err => {
