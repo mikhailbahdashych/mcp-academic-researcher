@@ -2,17 +2,20 @@
   class="source-row"
   [class.expanded]="expanded"
   [class.highlighted]="highlighted"
-  role="button"
-  tabindex="0"
-  [attr.aria-expanded]="expanded"
   (click)="toggle.emit()"
-  (keydown.enter)="toggle.emit()"
-  (keydown.space)="$event.preventDefault(); toggle.emit()"
 >
   <span class="index mono">{{ (index ?? 0) + 1 }}</span>
 
   <div class="body">
-    <div class="title" [class.clamp]="!expanded">{{ paper.title }}</div>
+    <button
+      type="button"
+      class="title row-toggle"
+      [class.clamp]="!expanded"
+      [attr.aria-expanded]="expanded"
+      (click)="$event.stopPropagation(); toggle.emit()"
+    >
+      {{ paper.title }}
+    </button>
     @if (metaLine) {
       <div class="meta mono">{{ metaLine }}</div>
     }

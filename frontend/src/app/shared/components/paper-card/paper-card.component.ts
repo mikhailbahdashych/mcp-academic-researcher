@@ -96,9 +96,10 @@ export class PaperCardComponent implements OnChanges {
   }
 
   copyCitation(): void {
-    navigator.clipboard.writeText(this.buildCitation()).then(() => {
-      this.snackBar.open('Citation copied', '', { duration: 1600 });
-    });
+    navigator.clipboard
+      .writeText(this.buildCitation())
+      .then(() => this.snackBar.open('Citation copied', '', { duration: 1600 }))
+      .catch(() => this.snackBar.open('Copy failed', '', { duration: 1600 }));
   }
 
   openUrl(): void {

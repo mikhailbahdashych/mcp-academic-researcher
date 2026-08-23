@@ -29,8 +29,9 @@ export class MessageBubbleComponent {
   private readonly snackBar = inject(MatSnackBar);
 
   copy(): void {
-    navigator.clipboard.writeText(this.message.content).then(() => {
-      this.snackBar.open('Copied', '', { duration: 1600 });
-    });
+    navigator.clipboard
+      .writeText(this.message.content)
+      .then(() => this.snackBar.open('Copied', '', { duration: 1600 }))
+      .catch(() => this.snackBar.open('Copy failed', '', { duration: 1600 }));
   }
 }

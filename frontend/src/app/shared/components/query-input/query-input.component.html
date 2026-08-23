@@ -19,9 +19,9 @@
     [attr.aria-label]="placeholderText"
   ></textarea>
 
-  <div class="composer-row">
-    <div class="composer-left">
-      @if (size === 'hero') {
+  @if (size === 'hero') {
+    <div class="composer-row">
+      <div class="composer-left">
         <button
           type="button"
           class="scope-chip"
@@ -42,23 +42,32 @@
         >
           <span class="material-icons">hub</span>OpenAlex
         </button>
-      }
-    </div>
+      </div>
 
-    <div class="composer-right">
-      @if (size === 'hero') {
+      <div class="composer-right">
         <span class="kbd mono">&#8984;K</span>
-      }
-      <button
-        type="button"
-        class="send-btn"
-        [disabled]="!query.trim() || disabled"
-        (click)="submit()"
-        aria-label="Send"
-        matTooltip="Send (Enter)"
-      >
-        <span class="material-icons">arrow_upward</span>
-      </button>
+        <button
+          type="button"
+          class="send-btn"
+          [disabled]="!query.trim() || disabled"
+          (click)="submit()"
+          aria-label="Send"
+          matTooltip="Send (Enter)"
+        >
+          <span class="material-icons">arrow_upward</span>
+        </button>
+      </div>
     </div>
-  </div>
+  } @else {
+    <button
+      type="button"
+      class="send-btn"
+      [disabled]="!query.trim() || disabled"
+      (click)="submit()"
+      aria-label="Send"
+      matTooltip="Send (Enter)"
+    >
+      <span class="material-icons">arrow_upward</span>
+    </button>
+  }
 </div>

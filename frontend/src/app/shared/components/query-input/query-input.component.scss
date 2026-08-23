@@ -26,8 +26,13 @@
     box-shadow: var(--composer-shadow);
   }
 
+  // The follow-up bar is a single row: textarea, then the send button.
+  // flex-end keeps the button pinned to the bottom as the textarea autosizes.
   &.inline {
     width: 100%;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 10px;
     border-radius: var(--radius-followup);
     padding: 14px 14px 14px 20px;
   }
@@ -59,6 +64,11 @@
 }
 
 .inline .composer-textarea {
+  flex: 1;
+  min-width: 0;
+  // Optically centres the single line against the 34px send button
+  // (cdkTextareaAutosize owns the height, so this cannot be padding).
+  margin-bottom: 5px;
   font-size: 16px;
 }
 
@@ -67,10 +77,6 @@
   align-items: center;
   gap: 12px;
   margin-top: 10px;
-}
-
-.inline .composer-row {
-  margin-top: 4px;
 }
 
 .composer-left {
