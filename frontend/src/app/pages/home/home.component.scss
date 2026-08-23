@@ -16,9 +16,9 @@
 }
 
 .hero-title {
-  font: 600 44px/1.15 var(--font-display);
+  font: 600 52px/1.12 var(--font-display);
   letter-spacing: -0.01em;
-  max-width: 640px;
+  max-width: 760px;
   margin: 0 0 14px;
 
   em {
@@ -28,10 +28,10 @@
 }
 
 .hero-subtitle {
-  font-size: 15px;
+  font-size: 17px;
   color: var(--app-text-secondary);
   line-height: 1.6;
-  max-width: 440px;
+  max-width: 520px;
   margin: 0 0 40px;
 }
 

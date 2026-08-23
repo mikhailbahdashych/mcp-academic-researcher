@@ -20,12 +20,12 @@
   border-radius: var(--radius-nav);
   background: none;
   font-family: var(--font-sans);
-  font-size: 12px;
+  font-size: 13.5px;
   color: var(--app-text-faint);
   cursor: pointer;
   transition: background 0.15s, color 0.15s;
 
-  .material-icons { font-size: 15px; }
+  .material-icons { font-size: 17px; }
 
   &:hover {
     background: var(--app-surface-hover);

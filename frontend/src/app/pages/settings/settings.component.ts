@@ -18,7 +18,7 @@ import { Component } from '@angular/core';
       }
 
       .page-title {
-        font: 600 28px/1.2 var(--font-display);
+        font: 600 32px/1.2 var(--font-display);
         margin: 0 0 10px;
       }
     `,
