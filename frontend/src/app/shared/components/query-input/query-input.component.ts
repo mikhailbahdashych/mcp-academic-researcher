@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -26,7 +27,7 @@ import { SearchScopeService } from '@core/services/search-scope.service';
   templateUrl: './query-input.component.html',
   styleUrl: './query-input.component.scss',
 })
-export class QueryInputComponent {
+export class QueryInputComponent implements AfterViewInit {
   @Input() size: 'hero' | 'inline' = 'hero';
   /** Overrides the size-derived default placeholder when set. */
   @Input() placeholder = '';
@@ -43,6 +44,15 @@ export class QueryInputComponent {
   protected get placeholderText(): string {
     if (this.placeholder) return this.placeholder;
     return this.size === 'hero' ? 'Ask a research question...' : 'Ask a follow-up...';
+  }
+
+  /**
+   * The hero composer autofocuses so that ⌘K from another route — which routes
+   * back to home — lands the caret in the composer. The follow-up bar never
+   * steals focus.
+   */
+  ngAfterViewInit(): void {
+    if (this.size === 'hero') this.focus();
   }
 
   /** ⌘K / Ctrl+K focuses the hero composer (the follow-up bar never steals focus). */

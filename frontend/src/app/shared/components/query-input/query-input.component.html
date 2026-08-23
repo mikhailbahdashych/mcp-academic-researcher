@@ -26,6 +26,7 @@
           type="button"
           class="scope-chip"
           [class.active]="scope.isEnabled('arxiv')"
+          [attr.aria-pressed]="scope.isEnabled('arxiv')"
           (click)="scope.toggle('arxiv')"
           matTooltip="Search arXiv"
         >
@@ -35,6 +36,7 @@
           type="button"
           class="scope-chip"
           [class.active]="scope.isEnabled('openalex')"
+          [attr.aria-pressed]="scope.isEnabled('openalex')"
           (click)="scope.toggle('openalex')"
           matTooltip="Search OpenAlex"
         >

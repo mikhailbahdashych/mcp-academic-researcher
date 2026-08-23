@@ -46,6 +46,7 @@
 
     .material-icons { font-size: 14px; }
 
+    &:focus-visible { opacity: 1; }
     &:hover { color: var(--danger-color); }
     &:disabled { cursor: default; }
   }

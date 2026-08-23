@@ -1,4 +1,5 @@
 import {
+  ArrayNotEmpty,
   IsArray,
   IsIn,
   IsNotEmpty,
@@ -18,6 +19,7 @@ export class StreamChatDto {
 
   @IsOptional()
   @IsArray()
+  @ArrayNotEmpty()
   @IsIn(['arxiv', 'openalex'], { each: true })
   sources?: string[];
 }

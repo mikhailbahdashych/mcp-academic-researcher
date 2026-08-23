@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { provideRouter } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -44,5 +44,33 @@ describe('AppComponent', () => {
     app.toggleCollapse();
     expect(app.sidebarCollapsed()).toBeFalse();
     expect(localStorage.getItem('sidebar_collapsed')).toBe('false');
+  });
+
+  it('should route home on Cmd+K when away from home', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    const router = TestBed.inject(Router);
+    const navigateByUrl = spyOn(router, 'navigateByUrl');
+    spyOnProperty(router, 'url', 'get').and.returnValue('/history');
+
+    const event = new KeyboardEvent('keydown', { key: 'k', metaKey: true, cancelable: true });
+    document.dispatchEvent(event);
+
+    expect(navigateByUrl).toHaveBeenCalledWith('/');
+    expect(event.defaultPrevented).toBeTrue();
+  });
+
+  it('should leave Cmd+K to the hero composer while already on home', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    const router = TestBed.inject(Router);
+    const navigateByUrl = spyOn(router, 'navigateByUrl');
+    spyOnProperty(router, 'url', 'get').and.returnValue('/');
+
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
+
+    expect(navigateByUrl).not.toHaveBeenCalled();
   });
 });
