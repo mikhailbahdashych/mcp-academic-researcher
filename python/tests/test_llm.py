@@ -2,6 +2,7 @@ import anthropic
 import httpx
 import pytest
 from orchestrator.llm import (
+    ANTHROPIC_MIN_COMPLETE_MAX_TOKENS,
     DEFAULT_OLLAMA_BASE_URL,
     AnthropicClient,
     LLMError,
@@ -304,3 +305,55 @@ async def test_anthropic_unmapped_api_error_becomes_llm_error(monkeypatch):
     monkeypatch.setattr(c._client.messages, "create", fake_create)
     with pytest.raises(LLMError, match="Anthropic API error:"):
         await c.complete([{"role": "user", "content": "hi"}])
+
+
+async def test_ollama_builtin_connection_error_reports_base_url(monkeypatch):
+    """The ollama client raises the builtin ConnectionError, not httpx's."""
+
+    async def fake_chat(**kwargs):
+        raise ConnectionError("Failed to connect to Ollama.")
+
+    c = OllamaClient(model="m", base_url="http://x")
+    monkeypatch.setattr(c._client, "chat", fake_chat)
+    with pytest.raises(LLMError, match="Ollama is not reachable at http://x"):
+        await c.complete([{"role": "user", "content": "hi"}])
+
+
+class _TextBlock:
+    type = "text"
+
+    def __init__(self, text: str) -> None:
+        self.text = text
+
+
+class _Response:
+    def __init__(self, text: str) -> None:
+        self.content = [_TextBlock(text)]
+
+
+async def test_anthropic_complete_floors_max_tokens(monkeypatch):
+    """A tiny budget is raised so adaptive thinking cannot eat the whole answer."""
+    captured = {}
+
+    async def fake_create(**kwargs):
+        captured.update(kwargs)
+        return _Response("pong")
+
+    c = AnthropicClient(model="m", api_key="sk-test")
+    monkeypatch.setattr(c._client.messages, "create", fake_create)
+    assert await c.complete([{"role": "user", "content": "hi"}], max_tokens=16) == "pong"
+    assert captured["max_tokens"] == ANTHROPIC_MIN_COMPLETE_MAX_TOKENS == 4096
+
+
+async def test_anthropic_complete_keeps_a_budget_above_the_floor(monkeypatch):
+    """The floor is a minimum, not an override: bigger requests pass through."""
+    captured = {}
+
+    async def fake_create(**kwargs):
+        captured.update(kwargs)
+        return _Response("ok")
+
+    c = AnthropicClient(model="m", api_key="sk-test")
+    monkeypatch.setattr(c._client.messages, "create", fake_create)
+    await c.complete([{"role": "user", "content": "hi"}], max_tokens=9000)
+    assert captured["max_tokens"] == 9000

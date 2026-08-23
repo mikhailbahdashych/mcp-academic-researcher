@@ -43,6 +43,13 @@ DEFAULT_ANTHROPIC_MODEL = "claude-opus-5"
 #: Output budget for streamed Anthropic responses (summaries can be long).
 ANTHROPIC_STREAM_MAX_TOKENS = 16000
 
+#: Floor for non-streamed Anthropic budgets. Current Claude models think
+#: adaptively, and thinking tokens are billed against ``max_tokens`` — a caller
+#: asking for 16 or 256 tokens can therefore get back zero *text* blocks, which
+#: reads as an empty answer rather than an error. Ollama has no such tax, so the
+#: floor lives here rather than in the callers' `max_tokens` arguments.
+ANTHROPIC_MIN_COMPLETE_MAX_TOKENS = 4096
+
 #: Anthropic failures translated into a user-facing message. ``APIError`` is the
 #: common base (``AuthenticationError`` and ``RateLimitError`` subclass
 #: ``APIStatusError``); it is listed last so nothing — ``APIResponseValidationError``
@@ -56,12 +63,18 @@ _ANTHROPIC_ERRORS = (
 #: Ollama failures that mean "the daemon answered badly", "it is not there", or
 #: "it is up but too slow". ``TransportError`` is the base of both ``ConnectError``
 #: and ``TimeoutException``, and catches the rest of the transport family too.
+#: The builtin ``ConnectionError`` is listed because the ollama client swallows
+#: ``httpx.ConnectError`` and re-raises its own, which shares no base with httpx.
 _OLLAMA_ERRORS = (
     ollama.ResponseError,
+    ConnectionError,
     httpx.ConnectError,
     httpx.TimeoutException,
     httpx.TransportError,
 )
+
+#: The two spellings of "the daemon is not answering" that reach us.
+_OLLAMA_UNREACHABLE = (ConnectionError, httpx.ConnectError)
 
 
 class LLMError(RuntimeError):
@@ -129,7 +142,7 @@ def _ollama_error(exc: Exception, base_url: str) -> LLMError:
     """Translate an Ollama/httpx failure into a user-facing :class:`LLMError`."""
     if isinstance(exc, ollama.ResponseError):
         return LLMError(getattr(exc, "error", None) or str(exc))
-    if isinstance(exc, httpx.ConnectError):
+    if isinstance(exc, _OLLAMA_UNREACHABLE):
         return LLMError(f"Ollama is not reachable at {base_url}")
     return LLMError(f"Ollama request failed at {base_url}: {exc}")
 
@@ -303,11 +316,16 @@ class AnthropicClient:
         return converted
 
     async def complete(self, messages: list[dict], *, max_tokens: int = 512) -> str:
-        """Return the concatenated text blocks of a one-shot, non-streaming call."""
+        """Return the concatenated text blocks of a one-shot, non-streaming call.
+
+        ``max_tokens`` is raised to :data:`ANTHROPIC_MIN_COMPLETE_MAX_TOKENS` so
+        adaptive thinking cannot consume the whole budget before any text is
+        emitted. It is a ceiling, not a target: short answers still stop short.
+        """
         system, converted = self._convert(messages)
         kwargs: dict[str, Any] = {
             "model": self.model,
-            "max_tokens": max_tokens,
+            "max_tokens": max(max_tokens, ANTHROPIC_MIN_COMPLETE_MAX_TOKENS),
             "messages": converted,
         }
         if system:
