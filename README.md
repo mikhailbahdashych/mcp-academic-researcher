@@ -1,11 +1,12 @@
 # MCP Academic Researcher
 
-A full-stack AI-powered research assistant that searches, synthesizes, and manages academic papers using the Model Context Protocol (MCP) with local LLM inference via Ollama. Built with Angular, NestJS, and Python (FastAPI + MCP SDK).
+A full-stack AI-powered research assistant that searches, synthesizes, and manages academic papers using the Model Context Protocol (MCP). Inference runs through a pluggable provider adapter -- a local model via Ollama, or Claude via the Anthropic API -- selected at runtime from the in-app Settings page. Built with Angular, NestJS, and Python (FastAPI + MCP SDK).
 
 ---
 
 ## Table of Contents
 
+- [Screenshots](#screenshots)
 - [Architecture Overview](#architecture-overview)
 - [Request Workflow](#request-workflow)
 - [Tech Stack](#tech-stack)
@@ -13,6 +14,8 @@ A full-stack AI-powered research assistant that searches, synthesizes, and manag
 - [Port Assignments](#port-assignments)
 - [Prerequisites](#prerequisites)
 - [Quick Start](#quick-start)
+- [LLM Providers & Settings](#llm-providers--settings)
+- [Testing](#testing)
 - [Docker Compose](#docker-compose)
 - [Environment Variables](#environment-variables)
 - [API Overview](#api-overview)
@@ -20,9 +23,22 @@ A full-stack AI-powered research assistant that searches, synthesizes, and manag
 
 ---
 
+## Screenshots
+
+A quiet research console: a 240px navigation rail, a boxed composer with source-scope toggles, and a numbered sources rail beside every answer. Dark is the default; a light "Paper" theme ships alongside it.
+
+| | |
+|---|---|
+| <img src="docs/screenshots/home-dark.png" width="100%" alt="Home page, dark theme"><br>**Home** -- hero, boxed composer, source toggles and the active-model chip | <img src="docs/screenshots/home-light.png" width="100%" alt="Home page, light theme"><br>**Home, light** -- the "Paper" theme |
+| <img src="docs/screenshots/research-dark.png" width="100%" alt="Research thread, dark theme"><br>**Research** -- streamed answer with `[n]` citation chips and the numbered sources rail | <img src="docs/screenshots/research-light.png" width="100%" alt="Research thread, light theme"><br>**Research, light** -- a source row expanded to its abstract and actions |
+| <img src="docs/screenshots/settings-dark.png" width="100%" alt="Settings page"><br>**Settings** -- pick Ollama or Anthropic, choose a model, test the connection | <img src="docs/screenshots/history-dark.png" width="100%" alt="History page"><br>**History** -- every past thread at a glance |
+| <img src="docs/screenshots/notes-dark.png" width="100%" alt="Notes page"><br>**Notes** -- saved notes with semantic search | |
+
+---
+
 ## Architecture Overview
 
-The system follows a four-layer architecture: an Angular frontend communicates with a NestJS API gateway, which proxies requests to a Python orchestrator. The orchestrator manages MCP server subprocesses (Papers, Notes, Citations) over stdio and coordinates with a local Ollama LLM.
+The system follows a four-layer architecture: an Angular frontend communicates with a NestJS API gateway, which proxies requests to a Python orchestrator. The orchestrator manages MCP server subprocesses (Papers, Notes, Citations) over stdio and drives the selected LLM through a provider adapter (`orchestrator/llm.py`) -- a local model on Ollama, or Claude over the Anthropic API. The provider, model and credentials travel with every `/chat` call, so the choice is made at runtime from Settings rather than baked into the deployment.
 
 ```
                             High-Level Flow
@@ -42,10 +58,11 @@ The system follows a four-layer architecture: an Angular frontend communicates w
                  └────────────────┘               └────────────────┘             └────────────────┘
                                                             │
                                                             v
-                                                   ┌────────────────┐
-                                                   │  Ollama LLM    │
-                                                   │  (port 11434)  │
-                                                   └────────────────┘
+                                                   ┌──────────────────────┐
+                                                   │  LLM Provider        │
+                                                   │  Ollama :11434  or   │
+                                                   │  Anthropic Claude API│
+                                                   └──────────────────────┘
 ```
 
 <details>
@@ -249,23 +266,26 @@ The system follows a four-layer architecture: an Angular frontend communicates w
 │                              LLM INFERENCE LAYER                                       │
 │                                                                                       │
 │    ┌─────────────────────────────────────────────────────────────────────────────┐    │
-│    │                         Ollama Server                                        │    │
+│    │                    LLM Providers (chosen in Settings)                       │    │
 │    │                                                                             │    │
-│    │  Technologies:                                                              │    │
-│    │  - Ollama (local LLM runtime)                                               │    │
-│    │  - Model: Llama 3.1 8B (or 70B if hardware permits)                         │    │
-│    │  - Alternative: Mistral, Qwen, DeepSeek                                     │    │
+│    │  Adapter: orchestrator/llm.py -- one LLMClient interface                    │    │
 │    │                                                                             │    │
-│    │  Responsibilities:                                                          │    │
-│    │  - Run LLM inference locally                                                │    │
+│    │  Ollama (local, default)                                                    │    │
+│    │  - Runtime: Ollama; default model qwen2.5:7b                                │    │
+│    │  - Alternatives: Llama, Mistral, DeepSeek, any pulled model                 │    │
+│    │  - API endpoint: http://localhost:11434                                     │    │
+│    │  - Hardware: 7-8B model 8GB+ RAM, 6GB+ VRAM (GPU optional)                  │    │
+│    │              70B model 64GB+ RAM or 48GB+ VRAM                              │    │
+│    │                                                                             │    │
+│    │  Anthropic Claude (hosted, optional)                                        │    │
+│    │  - SDK: anthropic (Python, >=1.0) -- streaming + tool use                   │    │
+│    │  - Default model: claude-opus-5                                             │    │
+│    │  - API key from Settings, else ANTHROPIC_API_KEY/CLAUDE_API_KEY             │    │
+│    │                                                                             │    │
+│    │  Responsibilities (either provider):                                        │    │
+│    │  - Classify search intent, run the agentic tool loop                        │    │
 │    │  - Process tool-calling requests                                            │    │
 │    │  - Generate natural language responses                                      │    │
-│    │                                                                             │    │
-│    │  API Endpoint: http://localhost:11434                                       │    │
-│    │                                                                             │    │
-│    │  Hardware Requirements:                                                     │    │
-│    │  - 8B model: 8GB+ RAM, 6GB+ VRAM (GPU optional)                             │    │
-│    │  - 70B model: 64GB+ RAM or 48GB+ VRAM                                       │    │
 │    └─────────────────────────────────────────────────────────────────────────────┘    │
 │                                                                                       │
 │    ┌─────────────────────────────────────────────────────────────────────────────┐    │
@@ -277,6 +297,9 @@ The system follows a four-layer architecture: an Angular frontend communicates w
 │    │  Used by (via HTTP -- embeddings run in Ollama, not in-process):            │    │
 │    │  - Notes Server (semantic search over saved notes)                          │    │
 │    │  - Papers Server (optional: finding similar papers)                         │    │
+│    │                                                                             │    │
+│    │  Anthropic has no embeddings API, so Ollama must be running                 │    │
+│    │  for notes even when chat is answered by Claude.                            │    │
 │    └─────────────────────────────────────────────────────────────────────────────┘    │
 │                                                                                       │
 └───────────────────────────────────────────────────────────────────────────────────────┘
@@ -289,6 +312,8 @@ The system follows a four-layer architecture: an Angular frontend communicates w
 ## Request Workflow
 
 The following diagrams describe the complete lifecycle of a user query, from submission to displayed results.
+
+The walkthrough names Ollama at each inference step because it is the default provider; with Anthropic selected the same steps run against the Claude API through the same adapter. The gateway also attaches the saved `llm` provider block and the composer's active `sources` filter to every request it forwards.
 
 <details>
 <summary><strong>Full Request Workflow (Steps 1-12)</strong></summary>
@@ -580,10 +605,15 @@ The following diagrams describe the complete lifecycle of a user query, from sub
 │                   JSON payloads                                                │
 │                   Streaming responses                                          │
 │                                                                                │
-│  Orchestrator <─── HTTP/REST ────────────> Ollama                             │
+│  Orchestrator <─── HTTP/REST ────────────> Ollama (default provider)          │
 │                    (Port 8000 -> 11434)                                        │
 │                    JSON (Ollama API format)                                    │
 │                    Streaming supported                                         │
+│                                                                                │
+│  Orchestrator <─── HTTPS ────────────────> Anthropic API (optional)           │
+│                    (api.anthropic.com)                                         │
+│                    anthropic Python SDK                                        │
+│                    Streaming + tool use                                        │
 │                                                                                │
 │  Orchestrator <─── stdio (JSON-RPC) ─────> MCP Servers                        │
 │                    Bidirectional pipes                                         │
@@ -613,6 +643,7 @@ The following diagrams describe the complete lifecycle of a user query, from sub
 | | ngx-markdown | 17.2 |
 | | highlight.js | 11.x |
 | | RxJS | 7.8 |
+| | Fonts (Google Fonts) | Hanken Grotesk, Source Serif 4, Space Mono |
 | | TypeScript | 5.4 |
 | **Backend** | NestJS | 10.x |
 | | Prisma | 6.x |
@@ -621,15 +652,18 @@ The following diagrams describe the complete lifecycle of a user query, from sub
 | | TypeScript | 5.1 |
 | **Python** | Python | 3.11+ |
 | | FastAPI | 0.128+ |
-| | MCP SDK | 1.25+ |
+| | MCP SDK | >=1.25, <2 (2.0 removed `mcp.server.fastmcp`) |
 | | ollama-python | 0.4+ |
+| | anthropic (Claude SDK) | 1.0+ |
 | | httpx | 0.28+ |
 | | Pydantic | 2.12+ |
 | | sqlite-vec | 0.1+ |
 | **Database** | SQLite | 3.x (via Prisma + sqlite-vec) |
-| **LLM** | Ollama | Latest |
-| | Default model | qwen2.5:7b |
-| | Embedding model | nomic-embed-text |
+| **LLM** | Ollama (local provider) | Latest |
+| | Default Ollama model | qwen2.5:7b |
+| | Anthropic Claude (hosted provider) | via `anthropic` SDK |
+| | Default Anthropic model | claude-opus-5 |
+| | Embedding model (always Ollama) | nomic-embed-text |
 | **DevOps** | Docker / Docker Compose | Latest |
 | | uv (Python pkg manager) | Latest |
 | | Node.js | 18+ |
@@ -650,9 +684,11 @@ mcp-academic-researcher/
 │   │   │   ├── home/                # Landing page with search hero
 │   │   │   ├── research/            # Chat + sources split view
 │   │   │   ├── history/             # Session history browser
-│   │   │   └── notes/               # Notes management page
+│   │   │   ├── notes/               # Notes management page
+│   │   │   └── settings/            # LLM provider settings page
 │   │   ├── shared/                  # Reusable components (QueryInput, PaperCard)
 │   │   └── types/                   # API response type definitions
+│   ├── src/favicon.svg              # App icon (flask on a dark tile)
 │   ├── proxy.conf.json              # Dev proxy: /api -> localhost:3000
 │   └── Dockerfile                   # Multi-stage: build + nginx
 │
@@ -662,20 +698,23 @@ mcp-academic-researcher/
 │   │   ├── modules/
 │   │   │   ├── conversations/       # CRUD for conversation + messages
 │   │   │   ├── chat/                # SSE streaming proxy to orchestrator
-│   │   │   └── notes/               # Notes proxy to orchestrator
+│   │   │   ├── notes/               # Notes proxy to orchestrator
+│   │   │   └── settings/            # LLM provider settings + provider probes
 │   │   └── main.ts                  # Bootstrap with CORS, /api prefix
-│   ├── prisma/schema.prisma         # Conversation + Message models
+│   ├── prisma/schema.prisma         # Conversation + Message + Setting models
 │   ├── .env                         # DATABASE_URL, ORCHESTRATOR_URL, PORT
 │   └── Dockerfile                   # Multi-stage: build + prisma migrate
 │
 ├── python/                          # uv workspace root
 │   ├── pyproject.toml               # Workspace config (members list)
-│   ├── .env                         # OPENALEX_API_KEY
+│   ├── .env                         # OPENALEX_API_KEY, ANTHROPIC_API_KEY
 │   ├── orchestrator/                # FastAPI orchestrator service
 │   │   ├── orchestrator/
 │   │   │   ├── main.py              # FastAPI app, /chat and /health endpoints
 │   │   │   ├── agent.py             # Agentic loop: intent classification + MCP tools + LLM
-│   │   │   ├── models.py            # Pydantic models (ChatRequest, Message, ForceTool)
+│   │   │   ├── llm.py               # Provider adapter (Ollama / Anthropic) behind one client
+│   │   │   ├── llm_router.py        # /llm/models, /llm/test, /llm/env
+│   │   │   ├── models.py            # Pydantic models (ChatRequest, LLMConfig, ForceTool)
 │   │   │   └── notes_router.py      # REST routes for notes CRUD + vector search
 │   │   └── Dockerfile               # Python 3.12 + uv
 │   ├── mcp_servers/
@@ -684,6 +723,7 @@ mcp-academic-researcher/
 │   │   └── citations/               # Citations MCP server (OpenAlex API)
 │   └── shared/                      # Shared Pydantic models
 │
+├── docs/screenshots/                # Screenshots used by this README
 ├── docker-compose.yml               # Full-stack deployment
 ├── package.json                     # Root scripts for running all services
 ├── CLAUDE.md                        # Development guidance for Claude Code
@@ -714,6 +754,8 @@ mcp-academic-researcher/
 | Ollama | Latest | [ollama.ai](https://ollama.ai/) |
 | Angular CLI | 17+ | `npm install -g @angular/cli` |
 | NestJS CLI | 10+ | `npm install -g @nestjs/cli` |
+
+Ollama is required even if you plan to answer chats with Claude: note embeddings have no Anthropic equivalent and are always generated locally. An Anthropic API key is optional -- add it in Settings, or in `python/.env`.
 
 ---
 
@@ -779,6 +821,54 @@ cd python && uv run uvicorn orchestrator.main:app --host 0.0.0.0 --port 8000 --r
 
 Navigate to [http://localhost:4200](http://localhost:4200) in your browser.
 
+### 5. (Optional) Answer with Claude instead of a local model
+
+Open **Settings** in the sidebar rail (or [http://localhost:4200/settings](http://localhost:4200/settings)), switch the provider to Anthropic, paste an API key, pick a model, and hit **Test connection**. See [LLM Providers & Settings](#llm-providers--settings) below.
+
+---
+
+## LLM Providers & Settings
+
+Inference is not hard-wired to one backend. `orchestrator/llm.py` exposes a single `LLMClient` interface with two adapters -- `OllamaClient` (local daemon) and `AnthropicClient` (the official `anthropic` Python SDK, with streaming and tool use) -- and both the intent classifier and the agent tool-loop run through whichever one the request selects.
+
+### Choosing a provider
+
+| Provider | What you configure | Default model |
+|----------|--------------------|---------------|
+| **Ollama** | Base URL, plus a model chosen from the list of models installed on that server | `qwen2.5:7b` |
+| **Anthropic** | API key, plus a model fetched live from the Anthropic API (a curated list is offered when that call fails) | `claude-opus-5` |
+
+**Test connection** sends a one-word prompt through the selected provider and reports the model that answered and the round-trip latency, so a bad key or a stopped daemon surfaces before you start a thread.
+
+### Where the API key lives
+
+- Stored in the backend's local SQLite database (`settings` table, a single row).
+- The API never returns it: `GET /api/settings` reports `anthropicApiKeySet` plus a `••••1234` hint of the last four characters. Neither the backend nor the orchestrator logs the key.
+- `PUT /api/settings` with an empty `anthropicApiKey` clears the stored key.
+- **Environment fallback:** when no key is stored, the orchestrator falls back to `ANTHROPIC_API_KEY` (or `CLAUDE_API_KEY`) from `python/.env`. The Settings page shows whether the server holds such a key via `GET /llm/env`, which returns a boolean and never the key itself.
+
+The selected provider, model and credentials ride along with every `/chat` call as an `llm: { provider, model, api_key, base_url }` block, which keeps the orchestrator stateless.
+
+### Embeddings still need Ollama
+
+Anthropic has no embeddings API. Note embeddings are always generated by Ollama (`EMBED_MODEL`, default `nomic-embed-text`), so **Ollama must be running for saving notes and for semantic note search even when chat is answered by Claude.**
+
+### Source scope
+
+The composer's **arXiv** and **OpenAlex** chips control which paper sources are pre-searched. The selection is sent as `sources: ("arxiv" | "openalex")[]` on the streaming request and forwarded to the orchestrator; omitting it searches every available source.
+
+---
+
+## Testing
+
+| Suite | Command | Tests |
+|-------|---------|-------|
+| Orchestrator (pytest) | `cd python && uv run pytest` | 49 |
+| Backend (Jest) | `cd backend && npm test` | 35 |
+| Frontend (Karma/Jasmine) | `cd frontend && npx ng test --no-watch` | 31 |
+
+The Python suite pins down the provider adapter, the LLM router, and the agent loop's invariants -- SSE event order, tool-call id pairing, the `sources` filter, and the provider error path. The Jest suite covers the settings service and controller (including key masking), the chat wiring that forwards `llm` and `sources`, and the notes proxy. The Karma suite covers the citation transform, the settings page, the composer, and the frontend services. Both providers were additionally exercised end to end against a running stack driven through Chrome DevTools.
+
 ---
 
 ## Docker Compose
@@ -824,6 +914,10 @@ Persistent volumes:
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL |
 | `EMBED_MODEL` | `nomic-embed-text` | Ollama embedding model name |
 | `NOTES_DIR` | `~/.academic-researcher/notes` | Directory for notes SQLite database |
+| `ANTHROPIC_API_KEY` | _(none)_ | Optional Anthropic API key. Fallback only -- a key saved in Settings wins |
+| `CLAUDE_API_KEY` | _(none)_ | Alternative spelling of the above, read when `ANTHROPIC_API_KEY` is unset |
+
+`OLLAMA_BASE_URL` and `EMBED_MODEL` apply to note embeddings whichever chat provider is selected; `OLLAMA_BASE_URL` is also the fallback host when a request carries no explicit Ollama base URL.
 
 ---
 
@@ -846,23 +940,39 @@ All backend endpoints are prefixed with `/api`.
 |--------|------|-------------|
 | `POST` | `/api/conversations/:id/messages/stream` | Stream a chat response via SSE |
 
+Request body: `{ query: string, forceTool?: { name, args }, sources?: ("arxiv" | "openalex")[] }`. The gateway attaches the saved LLM provider block before forwarding to the orchestrator.
+
 ### Notes
 
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/notes` | List notes (filter by paper_id, tags) |
 | `GET` | `/api/notes/search?q=...` | Semantic vector search over notes |
+| `POST` | `/api/notes` | Create a note (backs the "Save note" answer action) |
 | `DELETE` | `/api/notes/:id` | Delete a note |
+
+### Settings
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/settings` | Current provider settings; the API key is masked and never returned |
+| `PUT` | `/api/settings` | Partial update; an empty `anthropicApiKey` clears the stored key |
+| `POST` | `/api/settings/models` | List the models a provider offers (probes with submitted or stored credentials) |
+| `POST` | `/api/settings/test` | Round-trip a one-word prompt; returns `{ ok, model, latencyMs, reply }` |
 
 ### Orchestrator (internal)
 
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/chat` | Main agentic chat endpoint (SSE stream) |
+| `POST` | `/chat` | Main agentic chat endpoint (SSE stream); accepts `sources` and `llm` |
 | `GET` | `/health` | Health check |
 | `GET` | `/notes` | List notes |
 | `GET` | `/notes/search` | Vector search notes |
+| `POST` | `/notes` | Create a note (embeds via Ollama) |
 | `DELETE` | `/notes/:id` | Delete note |
+| `POST` | `/llm/models` | Models available from the given provider |
+| `POST` | `/llm/test` | One-shot provider round-trip with latency |
+| `GET` | `/llm/env` | Whether the server holds an Anthropic key (boolean only) |
 
 For detailed API documentation, see the [Backend README](backend/README.md).
 
