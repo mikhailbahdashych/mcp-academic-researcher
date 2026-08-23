@@ -27,6 +27,11 @@ export class ChatService {
     const conversation =
       await this.conversationsService.findOne(conversationId);
 
+    // Resolved before anything is persisted and before the stream is opened: a
+    // settings-read failure is our bug, and must surface as a normal error
+    // rather than as a half-written SSE stream blaming the orchestrator.
+    const llm = await this.settingsService.getLlmConfig();
+
     // Save user message
     await this.prisma.message.create({
       data: { conversationId, role: 'user', content: query },
@@ -51,10 +56,6 @@ export class ChatService {
 
     let accumulatedContent = '';
     let accumulatedPapers: string | null = null;
-
-    // Resolved outside the try: a settings-read failure is our bug, and must
-    // not be reported to the user as "the orchestrator is unreachable".
-    const llm = await this.settingsService.getLlmConfig();
 
     try {
       const orchestratorRes = await axios.post(

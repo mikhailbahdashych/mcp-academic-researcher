@@ -111,12 +111,17 @@ describe('ChatService', () => {
     );
   });
 
-  it('surfaces a settings-read failure instead of the mock stream', async () => {
+  it('surfaces a settings-read failure before opening the SSE stream', async () => {
     settings.getLlmConfig.mockRejectedValue(new Error('db is down'));
 
     await expect(service.streamChat('conv-1', 'hi', res)).rejects.toThrow(
       'db is down',
     );
+    // Nothing persisted, no headers flushed, no mock-stream masquerade: the
+    // caller still gets a normal error response.
+    expect(prisma.message.create).not.toHaveBeenCalled();
+    expect(res.setHeader).not.toHaveBeenCalled();
+    expect(res.flushHeaders).not.toHaveBeenCalled();
     expect(mockedAxios.post).not.toHaveBeenCalled();
     expect(res.write).not.toHaveBeenCalled();
   });
