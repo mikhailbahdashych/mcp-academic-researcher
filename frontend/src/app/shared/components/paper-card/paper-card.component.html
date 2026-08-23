@@ -1,54 +1,54 @@
-<mat-card class="paper-card">
-  <mat-card-header>
-    @if (index !== undefined) {
-      <span class="paper-index">{{ index + 1 }}</span>
-    }
-    <div class="paper-meta">
-      <mat-card-title class="paper-title">{{ paper.title }}</mat-card-title>
-      <mat-card-subtitle class="paper-authors">
-        {{ authorsDisplay }}
-        @if (paper.year) { · {{ paper.year }} }
-        @if (paper.venue) { · <em>{{ paper.venue }}</em> }
-      </mat-card-subtitle>
-    </div>
-  </mat-card-header>
+<div
+  class="source-row"
+  [class.expanded]="expanded"
+  [class.highlighted]="highlighted"
+  role="button"
+  tabindex="0"
+  [attr.aria-expanded]="expanded"
+  (click)="toggle.emit()"
+  (keydown.enter)="toggle.emit()"
+  (keydown.space)="$event.preventDefault(); toggle.emit()"
+>
+  <span class="index mono">{{ (index ?? 0) + 1 }}</span>
 
-  @if (paper.abstract) {
-    <mat-card-content>
-      <p class="paper-abstract" [class.expanded]="expanded">
-        {{ paper.abstract }}
-      </p>
-      @if (paper.abstract.length > 180) {
-        <button mat-button class="expand-btn" (click)="expanded = !expanded">
-          {{ expanded ? 'Show less' : 'Show more' }}
-        </button>
-      }
-    </mat-card-content>
-  }
+  <div class="body">
+    <div class="title" [class.clamp]="!expanded">{{ paper.title }}</div>
+    @if (metaLine) {
+      <div class="meta mono">{{ metaLine }}</div>
+    }
 
-  <mat-card-actions>
-    @if (paper.citationCount !== undefined) {
-      <span class="citation-count text-secondary">
-        <mat-icon>format_quote</mat-icon>
-        {{ paper.citationCount | number }} citations
-      </span>
+    @if (expanded) {
+      <div class="details" (click)="$event.stopPropagation()">
+        <div class="authors text-secondary">{{ authorsDisplay }}</div>
+
+        @if (paper.abstract) {
+          <p class="abstract" [class.clamp]="!abstractOpen">{{ paper.abstract }}</p>
+          @if (showAbstractToggle) {
+            <button type="button" class="icon-action more" (click)="abstractOpen = !abstractOpen">
+              {{ abstractOpen ? 'Show less' : 'Show more' }}
+            </button>
+          }
+        }
+
+        <div class="row-actions">
+          @if (isOpenAlex) {
+            <button type="button" class="icon-action" (click)="onCitationsClick()" matTooltip="Find citing papers">
+              <span class="material-icons">call_made</span>Cited by
+            </button>
+            <button type="button" class="icon-action" (click)="onReferencesClick()" matTooltip="Find references">
+              <span class="material-icons">call_received</span>References
+            </button>
+          }
+          <button type="button" class="icon-action" (click)="copyCitation()" matTooltip="Copy citation">
+            <span class="material-icons">content_copy</span>Cite
+          </button>
+          @if (paper.url) {
+            <button type="button" class="icon-action" (click)="openUrl()" matTooltip="Open paper">
+              <span class="material-icons">open_in_new</span>Open
+            </button>
+          }
+        </div>
+      </div>
     }
-    <span class="spacer"></span>
-    @if (isOpenAlex) {
-      <button mat-icon-button class="action-button" (click)="onCitationsClick()" matTooltip="Find citing papers">
-        <mat-icon>call_made</mat-icon>
-      </button>
-      <button mat-icon-button class="action-button" (click)="onReferencesClick()" matTooltip="Find references">
-        <mat-icon>call_received</mat-icon>
-      </button>
-    }
-    <button mat-icon-button class="action-button" (click)="copyCitation()" matTooltip="Copy citation">
-      <mat-icon>content_copy</mat-icon>
-    </button>
-    @if (paper.url) {
-      <button mat-icon-button class="action-button" (click)="openUrl()" matTooltip="Open paper">
-        <mat-icon>open_in_new</mat-icon>
-      </button>
-    }
-  </mat-card-actions>
-</mat-card>
+  </div>
+</div>

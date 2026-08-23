@@ -1,13 +1,19 @@
 import {
+  AfterViewChecked,
   Component,
   ElementRef,
+  EventEmitter,
   Input,
+  Output,
   ViewChild,
-  AfterViewChecked,
 } from '@angular/core';
 import { Message } from '@core/models/chat.models';
 import { MessageBubbleComponent } from '../message-bubble/message-bubble.component';
 
+/**
+ * Renders the conversation turns and keeps the viewport pinned to the newest
+ * one while an answer streams in. Answer-action intents bubble up to the panel.
+ */
 @Component({
   selector: 'app-message-thread',
   standalone: true,
@@ -18,6 +24,11 @@ import { MessageBubbleComponent } from '../message-bubble/message-bubble.compone
 export class MessageThreadComponent implements AfterViewChecked {
   @Input() messages: Message[] = [];
   @Input() isStreaming = false;
+  /** Number of sources in the session — bounds the citation chips. */
+  @Input() maxCitations = 0;
+
+  @Output() saveNote = new EventEmitter<Message>();
+  @Output() rewrite = new EventEmitter<Message>();
 
   @ViewChild('scrollAnchor') scrollAnchor!: ElementRef<HTMLDivElement>;
 
