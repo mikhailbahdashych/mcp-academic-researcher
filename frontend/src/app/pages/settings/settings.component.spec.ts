@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { WritableSignal, computed, signal } from '@angular/core';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { SettingsComponent } from './settings.component';
 import { SettingsService } from '@core/services/settings.service';
-import { ProviderId, SettingsView } from '@api-types/settings.types';
+import { ModelsResult, ProviderId, SettingsView } from '@api-types/settings.types';
 
 const OLLAMA_VIEW: SettingsView = {
   llmProvider: 'ollama',
@@ -58,6 +58,16 @@ describe('SettingsComponent', () => {
     fixture.detectChanges();
     fixture.detectChanges();
     return { fixture, el: fixture.nativeElement as HTMLElement };
+  }
+
+
+  /** Types into a text input the way ngModel listens for it, then blurs. */
+  function setBaseUrl(el: HTMLElement, fixture: ComponentFixture<SettingsComponent>, value: string): void {
+    const input = el.querySelector<HTMLInputElement>('#ollama-url')!;
+    input.value = value;
+    input.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+    input.dispatchEvent(new Event('blur'));
   }
 
   afterEach(() => TestBed.resetTestingModule());
@@ -160,5 +170,62 @@ describe('SettingsComponent', () => {
     const status = el.querySelector('.footer .status');
     expect(status?.textContent).toContain('qwen2.5:7b');
     expect(status?.textContent).toContain('812 ms');
+  });
+
+  it('ignores a stale model probe that answers after a newer one', async () => {
+    const { fixture, el } = await create();
+
+    const pending: Subject<ModelsResult>[] = [];
+    stub.listModels.and.callFake(() => {
+      const subject = new Subject<ModelsResult>();
+      pending.push(subject);
+      return subject;
+    });
+
+    setBaseUrl(el, fixture, 'http://first:11434');
+    setBaseUrl(el, fixture, 'http://second:11434');
+    expect(pending.length).toBe(2);
+
+    // The first probe answers last; its models must not land.
+    pending[1].next({ models: [{ id: 'second-model', name: 'second-model' }] });
+    pending[0].next({ models: [{ id: 'first-model', name: 'first-model' }] });
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance;
+    expect(component.ollamaModels().map(m => m.id)).toEqual(['second-model']);
+    expect(component.ollamaModelsLoading()).toBeFalse();
+  });
+
+  it('undoes a pending key clear, and lets a typed key override it', async () => {
+    const { fixture, el } = await create({
+      ...OLLAMA_VIEW,
+      llmProvider: 'anthropic',
+      anthropicApiKeySet: true,
+      anthropicApiKeyHint: '\u2022\u2022\u2022\u20221234',
+    });
+    const component = fixture.componentInstance;
+
+    el.querySelector<HTMLButtonElement>('.clear-key')!.click();
+    fixture.detectChanges();
+    expect(el.querySelector('.key-status')?.textContent).toContain('Key will be removed on save');
+
+    el.querySelector<HTMLButtonElement>('.undo-key')!.click();
+    fixture.detectChanges();
+    expect(component.clearKey()).toBeFalse();
+    expect(el.querySelector('.key-status')?.textContent).toContain('\u2022\u2022\u2022\u20221234');
+    expect(component.buildPayload().anthropicApiKey).toBeUndefined();
+
+    // Clear again, then type: the payload replaces the key, so the status line
+    // must stop claiming it will be removed.
+    el.querySelector<HTMLButtonElement>('.clear-key')!.click();
+    fixture.detectChanges();
+
+    const key = el.querySelector<HTMLInputElement>('#anthropic-key')!;
+    key.value = 'sk-ant-typed';
+    key.dispatchEvent(new Event('input'));
+    fixture.detectChanges();
+
+    expect(el.querySelector('.key-status')?.textContent).not.toContain('will be removed');
+    expect(component.buildPayload().anthropicApiKey).toBe('sk-ant-typed');
   });
 });

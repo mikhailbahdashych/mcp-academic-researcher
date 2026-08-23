@@ -151,13 +151,15 @@
   flex-wrap: wrap;
 }
 
-.clear-key {
+.clear-key,
+.undo-key {
   font-size: 12px;
   color: var(--app-text-faint);
 
   .material-icons { font-size: 15px; width: 15px; height: 15px; }
-  &:hover { color: var(--danger-color); }
 }
+
+.clear-key:hover { color: var(--danger-color); }
 
 .danger { color: var(--danger-color); }
 .accent { color: var(--accent-color); }

@@ -100,6 +100,13 @@ export class SettingsComponent {
   /** Base URL the Ollama list was fetched with, so blur only refetches on a change. */
   private ollamaModelsFor: string | null = null;
   private anthropicModelsLoaded = false;
+  /**
+   * Monotonic ids for the in-flight model probes. Blur and Refresh can start a
+   * second probe before the first answers, and the slower one must not win: a
+   * response is applied only while it still holds the latest token.
+   */
+  private ollamaProbe = 0;
+  private anthropicProbe = 0;
 
   constructor() {
     effect(
@@ -174,17 +181,20 @@ export class SettingsComponent {
 
   protected loadOllamaModels(): void {
     const baseUrl = this.ollamaBaseUrl().trim();
+    const token = ++this.ollamaProbe;
     this.ollamaModelsFor = baseUrl;
     this.ollamaModelsLoading.set(true);
     this.ollamaModelsError.set(null);
 
     this.settingsService.listModels({ provider: 'ollama', baseUrl }).subscribe({
       next: result => {
+        if (token !== this.ollamaProbe) return;
         this.ollamaModels.set(result.models ?? []);
         this.ollamaModelsError.set(result.error ?? null);
         this.ollamaModelsLoading.set(false);
       },
       error: () => {
+        if (token !== this.ollamaProbe) return;
         this.ollamaModels.set([]);
         this.ollamaModelsError.set('Could not reach the server');
         this.ollamaModelsLoading.set(false);
@@ -193,6 +203,7 @@ export class SettingsComponent {
   }
 
   protected loadAnthropicModels(): void {
+    const token = ++this.anthropicProbe;
     this.anthropicModelsLoaded = true;
     this.anthropicModelsLoading.set(true);
     this.anthropicModelsError.set(null);
@@ -201,11 +212,13 @@ export class SettingsComponent {
       .listModels({ provider: 'anthropic', apiKey: this.anthropicApiKey() })
       .subscribe({
         next: result => {
+          if (token !== this.anthropicProbe) return;
           this.anthropicModels.set(result.models ?? []);
           this.anthropicModelsError.set(result.error ?? null);
           this.anthropicModelsLoading.set(false);
         },
         error: () => {
+          if (token !== this.anthropicProbe) return;
           this.anthropicModels.set([]);
           this.anthropicModelsError.set('Could not reach the server');
           this.anthropicModelsLoading.set(false);
@@ -295,12 +308,10 @@ export class SettingsComponent {
   /** Loads the list for a section the first time it is shown. */
   private ensureModels(provider: ProviderId): void {
     if (provider === 'ollama') {
-      if (this.ollamaModelsFor === null && !this.ollamaModelsLoading()) this.loadOllamaModels();
+      if (this.ollamaModelsFor === null) this.loadOllamaModels();
       return;
     }
-    if (!this.anthropicModelsLoaded && !this.anthropicModelsLoading() && this.hasAnthropicKey()) {
-      this.loadAnthropicModels();
-    }
+    if (!this.anthropicModelsLoaded && this.hasAnthropicKey()) this.loadAnthropicModels();
   }
 }
 

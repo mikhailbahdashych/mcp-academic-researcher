@@ -99,15 +99,20 @@
           class="text-input"
           type="password"
           placeholder="sk-ant-…"
-          autocomplete="off"
+          autocomplete="new-password"
           spellcheck="false"
           [ngModel]="anthropicApiKey()"
           (ngModelChange)="anthropicApiKey.set($event)"
         />
 
         <div class="status mono key-status">
-          @if (clearKey()) {
+          <!-- A typed key wins over the pending clear, so say so: the payload
+               would replace the stored key, not remove it. -->
+          @if (clearKey() && !anthropicApiKey().trim()) {
             <span class="danger">Key will be removed on save</span>
+            <button type="button" class="icon-action undo-key" (click)="clearKey.set(false)">
+              <span class="material-icons">undo</span>Undo
+            </button>
           } @else if (view.anthropicApiKeySet) {
             <span>Stored key {{ view.anthropicApiKeyHint }}</span>
             <button type="button" class="icon-action clear-key" (click)="clearKey.set(true)">
