@@ -10,18 +10,18 @@
   }
 
   &.sidebar-collapsed ::ng-deep .mat-sidenav-content {
-    margin-left: 56px !important;
+    margin-left: var(--sidebar-collapsed-width) !important;
   }
 }
 
+// Border-right comes from the global `.mat-drawer` rule (--app-border-soft).
 .app-sidenav {
   width: var(--sidebar-width);
-  border-right: 1px solid var(--app-border) !important;
   transition: width 0.2s ease;
   overflow: hidden;
 
   &.collapsed {
-    width: 56px;
+    width: var(--sidebar-collapsed-width);
   }
 }
 
