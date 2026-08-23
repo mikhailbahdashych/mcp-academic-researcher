@@ -27,6 +27,9 @@ from orchestrator import agent
 PAPER = {"id": "2301.00001v1", "title": "A Fake Paper", "source": "arxiv"}
 #: What a search the model runs itself finds, as opposed to the pre-search's PAPER.
 RELEVANT_PAPER = {"id": "2302.00002v1", "title": "The Relevant Paper", "source": "arxiv"}
+#: Notes carry a `title` exactly like papers do — which is what makes them able
+#: to masquerade as sources if the papers accumulator is not gated by tool name.
+NOTE = {"id": "note-1", "title": "A Saved Note", "content": "my earlier thoughts"}
 
 NO_SEARCH = "SEARCH: no\nQUERY:\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:"
 YES_SEARCH = "SEARCH: yes\nQUERY: llm\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:"
@@ -66,6 +69,10 @@ class FakeSession:
         self.calls.append((name, args))
         if name in ("search_arxiv", "search_openalex"):
             return _result([self._papers_by_query.get(args.get("query"), PAPER)])
+        if name in ("search_notes", "get_notes"):
+            return _result([NOTE])
+        if name in ("get_citations", "get_references"):
+            return _result([PAPER])
         return _result({"ok": name})
 
     @property
@@ -234,6 +241,8 @@ async def test_run_forced_tool_runs_before_the_model_and_after_the_user(monkeypa
 
     _assert_closes_cleanly(events)
     assert session.call_names == ["get_citations"]
+    # Citation results are real sources; the note exclusion must not catch them.
+    assert next(d for t, d in events if t == "papers") == [PAPER]
 
     messages = llm.seen_messages[0]
     user_idx = next(i for i, m in enumerate(messages) if m["role"] == "user")
@@ -289,6 +298,48 @@ async def test_run_drops_pre_search_papers_first_under_a_cap(monkeypatch):
 
     _assert_closes_cleanly(events)
     assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER]
+
+
+async def test_run_keeps_note_results_out_of_the_sources_list(monkeypatch):
+    """A note the model looks up is context, not a source — and it has a title."""
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_n", name="search_notes", arguments={"query": "rag"}
+                    )
+                )
+            ],
+            [StreamEvent(text="Your notes mention RAG.")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("What do my notes say about RAG?"))
+
+    _assert_closes_cleanly(events)
+    assert session.call_names == ["search_notes"]
+    assert next(d for t, d in events if t == "papers") == []
+
+
+async def test_run_keeps_a_forced_note_tool_out_of_the_sources_list(monkeypatch):
+    """The forced path accumulates papers unconditionally except for note tools."""
+    session = FakeSession()
+    llm = FakeLLM(NO_SEARCH, [[StreamEvent(text="Saved.")]])
+    _install(monkeypatch, llm, session)
+
+    request = _request(
+        "Save that",
+        force_tool={"name": "get_notes", "args": {"limit": 5}},
+    )
+    events = await _events(request)
+
+    _assert_closes_cleanly(events)
+    assert session.call_names == ["get_notes"]
+    assert next(d for t, d in events if t == "papers") == []
 
 
 async def test_run_reports_a_provider_failure_as_answer_text(monkeypatch):

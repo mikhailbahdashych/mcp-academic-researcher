@@ -100,9 +100,16 @@ def _parse_papers(result) -> list[dict]:
 
 
 #: Paper-search tools that can be pre-called; a request names them by suffix.
+#: Also the only tools whose results may enter the sources list. Kept a list,
+#: not a set: `_select_search_tools` returns them in this order.
 PRE_SEARCH_TOOLS = ["search_arxiv", "search_openalex"]
 
+#: Tools served by the notes MCP server. Notes carry a `title` just like papers
+#: do, so an ungated accumulator would rank them into the sources rail.
+NOTE_TOOL_NAMES = {"save_note", "get_notes", "search_notes", "delete_note"}
+
 #: Excluded from the LLM's tool list after a pre-search, so it cannot re-run them.
+#: This is about tool *offering*, not about what counts as a paper.
 SEARCH_TOOL_NAMES = {"search_arxiv", "search_openalex", "search_notes"}
 
 #: Ceiling on LLM round trips per request, so a tool-calling loop cannot run away.
@@ -386,7 +393,10 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                         )
                     )
                 else:
-                    presearch_papers.extend(_parse_papers(result))
+                    # Citation tools do return papers, so this is not gated on
+                    # PRE_SEARCH_TOOLS — only note results are excluded.
+                    if tool_name not in NOTE_TOOL_NAMES:
+                        presearch_papers.extend(_parse_papers(result))
                     messages.extend(
                         _build_tool_exchange(tool_name, tool_args, _result_texts(result))
                     )
@@ -474,7 +484,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                         logger.exception("Tool %s failed", tc.name)
                         content = json.dumps({"error": str(exc)})
                     else:
-                        if tc.name in SEARCH_TOOL_NAMES:
+                        if tc.name in PRE_SEARCH_TOOLS:
                             loop_papers.extend(_parse_papers(result))
                         content = json.dumps(_result_texts(result))
 
