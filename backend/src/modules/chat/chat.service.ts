@@ -52,6 +52,10 @@ export class ChatService {
     let accumulatedContent = '';
     let accumulatedPapers: string | null = null;
 
+    // Resolved outside the try: a settings-read failure is our bug, and must
+    // not be reported to the user as "the orchestrator is unreachable".
+    const llm = await this.settingsService.getLlmConfig();
+
     try {
       const orchestratorRes = await axios.post(
         `${this.orchestratorUrl}/chat`,
@@ -61,7 +65,7 @@ export class ChatService {
           history,
           force_tool: forceTool ?? null,
           sources: sources ?? null,
-          llm: await this.settingsService.getLlmConfig(),
+          llm,
         },
         { responseType: 'stream', timeout: 60000 },
       );

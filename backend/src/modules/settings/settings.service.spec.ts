@@ -90,6 +90,23 @@ describe('SettingsService', () => {
       expect(view.anthropicApiKeyHint).toBeNull();
     });
 
+    it('withholds the hint for a key too short to mask', async () => {
+      prisma.setting.upsert.mockResolvedValue(row({ anthropicApiKey: 'abc' }));
+
+      const view = await service.get();
+
+      expect(view.anthropicApiKeySet).toBe(true);
+      expect(view.anthropicApiKeyHint).toBeNull();
+    });
+
+    it('withholds the hint when the key is exactly four characters', async () => {
+      prisma.setting.upsert.mockResolvedValue(row({ anthropicApiKey: 'abcd' }));
+
+      const view = await service.get();
+
+      expect(view.anthropicApiKeyHint).toBeNull();
+    });
+
     it('reports the orchestrator env key presence', async () => {
       prisma.setting.upsert.mockResolvedValue(row());
       mockedAxios.get.mockResolvedValue({
@@ -157,6 +174,31 @@ describe('SettingsService', () => {
       expect(data).not.toHaveProperty('anthropicApiKey');
       expect(view.ollamaModel).toBe('llama3');
       expect(JSON.stringify(view)).not.toContain(STORED_KEY);
+    });
+
+    it('ignores a blank model name instead of persisting an empty one', async () => {
+      prisma.setting.upsert.mockResolvedValue(row());
+      prisma.setting.update.mockResolvedValue(row());
+
+      await service.update({ ollamaModel: '   ' });
+
+      const { data } = prisma.setting.update.mock.calls[0][0];
+      expect(data).toEqual({});
+      expect(data).not.toHaveProperty('ollamaModel');
+    });
+
+    it('ignores blank anthropic model and base url values', async () => {
+      prisma.setting.upsert.mockResolvedValue(row());
+      prisma.setting.update.mockResolvedValue(row());
+
+      await service.update({
+        anthropicModel: '  ',
+        ollamaBaseUrl: '',
+        ollamaModel: 'llama3',
+      });
+
+      const { data } = prisma.setting.update.mock.calls[0][0];
+      expect(data).toEqual({ ollamaModel: 'llama3' });
     });
 
     it('persists provider and url changes', async () => {
@@ -273,6 +315,48 @@ describe('SettingsService', () => {
           model: 'llama3',
           api_key: null,
           base_url: 'http://remote:11434',
+        },
+        expect.any(Object),
+      );
+    });
+
+    it('treats a blank apiKey as omitted and falls back to the stored key', async () => {
+      prisma.setting.upsert.mockResolvedValue(
+        row({ anthropicApiKey: STORED_KEY }),
+      );
+      mockedAxios.post.mockResolvedValue({ data: { models: [] } });
+
+      await service.listModels({ provider: 'anthropic', apiKey: '' });
+
+      expect(mockedAxios.post).toHaveBeenLastCalledWith(
+        expect.stringContaining('/llm/models'),
+        {
+          provider: 'anthropic',
+          model: null,
+          api_key: STORED_KEY,
+          base_url: null,
+        },
+        expect.any(Object),
+      );
+    });
+
+    it('treats blank baseUrl and model as omitted', async () => {
+      prisma.setting.upsert.mockResolvedValue(row());
+      mockedAxios.post.mockResolvedValue({ data: { models: [] } });
+
+      await service.listModels({
+        provider: 'ollama',
+        baseUrl: '   ',
+        model: '  ',
+      });
+
+      expect(mockedAxios.post).toHaveBeenLastCalledWith(
+        expect.stringContaining('/llm/models'),
+        {
+          provider: 'ollama',
+          model: null,
+          api_key: null,
+          base_url: 'http://localhost:11434',
         },
         expect.any(Object),
       );

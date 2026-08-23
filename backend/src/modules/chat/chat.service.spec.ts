@@ -111,6 +111,16 @@ describe('ChatService', () => {
     );
   });
 
+  it('surfaces a settings-read failure instead of the mock stream', async () => {
+    settings.getLlmConfig.mockRejectedValue(new Error('db is down'));
+
+    await expect(service.streamChat('conv-1', 'hi', res)).rejects.toThrow(
+      'db is down',
+    );
+    expect(mockedAxios.post).not.toHaveBeenCalled();
+    expect(res.write).not.toHaveBeenCalled();
+  });
+
   it('persists the accumulated assistant content', async () => {
     stubOrchestratorStream(['Attention ', 'is all you need.']);
 

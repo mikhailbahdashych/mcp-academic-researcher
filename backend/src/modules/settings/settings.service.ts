@@ -65,6 +65,11 @@ interface ProbePayload {
 const SINGLETON_ID = 'default';
 const UNREACHABLE = 'Orchestrator unreachable';
 
+/** Trimmed value, or undefined when the field was omitted or all whitespace. */
+function blank(value: string | undefined): string | undefined {
+  return value?.trim() || undefined;
+}
+
 @Injectable()
 export class SettingsService {
   private readonly logger = new Logger(SettingsService.name);
@@ -88,14 +93,17 @@ export class SettingsService {
 
     const data: Partial<Omit<SettingRow, 'id' | 'updatedAt'>> = {};
     if (dto.llmProvider !== undefined) data.llmProvider = dto.llmProvider;
-    if (dto.ollamaBaseUrl !== undefined) {
-      data.ollamaBaseUrl = dto.ollamaBaseUrl.trim();
-    }
-    if (dto.ollamaModel !== undefined)
-      data.ollamaModel = dto.ollamaModel.trim();
-    if (dto.anthropicModel !== undefined) {
-      data.anthropicModel = dto.anthropicModel.trim();
-    }
+
+    // A blank value means "leave it alone", never "store an empty string": an
+    // empty model or base url would break every subsequent chat.
+    const baseUrl = blank(dto.ollamaBaseUrl);
+    if (baseUrl) data.ollamaBaseUrl = baseUrl;
+    const ollamaModel = blank(dto.ollamaModel);
+    if (ollamaModel) data.ollamaModel = ollamaModel;
+    const anthropicModel = blank(dto.anthropicModel);
+    if (anthropicModel) data.anthropicModel = anthropicModel;
+
+    // The key is the exception: an empty string is how the UI clears it.
     if (dto.anthropicApiKey !== undefined) {
       const key = dto.anthropicApiKey.trim();
       data.anthropicApiKey = key === '' ? null : key;
@@ -207,7 +215,10 @@ export class SettingsService {
       ollamaModel: row.ollamaModel,
       anthropicModel: row.anthropicModel,
       anthropicApiKeySet: Boolean(key),
-      anthropicApiKeyHint: key ? `••••${key.slice(-4)}` : null,
+      // Hint only at a key long enough that its last 4 chars are not the whole
+      // of it -- a short key would otherwise be echoed back verbatim.
+      anthropicApiKeyHint:
+        key && key.length > 4 ? `••••${key.slice(-4)}` : null,
       anthropicEnvKeyPresent,
       updatedAt: new Date(row.updatedAt).toISOString(),
     };
@@ -236,14 +247,17 @@ export class SettingsService {
     const row = await this.load();
     const provider = dto.provider;
 
+    // A blank submitted field falls back to what is stored rather than shipping
+    // an empty credential the provider would only reject.
     return {
       provider,
-      model: dto.model ?? null,
+      model: blank(dto.model) ?? null,
       api_key:
-        dto.apiKey ??
+        blank(dto.apiKey) ??
         (provider === 'anthropic' ? (row.anthropicApiKey ?? null) : null),
       base_url:
-        dto.baseUrl ?? (provider === 'ollama' ? row.ollamaBaseUrl : null),
+        blank(dto.baseUrl) ??
+        (provider === 'ollama' ? row.ollamaBaseUrl : null),
     };
   }
 }
