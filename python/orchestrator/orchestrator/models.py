@@ -1,5 +1,7 @@
 """Pydantic models for the orchestrator's HTTP API."""
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -29,6 +31,32 @@ class ForceTool(BaseModel):
     args: dict
 
 
+class LLMConfig(BaseModel):
+    """Which LLM provider to answer a request with.
+
+    Mirrors :class:`orchestrator.llm.LLMSettings` field for field, so a config
+    can be splatted straight into it. Every field is optional: the adapter falls
+    back to its own defaults (and to the ambient environment for the Anthropic
+    key and the Ollama base URL).
+
+    Attributes:
+        provider: "ollama" for a local daemon, "anthropic" for the Claude API.
+        model: Model id; None picks the provider's default.
+        api_key: Anthropic key; None falls back to the server environment.
+        base_url: Ollama host; None falls back to OLLAMA_BASE_URL.
+    """
+
+    provider: Literal["ollama", "anthropic"] = "ollama"
+    model: str | None = None
+    api_key: str | None = None
+    base_url: str | None = None
+
+
+#: The /llm/models and /llm/test endpoints take a bare provider config.
+ModelsRequest = LLMConfig
+TestRequest = LLMConfig
+
+
 class ChatRequest(BaseModel):
     """Request payload for the /chat endpoint.
 
@@ -40,7 +68,10 @@ class ChatRequest(BaseModel):
         message: The current user message to process.
         history: Complete conversation history (all prior messages).
         force_tool: Optional directive to force a specific tool call.
-        sources: Paper sources to search ("arxiv", "openalex"); None means all.
+        sources: Which paper sources to pre-search ("arxiv", "openalex").
+            None means every available source.
+        llm: Which provider/model to answer with. None means the default
+            (local Ollama).
     """
 
     conversation_id: str
@@ -48,3 +79,4 @@ class ChatRequest(BaseModel):
     history: list[Message]
     force_tool: ForceTool | None = None
     sources: list[str] | None = None
+    llm: LLMConfig | None = None
