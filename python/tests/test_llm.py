@@ -1,9 +1,14 @@
+import anthropic
+import httpx
 import pytest
 from orchestrator.llm import (
+    DEFAULT_OLLAMA_BASE_URL,
     AnthropicClient,
+    LLMError,
     LLMSettings,
     OllamaClient,
     build_client,
+    env_anthropic_key,
     new_tool_call_id,
 )
 
@@ -223,3 +228,79 @@ async def test_anthropic_stream_omits_empty_tools(monkeypatch):
     assert [e async for e in c.stream([{"role": "user", "content": "hi"}], tools=[])] == []
     assert "tools" not in captured
     assert "system" not in captured
+
+
+def test_llm_settings_repr_hides_api_key():
+    """The key must never reach a log line, an f-string, or a traceback's locals."""
+    settings = LLMSettings(provider="anthropic", api_key="sk-secret")
+    assert "sk-" not in repr(settings)
+    assert "secret" not in repr(settings)
+    # still readable by the code that needs it
+    assert settings.api_key == "sk-secret"
+
+
+def test_env_anthropic_key_prefers_anthropic_over_claude(monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-anthropic")
+    monkeypatch.setenv("CLAUDE_API_KEY", "sk-claude")
+    assert env_anthropic_key() == "sk-anthropic"
+    assert isinstance(build_client(LLMSettings(provider="anthropic")), AnthropicClient)
+
+
+def test_build_client_ignores_empty_ollama_base_url_env(monkeypatch):
+    monkeypatch.setenv("OLLAMA_BASE_URL", "")
+    assert build_client(None).base_url == DEFAULT_OLLAMA_BASE_URL
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://elsewhere:11434")
+    assert build_client(None).base_url == "http://elsewhere:11434"
+
+
+async def test_ollama_complete_honours_max_tokens(monkeypatch):
+    captured = {}
+
+    class Message:
+        content = "done"
+
+    class Response:
+        message = Message()
+
+    async def fake_chat(**kwargs):
+        captured.update(kwargs)
+        return Response()
+
+    c = OllamaClient(model="m", base_url="http://x")
+    monkeypatch.setattr(c._client, "chat", fake_chat)
+    assert await c.complete([{"role": "user", "content": "hi"}], max_tokens=123) == "done"
+    assert captured["options"] == {"num_predict": 123}
+    assert captured["stream"] is False
+
+
+async def test_ollama_timeout_becomes_llm_error(monkeypatch):
+    async def fake_chat(**kwargs):
+        raise httpx.ReadTimeout("too slow")
+
+    c = OllamaClient(model="m", base_url="http://x")
+    monkeypatch.setattr(c._client, "chat", fake_chat)
+    with pytest.raises(LLMError, match="Ollama request failed at http://x"):
+        await c.complete([{"role": "user", "content": "hi"}])
+
+
+async def test_ollama_connect_error_reports_base_url(monkeypatch):
+    async def fake_chat(**kwargs):
+        raise httpx.ConnectError("refused")
+
+    c = OllamaClient(model="m", base_url="http://x")
+    monkeypatch.setattr(c._client, "chat", fake_chat)
+    with pytest.raises(LLMError, match="Ollama is not reachable at http://x"):
+        await c.complete([{"role": "user", "content": "hi"}])
+
+
+async def test_anthropic_unmapped_api_error_becomes_llm_error(monkeypatch):
+    async def fake_create(**kwargs):
+        raise anthropic.APIResponseValidationError(
+            response=httpx.Response(200, request=httpx.Request("POST", "http://x")),
+            body=None,
+        )
+
+    c = AnthropicClient(model="m", api_key="sk-test")
+    monkeypatch.setattr(c._client.messages, "create", fake_create)
+    with pytest.raises(LLMError, match="Anthropic API error:"):
+        await c.complete([{"role": "user", "content": "hi"}])

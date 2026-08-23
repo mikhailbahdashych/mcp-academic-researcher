@@ -27,7 +27,7 @@ import json
 import os
 import uuid
 from collections.abc import AsyncIterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Literal, Protocol
 
 import anthropic
@@ -43,12 +43,25 @@ DEFAULT_ANTHROPIC_MODEL = "claude-opus-5"
 #: Output budget for streamed Anthropic responses (summaries can be long).
 ANTHROPIC_STREAM_MAX_TOKENS = 16000
 
-#: Anthropic error types worth translating into a user-facing message.
-#: ``AuthenticationError`` and ``RateLimitError`` both subclass ``APIStatusError``.
-_ANTHROPIC_ERRORS = (anthropic.APIConnectionError, anthropic.APIStatusError)
+#: Anthropic failures translated into a user-facing message. ``APIError`` is the
+#: common base (``AuthenticationError`` and ``RateLimitError`` subclass
+#: ``APIStatusError``); it is listed last so nothing — ``APIResponseValidationError``
+#: included — escapes as a raw SDK exception.
+_ANTHROPIC_ERRORS = (
+    anthropic.APIConnectionError,
+    anthropic.APIStatusError,
+    anthropic.APIError,
+)
 
-#: Ollama failures that mean "the daemon answered badly" or "it is not there".
-_OLLAMA_ERRORS = (ollama.ResponseError, httpx.ConnectError)
+#: Ollama failures that mean "the daemon answered badly", "it is not there", or
+#: "it is up but too slow". ``TransportError`` is the base of both ``ConnectError``
+#: and ``TimeoutException``, and catches the rest of the transport family too.
+_OLLAMA_ERRORS = (
+    ollama.ResponseError,
+    httpx.ConnectError,
+    httpx.TimeoutException,
+    httpx.TransportError,
+)
 
 
 class LLMError(RuntimeError):
@@ -61,7 +74,9 @@ class LLMSettings:
 
     provider: Provider = "ollama"
     model: str | None = None
-    api_key: str | None = None  # anthropic only
+    # repr=False keeps the key out of reprs, f-strings, and traceback locals.
+    # LLMSettings crosses an HTTP boundary, so the safe thing must be the default.
+    api_key: str | None = field(default=None, repr=False)  # anthropic only
     base_url: str | None = None  # ollama only
 
 
@@ -114,7 +129,9 @@ def _ollama_error(exc: Exception, base_url: str) -> LLMError:
     """Translate an Ollama/httpx failure into a user-facing :class:`LLMError`."""
     if isinstance(exc, ollama.ResponseError):
         return LLMError(getattr(exc, "error", None) or str(exc))
-    return LLMError(f"Ollama is not reachable at {base_url}")
+    if isinstance(exc, httpx.ConnectError):
+        return LLMError(f"Ollama is not reachable at {base_url}")
+    return LLMError(f"Ollama request failed at {base_url}: {exc}")
 
 
 def _anthropic_error(exc: Exception) -> LLMError:
@@ -127,7 +144,7 @@ def _anthropic_error(exc: Exception) -> LLMError:
         return LLMError("Could not reach the Anthropic API")
     if isinstance(exc, anthropic.APIStatusError):
         return LLMError(f"Anthropic API error {exc.status_code}: {exc.message}")
-    return LLMError(str(exc))
+    return LLMError(f"Anthropic API error: {exc}")
 
 
 class OllamaClient:
@@ -145,16 +162,13 @@ class OllamaClient:
         self._client = ollama.AsyncClient(host=base_url)
 
     async def complete(self, messages: list[dict], *, max_tokens: int = 512) -> str:
-        """Return the assistant text for a one-shot, non-streaming call.
-
-        ``max_tokens`` is accepted for interface parity with
-        :class:`AnthropicClient`; Ollama's own output limit applies instead.
-        """
+        """Return the assistant text for a one-shot, non-streaming call."""
         try:
             response = await self._client.chat(
                 model=self.model,
                 messages=messages,
                 stream=False,
+                options={"num_predict": max_tokens},
             )
         except _OLLAMA_ERRORS as exc:
             raise _ollama_error(exc, self.base_url) from exc
@@ -374,6 +388,8 @@ def build_client(settings: LLMSettings | None) -> LLMClient:
 
     return OllamaClient(
         model=settings.model or DEFAULT_OLLAMA_MODEL,
+        # `or` rather than a dict default: an empty env var must not yield host="".
         base_url=settings.base_url
-        or os.environ.get("OLLAMA_BASE_URL", DEFAULT_OLLAMA_BASE_URL),
+        or os.environ.get("OLLAMA_BASE_URL")
+        or DEFAULT_OLLAMA_BASE_URL,
     )
