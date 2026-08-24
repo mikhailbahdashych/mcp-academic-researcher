@@ -3,31 +3,39 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  background: var(--app-surface);
+  padding: 16px 10px;
+  background: var(--app-rail);
 }
 
 .sidebar-nav {
-  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 18px;
   flex-shrink: 0;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   padding: 8px 12px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-nav);
+  font-size: 15px;
+  color: var(--app-text-nav);
   text-decoration: none;
-  color: var(--app-text-secondary);
-  font-size: 0.875rem;
-  transition: background 0.15s, color 0.15s;
   white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
 
-  mat-icon {
+  .material-icons {
     font-size: 18px;
-    width: 18px;
-    height: 18px;
     flex-shrink: 0;
+  }
+
+  .kbd {
+    margin-left: auto;
+    font-size: 11.5px;
+    color: var(--app-text-faint);
   }
 
   &:hover {
@@ -37,20 +45,24 @@
   }
 
   &.active {
-    background: rgba(29, 233, 182, 0.08);
-    color: var(--accent-color);
+    color: var(--app-text-primary);
   }
 }
 
-// When collapsed, center icons
 .collapsed .nav-item {
   justify-content: center;
-  padding: 8px;
+  padding: 8px 0;
 }
 
-.divider {
-  height: 1px;
-  background: var(--app-border);
-  margin: 4px 12px;
+.session-list-host {
+  display: block;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+app-sidebar-footer {
+  display: block;
+  margin-top: auto;
   flex-shrink: 0;
 }

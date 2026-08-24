@@ -8,6 +8,13 @@ requires-python = ">=3.11"
 [tool.uv]
 managed = true
 
+[dependency-groups]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.28",
+]
+
 [tool.uv.workspace]
 members = [
     "orchestrator",
@@ -28,3 +35,4 @@ select = ["E", "F", "I", "UP"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_functions = ["test_*"]
+asyncio_mode = "auto"

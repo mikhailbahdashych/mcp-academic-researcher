@@ -1,14 +1,23 @@
+"""FastAPI application for the orchestrator.
+
+``load_dotenv()`` deliberately runs before the local imports: those modules read
+their configuration (notes directory, Ollama host, API keys) from the
+environment at import time, so the .env file has to be in place first. That is
+what the per-import E402 suppressions below mark.
+"""
+
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
-
-load_dotenv()
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
-from . import agent
-from .models import ChatRequest
-from .notes_router import router as notes_router
+load_dotenv()
+
+from . import agent  # noqa: E402
+from .llm_router import router as llm_router  # noqa: E402
+from .models import ChatRequest  # noqa: E402
+from .notes_router import router as notes_router  # noqa: E402
 
 app = FastAPI(title="MCP Academic Researcher Orchestrator")
 
@@ -21,6 +30,7 @@ app.add_middleware(
 
 
 app.include_router(notes_router, prefix="/notes")
+app.include_router(llm_router, prefix="/llm")
 
 
 @app.post("/chat")

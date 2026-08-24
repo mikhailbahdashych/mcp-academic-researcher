@@ -22,6 +22,7 @@ export class StreamingService {
    * @param conversationId - The conversation UUID.
    * @param query - The user's query text.
    * @param forceTool - Optional forced MCP tool call (e.g., for citation lookups).
+   * @param sources - Optional paper sources to search (defaults to all server-side).
    * @returns Observable that emits SSEEvent objects (token, papers, done, error).
    *          Completes on `done` events; errors on `error` events.
    *          Unsubscribing aborts the fetch via AbortController.
@@ -30,6 +31,7 @@ export class StreamingService {
     conversationId: string,
     query: string,
     forceTool?: { name: string; args: Record<string, unknown> },
+    sources?: string[],
   ): Observable<SSEEvent> {
     return new Observable<SSEEvent>(subscriber => {
       const controller = new AbortController();
@@ -38,7 +40,11 @@ export class StreamingService {
       fetch(`/api/conversations/${conversationId}/messages/stream`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, ...(forceTool ? { forceTool } : {}) }),
+        body: JSON.stringify({
+          query,
+          ...(forceTool ? { forceTool } : {}),
+          ...(sources ? { sources } : {}),
+        }),
         signal: controller.signal,
       })
         .then(async response => {

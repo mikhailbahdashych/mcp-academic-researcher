@@ -1,0 +1,474 @@
+"""End-to-end tests for ``agent.run()`` against fake MCP sessions and a fake LLM.
+
+``run()`` carries three invariants that only appear once the whole generator is
+driven, and that the unit tests on its helpers cannot see:
+
+(a) the user's message precedes the assistant/tool pairs (Anthropic rejects a
+    conversation that opens with an assistant turn),
+(b) every assistant ``tool_calls[].id`` is answered by a tool message carrying
+    the same ``tool_call_id``,
+(c) a provider failure still closes the stream as papers -> done -> [DONE], with
+    the message as answer text and no ``error`` event (the frontend drops the
+    answer bubble when it sees one).
+
+Nothing here spawns a subprocess or opens a socket: ``_open_session`` and
+``build_client`` are both monkeypatched.
+"""
+
+import copy
+import json
+from types import SimpleNamespace
+
+from orchestrator.llm import LLMError, StreamEvent, ToolCall
+from orchestrator.models import ChatRequest
+
+from orchestrator import agent
+
+PAPER = {"id": "2301.00001v1", "title": "A Fake Paper", "source": "arxiv"}
+#: What a search the model runs itself finds, as opposed to the pre-search's PAPER.
+RELEVANT_PAPER = {"id": "2302.00002v1", "title": "The Relevant Paper", "source": "arxiv"}
+#: Notes carry a `title` exactly like papers do — which is what makes them able
+#: to masquerade as sources if the papers accumulator is not gated by tool name.
+NOTE = {"id": "note-1", "title": "A Saved Note", "content": "my earlier thoughts"}
+
+NO_SEARCH = "SEARCH: no\nQUERY:\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:"
+YES_SEARCH = "SEARCH: yes\nQUERY: llm\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:"
+#: The shape of the bug report: "recent papers on X" sends the classifier down a
+#: sort-by-date pre-search that returns the newest entries rather than the apt ones.
+RECENT_SEARCH = "SEARCH: yes\nQUERY: rag\nMAX_RESULTS: {n}\nSORT_BY_DATE: yes\nYEAR_FROM:\nYEAR_TO:"
+
+TOOL_NAMES = ["search_arxiv", "search_openalex", "search_notes", "get_citations"]
+
+
+def _tool(name: str) -> SimpleNamespace:
+    return SimpleNamespace(
+        name=name,
+        description=f"{name} tool",
+        inputSchema={"type": "object", "properties": {}},
+    )
+
+
+def _result(payload) -> SimpleNamespace:
+    return SimpleNamespace(content=[SimpleNamespace(text=json.dumps(payload))])
+
+
+class FakeSession:
+    """Stands in for all three MCP servers and records every tool it is asked to run."""
+
+    def __init__(
+        self, names: list[str] = TOOL_NAMES, papers_by_query: dict[str, dict] | None = None
+    ) -> None:
+        self._tools = [_tool(n) for n in names]
+        self._papers_by_query = papers_by_query or {}
+        self.calls: list[tuple[str, dict]] = []
+
+    async def list_tools(self):
+        return SimpleNamespace(tools=self._tools)
+
+    async def call_tool(self, name: str, args: dict):
+        self.calls.append((name, args))
+        if name in ("search_arxiv", "search_openalex"):
+            return _result([self._papers_by_query.get(args.get("query"), PAPER)])
+        if name in ("search_notes", "get_notes"):
+            return _result([NOTE])
+        if name in ("get_citations", "get_references"):
+            return _result([PAPER])
+        return _result({"ok": name})
+
+    @property
+    def call_names(self) -> list[str]:
+        return [name for name, _ in self.calls]
+
+
+class FakeLLM:
+    """Scripted client: ``complete`` classifies, ``stream`` replays one turn per call."""
+
+    model = "fake-model"
+
+    def __init__(self, classifier_reply: str, script: list[list[StreamEvent]]) -> None:
+        self.classifier_reply = classifier_reply
+        self._script = list(script)
+        # `run()` mutates one messages list in place, so snapshot each turn.
+        self.seen_messages: list[list[dict]] = []
+        self.seen_tools: list[list[dict]] = []
+
+    async def complete(self, messages: list[dict], *, max_tokens: int = 512) -> str:
+        return self.classifier_reply
+
+    async def stream(self, messages: list[dict], tools: list[dict]):
+        self.seen_messages.append(copy.deepcopy(messages))
+        self.seen_tools.append(copy.deepcopy(tools))
+        if not self._script:
+            raise AssertionError("run() called stream() more times than the script allows")
+        for event in self._script.pop(0):
+            yield event
+
+
+class FailingLLM:
+    """Classifies fine, then fails the way a misconfigured provider would."""
+
+    model = "fake-model"
+
+    def __init__(self, exc: Exception) -> None:
+        self._exc = exc
+
+    async def complete(self, messages: list[dict], *, max_tokens: int = 512) -> str:
+        return NO_SEARCH
+
+    async def stream(self, messages: list[dict], tools: list[dict]):
+        raise self._exc
+        yield  # unreachable; makes this an async generator like the real one
+
+
+def _install(monkeypatch, llm, session: FakeSession) -> None:
+    async def fake_open_session(stack, bin_name):
+        return session
+
+    monkeypatch.setattr(agent, "_open_session", fake_open_session)
+    monkeypatch.setattr(agent, "build_client", lambda settings: llm)
+
+
+def _request(message: str, **kwargs) -> ChatRequest:
+    return ChatRequest(conversation_id="c1", message=message, history=[], **kwargs)
+
+
+async def _events(request: ChatRequest) -> list[tuple[str, object]]:
+    """Drive ``run()`` and parse its SSE lines into (type, data) pairs."""
+    chunks = [chunk async for chunk in agent.run(request)]
+    out: list[tuple[str, object]] = []
+    for chunk in chunks:
+        payload = chunk.removeprefix("data: ").strip()
+        if payload == "[DONE]":
+            out.append(("[DONE]", None))
+        else:
+            event = json.loads(payload)
+            out.append((event["type"], event["data"]))
+    return out
+
+
+def _assert_closes_cleanly(events: list[tuple[str, object]]) -> None:
+    """Every run ends papers -> done -> [DONE], exactly once each, with no error."""
+    types = [t for t, _ in events]
+    assert "error" not in types
+    assert types.count("papers") == 1
+    assert types.count("done") == 1
+    assert types[-3:] == ["papers", "done", "[DONE]"]
+    assert set(types[:-3]) <= {"token"}
+
+
+async def test_run_orders_messages_and_pairs_tool_call_ids(monkeypatch):
+    """Invariants (a) and (b), as the model itself sees them on its second turn."""
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(text="Checking. "),
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_abc", name="get_citations", arguments={"paper_id": "x"}
+                    )
+                ),
+            ],
+            [StreamEvent(text="Done.")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Who cites this?"))
+
+    _assert_closes_cleanly(events)
+    # The blank line is the turn separator; see the segment-separation test below.
+    assert "".join(d for t, d in events if t == "token") == "Checking. \n\nDone."
+    assert session.call_names == ["get_citations"]
+    assert len(llm.seen_messages) == 2, "the loop should stop once no tool calls come back"
+
+    messages = llm.seen_messages[1]
+    user_idx = next(
+        i
+        for i, m in enumerate(messages)
+        if m["role"] == "user" and m["content"] == "Who cites this?"
+    )
+    assistant_idx = next(i for i, m in enumerate(messages) if m.get("tool_calls"))
+    tool_idx = next(i for i, m in enumerate(messages) if m["role"] == "tool")
+
+    # (a) the user's message comes first, then the call, then its result.
+    assert user_idx < assistant_idx < tool_idx
+    # (b) the result names the call that produced it.
+    assert messages[assistant_idx]["tool_calls"][0]["id"] == "call_abc"
+    assert messages[tool_idx]["tool_call_id"] == "call_abc"
+    assert messages[tool_idx]["name"] == "get_citations"
+
+
+async def test_run_separates_answer_text_across_tool_iterations(monkeypatch):
+    """Two model turns are one bubble, so the second must not weld onto the first.
+
+    Without a separator the concatenation is "part one## part two", where the
+    heading is no longer at the start of a line and renders as literal "##" —
+    in the live stream and in the copy the gateway writes to the database.
+    """
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(text="part one"),
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_sep", name="get_citations", arguments={"paper_id": "x"}
+                    )
+                ),
+            ],
+            [StreamEvent(text="## part two")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Who cites this?"))
+
+    _assert_closes_cleanly(events)
+    assert "".join(d for t, d in events if t == "token") == "part one\n\n## part two"
+
+
+async def test_run_does_not_lead_with_a_separator_when_a_turn_is_silent(monkeypatch):
+    """A tool-only first turn emitted no text, so the answer must not open blank."""
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_quiet", name="get_citations", arguments={"paper_id": "x"}
+                    )
+                )
+            ],
+            [StreamEvent(text="## the whole answer")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Who cites this?"))
+
+    _assert_closes_cleanly(events)
+    assert "".join(d for t, d in events if t == "token") == "## the whole answer"
+
+
+async def test_run_pre_searches_only_the_requested_source(monkeypatch):
+    """`sources` filters the pre-search, and the papers still reach the client."""
+    session = FakeSession()
+    llm = FakeLLM(YES_SEARCH, [[StreamEvent(text="Found one paper.")]])
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find papers on llm", sources=["arxiv"]))
+
+    _assert_closes_cleanly(events)
+    # search_openalex is filtered out; the notes pre-fetch still runs.
+    assert session.call_names == ["search_arxiv", "search_notes"]
+    assert next(d for t, d in events if t == "papers") == [PAPER]
+
+    messages = llm.seen_messages[0]
+    user_idx = next(i for i, m in enumerate(messages) if m["role"] == "user")
+    first_call_idx = next(i for i, m in enumerate(messages) if m.get("tool_calls"))
+    assert user_idx < first_call_idx
+
+    # Every pre-search result is paired with the call above it.
+    for i, m in enumerate(messages):
+        if m.get("tool_calls"):
+            assert messages[i + 1]["tool_call_id"] == m["tool_calls"][0]["id"]
+
+    # After a pre-search the model must not be offered the search tools again.
+    offered = {t["function"]["name"] for t in llm.seen_tools[0]}
+    assert offered == {"get_citations"}
+
+
+async def test_run_forced_tool_runs_before_the_model_and_after_the_user(monkeypatch):
+    """The forced-tool branch skips the classifier but keeps the same ordering."""
+    session = FakeSession()
+    llm = FakeLLM(NO_SEARCH, [[StreamEvent(text="Here are the citations.")]])
+    _install(monkeypatch, llm, session)
+
+    request = _request(
+        "Show citations",
+        force_tool={"name": "get_citations", "args": {"paper_id": "2301.00001v1"}},
+    )
+    events = await _events(request)
+
+    _assert_closes_cleanly(events)
+    assert session.call_names == ["get_citations"]
+    # Citation results are real sources; the note exclusion must not catch them.
+    assert next(d for t, d in events if t == "papers") == [PAPER]
+
+    messages = llm.seen_messages[0]
+    user_idx = next(i for i, m in enumerate(messages) if m["role"] == "user")
+    call_idx = next(i for i, m in enumerate(messages) if m.get("tool_calls"))
+    assert user_idx < call_idx
+    assert messages[call_idx + 1]["tool_call_id"] == messages[call_idx]["tool_calls"][0]["id"]
+    assert messages[call_idx]["tool_calls"][0]["function"]["name"] == "get_citations"
+
+
+def _model_searches_again(max_results: int) -> tuple[FakeSession, "FakeLLM"]:
+    """Pre-search finds PAPER; the model then searches itself and finds RELEVANT_PAPER."""
+    session = FakeSession(papers_by_query={"rag relevance": RELEVANT_PAPER})
+    llm = FakeLLM(
+        RECENT_SEARCH.format(n=max_results),
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_1", name="search_arxiv", arguments={"query": "rag relevance"}
+                    )
+                )
+            ],
+            [StreamEvent(text="Here is the paper that actually fits.")],
+        ],
+    )
+    return session, llm
+
+
+async def test_run_lists_model_initiated_papers_before_pre_search_ones(monkeypatch):
+    """The pre-search is a guess; a search the model chose to run outranks it."""
+    session, llm = _model_searches_again(max_results=5)
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find 5 recent papers on RAG"))
+
+    _assert_closes_cleanly(events)
+    # Pre-search hit both sources plus notes, then the model searched arXiv itself.
+    assert session.call_names == [
+        "search_arxiv",
+        "search_openalex",
+        "search_notes",
+        "search_arxiv",
+    ]
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER, PAPER]
+
+
+async def test_run_drops_pre_search_papers_first_under_a_cap(monkeypatch):
+    """With max_results=1 the model's own result is the one that survives."""
+    session, llm = _model_searches_again(max_results=1)
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find 1 recent paper on RAG"))
+
+    _assert_closes_cleanly(events)
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER]
+
+
+async def test_run_keeps_note_results_out_of_the_sources_list(monkeypatch):
+    """A note the model looks up is context, not a source — and it has a title."""
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_n", name="search_notes", arguments={"query": "rag"}
+                    )
+                )
+            ],
+            [StreamEvent(text="Your notes mention RAG.")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("What do my notes say about RAG?"))
+
+    _assert_closes_cleanly(events)
+    assert session.call_names == ["search_notes"]
+    assert next(d for t, d in events if t == "papers") == []
+
+
+async def test_run_keeps_a_forced_note_tool_out_of_the_sources_list(monkeypatch):
+    """The forced path accumulates papers unconditionally except for note tools."""
+    session = FakeSession()
+    llm = FakeLLM(NO_SEARCH, [[StreamEvent(text="Saved.")]])
+    _install(monkeypatch, llm, session)
+
+    request = _request(
+        "Save that",
+        force_tool={"name": "get_notes", "args": {"limit": 5}},
+    )
+    events = await _events(request)
+
+    _assert_closes_cleanly(events)
+    assert session.call_names == ["get_notes"]
+    assert next(d for t, d in events if t == "papers") == []
+
+
+async def test_run_reports_a_provider_failure_as_answer_text(monkeypatch):
+    """Invariant (c): the message is a token, and the stream still closes normally."""
+    session = FakeSession()
+    _install(monkeypatch, FailingLLM(LLMError("boom")), session)
+
+    events = await _events(_request("hi"))
+
+    _assert_closes_cleanly(events)
+    assert [t for t, _ in events] == ["token", "papers", "done", "[DONE]"]
+    assert events[0][1] == "⚠️ boom"
+
+
+async def test_run_reports_a_missing_api_key_as_answer_text(monkeypatch):
+    """A ValueError from build_client reads as user-facing text, not a crash."""
+    session = FakeSession()
+
+    async def fake_open_session(stack, bin_name):
+        return session
+
+    def boom(settings):
+        raise ValueError("Anthropic API key is not configured")
+
+    monkeypatch.setattr(agent, "_open_session", fake_open_session)
+    monkeypatch.setattr(agent, "build_client", boom)
+
+    events = await _events(_request("hi"))
+
+    _assert_closes_cleanly(events)
+    assert events[0] == ("token", "⚠️ Anthropic API key is not configured")
+
+
+def _model_cites(max_results: int, answer: str) -> tuple[FakeSession, "FakeLLM"]:
+    """Same shape as ``_model_searches_again`` but the answer restates titles."""
+    session = FakeSession(papers_by_query={"rag relevance": RELEVANT_PAPER})
+    llm = FakeLLM(
+        RECENT_SEARCH.format(n=max_results),
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_1", name="search_arxiv", arguments={"query": "rag relevance"}
+                    )
+                )
+            ],
+            [StreamEvent(text=answer)],
+        ],
+    )
+    return session, llm
+
+
+async def test_run_lists_exactly_the_papers_the_answer_cites(monkeypatch):
+    """When the answer restates titles, uncited search noise stays off the rail."""
+    session, llm = _model_cites(
+        max_results=5, answer="Only The Relevant Paper matters for this question."
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find recent papers on RAG"))
+
+    _assert_closes_cleanly(events)
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER]
+
+
+async def test_run_cited_papers_are_not_capped_by_the_requested_count(monkeypatch):
+    """An answer that uses more sources than the per-search count shows them all."""
+    session, llm = _model_cites(
+        max_results=1,
+        answer="The Relevant Paper builds on A Fake Paper; both are needed here.",
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find 1 recent paper on RAG"))
+
+    _assert_closes_cleanly(events)
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER, PAPER]

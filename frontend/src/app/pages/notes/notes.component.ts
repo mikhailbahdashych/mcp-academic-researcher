@@ -1,7 +1,5 @@
 import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { toObservable } from '@angular/core/rxjs-interop';
@@ -10,17 +8,14 @@ import { Note } from '@core/models/chat.models';
 import { NotesService } from '@core/services/notes.service';
 import { NoteCardComponent } from './note-card/note-card.component';
 
+/**
+ * Notes page: semantic search over saved notes (debounced, falling back to a
+ * plain listing when the query is empty) rendered as note cards.
+ */
 @Component({
   selector: 'app-notes',
   standalone: true,
-  imports: [
-    FormsModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    MatTooltipModule,
-    NoteCardComponent,
-  ],
+  imports: [FormsModule, MatProgressSpinnerModule, MatTooltipModule, NoteCardComponent],
   templateUrl: './notes.component.html',
   styleUrl: './notes.component.scss',
 })

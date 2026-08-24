@@ -212,6 +212,37 @@ export class SessionService {
   }
 
   /**
+   * Records the source list one answer resolved to, on that answer's message.
+   *
+   * The model numbers its `[n]` markers against its own final source list for
+   * that turn, so a citation can only be resolved through the papers of the
+   * message that wrote it — the session-level list accumulates across turns and
+   * renumbers everything from turn two on. `hydrateSession` already restores
+   * this from the backend; this keeps a live stream consistent with a reload.
+   *
+   * Like `appendToken` this does not touch localStorage: `finalizeMessage`
+   * persists once the stream is done.
+   *
+   * @param sessionId - Session containing the message.
+   * @param messageId - ID of the assistant message the papers belong to.
+   * @param papers - The turn's source list, in the order the model numbered it.
+   */
+  setMessagePapers(sessionId: string, messageId: string, papers: Paper[]): void {
+    this._sessions.update(sessions =>
+      sessions.map(s =>
+        s.id !== sessionId
+          ? s
+          : {
+              ...s,
+              messages: s.messages.map((m: Message) =>
+                m.id !== messageId ? m : { ...m, papers: [...papers] }
+              ),
+            }
+      )
+    );
+  }
+
+  /**
    * Marks a message as no longer streaming and persists to localStorage.
    * Called when the SSE stream completes or errors.
    */

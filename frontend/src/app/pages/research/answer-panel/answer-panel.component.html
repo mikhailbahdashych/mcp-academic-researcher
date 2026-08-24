@@ -4,6 +4,9 @@
       <app-message-thread
         [messages]="sess.messages"
         [isStreaming]="isStreaming()"
+        [fallbackCitations]="sess.papers.length"
+        (saveNote)="onSaveNote($event)"
+        (rewrite)="onRewrite($event)"
       ></app-message-thread>
     }
   </div>

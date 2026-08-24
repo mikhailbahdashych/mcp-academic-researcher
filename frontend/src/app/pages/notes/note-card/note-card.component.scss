@@ -1,163 +1,101 @@
 .note-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   background: var(--app-surface);
   border: 1px solid var(--app-border);
-  border-radius: var(--radius-lg);
-  padding: 16px 20px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
 
-  &:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: var(--app-shadow);
-
-    .delete-btn {
-      opacity: 1;
-    }
-  }
+  &:hover .delete-btn { opacity: 1; }
 }
 
-.note-header {
+.note-head {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  cursor: pointer;
-  margin-bottom: 10px;
-}
-
-.note-title-row {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .note-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--app-text-primary);
+  flex: 1;
+  min-width: 0;
   margin: 0;
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.4;
+  color: var(--app-text-primary);
+  overflow-wrap: anywhere;
 }
 
 .score-badge {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  background: rgba(29, 233, 182, 0.15);
-  color: var(--accent-color);
-  border-radius: 20px;
+  flex-shrink: 0;
   padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  font-size: 12px;
+  line-height: 1.5;
   white-space: nowrap;
 }
 
 .delete-btn {
   flex-shrink: 0;
   opacity: 0;
-  transition: opacity 0.15s;
-  color: var(--app-text-secondary) !important;
-  margin-top: -4px;
+  color: var(--app-text-faint);
+  transition: opacity 0.15s, color 0.15s;
 
-  &:hover {
-    color: var(--danger-color) !important;
-  }
-
-  ::ng-deep .mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
+  &:hover { color: var(--danger-color); }
+  &:focus-visible { opacity: 1; }
 }
 
 .note-content {
-  font-size: 0.875rem;
-  color: var(--app-text-secondary);
+  font-size: 15.5px;
   line-height: 1.6;
-  margin: 0 0 8px;
+  color: var(--app-text-body);
   white-space: pre-wrap;
-  word-break: break-word;
+  overflow-wrap: anywhere;
 
   &.clamped {
     display: -webkit-box;
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
 }
 
 .expand-btn {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  font-size: 0.8125rem;
-  color: var(--accent-color);
-  margin-bottom: 10px;
-
-  &:hover {
-    text-decoration: underline;
-  }
+  align-self: flex-start;
 }
 
 .note-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 8px;
-  margin-top: 4px;
-}
-
-.note-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
 }
 
 .paper-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.75rem;
-  color: var(--app-text-secondary);
-  background: var(--app-surface-elevated);
-  border: 1px solid var(--app-border);
-  border-radius: var(--radius-sm);
-  padding: 2px 8px;
   max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  font-size: 12px;
+  line-height: 1.5;
   cursor: pointer;
-  transition: border-color 0.15s, color 0.15s;
-
-  &:hover {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-  }
-}
-
-.paper-icon {
-  font-size: 13px;
-  width: 13px;
-  height: 13px;
-  flex-shrink: 0;
 }
 
 .note-date {
-  font-size: 0.75rem;
+  font-size: 12px;
+  color: var(--app-text-faint);
 }
 
-.note-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.tag-chip {
-  font-size: 0.75rem;
-  background: var(--app-surface-elevated);
-  color: var(--app-text-secondary);
+.tag-pill {
+  padding: 2px 8px;
   border: 1px solid var(--app-border);
-  border-radius: 20px;
-  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--app-text-secondary);
 }

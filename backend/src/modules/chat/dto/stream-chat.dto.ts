@@ -1,4 +1,12 @@
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsIn,
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class StreamChatDto {
   @IsString()
@@ -8,4 +16,10 @@ export class StreamChatDto {
   @IsOptional()
   @IsObject()
   forceTool?: { name: string; args: Record<string, unknown> };
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(['arxiv', 'openalex'], { each: true })
+  sources?: string[];
 }

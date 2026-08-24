@@ -1,21 +1,14 @@
 <div class="session-list">
-  @if (!groups().length) {
-    <div class="empty-state">
-      <span class="text-secondary" style="font-size: 0.8125rem; padding: 16px; display: block; text-align: center;">
-        No research sessions yet
-      </span>
-    </div>
+  <p class="mono-label">Library</p>
+
+  @if (!sessions().length) {
+    <p class="empty text-faint">No threads yet</p>
   }
 
-  @for (group of groups(); track group.label) {
-    <div class="group">
-      <span class="group-label">{{ group.label }}</span>
-      @for (session of group.sessions; track session.id) {
-        <app-session-item
-          [session]="session"
-          (deleteSession)="onDelete($event)"
-        ></app-session-item>
-      }
-    </div>
+  @for (session of sessions(); track session.id) {
+    <app-session-item
+      [session]="session"
+      (deleteSession)="onDelete($event)"
+    ></app-session-item>
   }
 </div>

@@ -4,6 +4,7 @@ import { PrismaModule } from './common/database/prisma.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 import { ChatModule } from './modules/chat/chat.module';
 import { NotesModule } from './modules/notes/notes.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { NotesModule } from './modules/notes/notes.module';
     ConversationsModule,
     ChatModule,
     NotesModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

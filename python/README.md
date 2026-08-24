@@ -1,6 +1,8 @@
 # Python -- Orchestrator and MCP Servers
 
-The Python layer contains the FastAPI orchestrator and three MCP (Model Context Protocol) servers. The orchestrator acts as the MCP host, spawning each server as a stdio subprocess, coordinating tool calls with the Ollama LLM, and streaming responses back to the NestJS gateway.
+The Python layer contains the FastAPI orchestrator and three MCP (Model Context Protocol) servers. The orchestrator acts as the MCP host, spawning each server as a stdio subprocess, coordinating tool calls with the LLM the request names -- a local Ollama model or Anthropic's Claude -- and streaming responses back to the NestJS gateway.
+
+The orchestrator is **stateless with respect to the provider**: every `/chat` request carries its own `llm` block, so which model answers is a gateway decision, not a deployment one.
 
 [Back to project root](../README.md)
 
@@ -12,6 +14,8 @@ The Python layer contains the FastAPI orchestrator and three MCP (Model Context 
 - [Orchestrator](#orchestrator)
   - [FastAPI Application](#fastapi-application)
   - [Agent Module](#agent-module)
+  - [LLM Provider Adapter](#llm-provider-adapter)
+  - [LLM Router](#llm-router)
   - [Notes Router](#notes-router)
   - [Pydantic Models](#pydantic-models)
 - [MCP Servers](#mcp-servers)
@@ -32,13 +36,15 @@ The Python directory is a `uv` workspace with five members:
 ```
 python/
 ├── pyproject.toml                  # Workspace root (members, ruff, pytest config)
-├── .env                            # OPENALEX_API_KEY
+├── .env                            # OPENALEX_API_KEY, ANTHROPIC_API_KEY / CLAUDE_API_KEY
 ├── orchestrator/                   # FastAPI orchestrator
-│   ├── pyproject.toml              # Dependencies: fastapi, mcp, ollama, httpx, etc.
+│   ├── pyproject.toml              # Dependencies: fastapi, mcp, ollama, anthropic, httpx, etc.
 │   └── orchestrator/
 │       ├── __init__.py
 │       ├── main.py                 # FastAPI app with /chat and /health endpoints
 │       ├── agent.py                # Agentic loop: intent classification + tool execution
+│       ├── llm.py                  # Provider adapters: OllamaClient / AnthropicClient
+│       ├── llm_router.py           # REST endpoints backing the settings page
 │       ├── models.py               # Pydantic request/response models
 │       └── notes_router.py         # REST endpoints for notes CRUD + vector search
 ├── mcp_servers/
@@ -85,6 +91,12 @@ Each member defines a CLI entry point via `[project.scripts]`:
 - `mcp-notes` -> `notes.server:main`
 - `mcp-citations` -> `citations.server:main`
 
+### Dependency Pins
+
+`mcp` is pinned to `>=1.25.0,<2` in the orchestrator **and** in all three MCP server packages. MCP 2.0 removed `mcp.server.fastmcp`, which every server here imports -- allowing the major bump would break all of them at import time.
+
+The orchestrator additionally depends on `anthropic>=1.0.0` alongside `ollama>=0.4.0`; both providers are always installed, and which one runs is decided per request.
+
 ---
 
 ## Orchestrator
@@ -119,11 +131,16 @@ Health check endpoint. Returns `{"status": "ok"}`.
 
 Mounted at `/notes` prefix via `notes_router`. See [Notes Router](#notes-router).
 
+#### LLM endpoints
+
+Mounted at `/llm` prefix via `llm_router`. See [LLM Router](#llm-router).
+
 #### Application configuration
 
 - CORS: allows all origins (internal service)
 - No authentication (gateway handles auth)
 - Default port: 8000
+- `load_dotenv()` runs **before** the local imports, because those modules read their configuration (notes directory, Ollama host, API keys) from the environment at import time. That is what the per-import `# noqa: E402` suppressions in `main.py` mark
 
 ---
 
@@ -131,16 +148,20 @@ Mounted at `/notes` prefix via `notes_router`. See [Notes Router](#notes-router)
 
 **File:** `orchestrator/orchestrator/agent.py`
 
-The agent module implements the core agentic loop that coordinates MCP tool calls with the Ollama LLM. This is the most complex component in the system.
+The agent module implements the core agentic loop that coordinates MCP tool calls with the LLM. This is the most complex component in the system.
+
+It holds no provider configuration of its own: it builds a client from the request's `llm` block via `build_client()` (see [LLM Provider Adapter](#llm-provider-adapter)) and uses that **one** client for both the intent classifier and the tool loop, so a request answered by Claude is also classified by Claude.
 
 #### Constants
 
 | Name | Value | Description |
 |------|-------|-------------|
-| `OLLAMA_BASE_URL` | `$OLLAMA_BASE_URL` or `http://localhost:11434` | Ollama API base URL |
-| `MODEL` | `qwen2.5:7b` | Default LLM model for chat and intent classification |
-| `SYSTEM_PROMPT` | _(long string)_ | Instructions for the LLM to act as an academic research assistant |
+| `SYSTEM_PROMPT` | _(long string)_ | Instructions for the LLM to act as an academic research assistant, including the `[n]` inline-citation convention |
 | `DEFAULT_MAX_RESULTS` | `5` | Default number of papers to return |
+| `PRE_SEARCH_TOOLS` | `["search_arxiv", "search_openalex"]` | Paper-search tools that can be pre-called; a request names them by suffix. Also the only tools whose results may enter the sources list |
+| `NOTE_TOOL_NAMES` | `{save_note, get_notes, search_notes, delete_note}` | Notes-server tools. Notes carry a `title` like papers do, so they are excluded from the sources rail |
+| `SEARCH_TOOL_NAMES` | `{search_arxiv, search_openalex, search_notes}` | Excluded from the LLM's tool list after a pre-search, so it cannot re-run them |
+| `MAX_TOOL_ITERATIONS` | `8` | Ceiling on LLM round trips per request, so a tool-calling loop cannot run away |
 
 #### `run(request: ChatRequest) -> AsyncGenerator[str, None]`
 
@@ -149,34 +170,51 @@ The main entry point. An async generator that yields SSE-formatted strings.
 **Flow:**
 
 1. **Open MCP sessions**: Spawns three stdio subprocesses (`mcp-papers`, `mcp-citations`, `mcp-notes`) and initializes MCP client sessions with each
-2. **Build tool registry**: Lists all tools from all servers and builds a `tool_session` map (`tool_name -> ClientSession`) plus an `ollama_tools` list of tool schemas in Ollama format
+2. **Build tool registry**: Lists all tools from all servers and builds a `tool_session` map (`tool_name -> ClientSession`) plus an `all_tools` list of tool schemas in the canonical format
 3. **Initialize message history**: Prepends the system prompt and adds all messages from `request.history`
-4. **Handle forced tool call** (if `request.force_tool` is set): Calls the specified tool directly via MCP, appends the result to history, and skips intent classification
-5. **Intent classification** (if no forced tool): Calls `_extract_search_query()` to determine if the user's message is a paper search request
-6. **Pre-search** (if search intent detected):
-   - Calls `search_arxiv` and `search_openalex` with the extracted query parameters
+4. **Build the LLM client**: `build_client(LLMSettings(**request.llm.model_dump()) if request.llm else None)` -- a missing `llm` block means local Ollama with the adapter's defaults
+5. **Intent classification** (if no forced tool): Calls `_extract_search_query()` with that same client, *before* appending the current message, so the classifier's recent-context window does not see it twice
+6. **Handle forced tool call** (if `request.force_tool` is set): Calls the specified tool directly via MCP and appends the result. A failure is still recorded as a call/result pair -- a dangling tool call is a protocol error for Anthropic
+7. **Pre-search** (if search intent detected):
+   - Calls the search tools selected by `_select_search_tools(request.sources, ...)` with the extracted query parameters. One dead source does not sink the answer the other found
    - Calls `search_notes` to retrieve related prior notes for context
    - Appends all results as tool call + tool response messages to the history
-7. **LLM loop**: Streams the LLM response, handling any additional tool calls the model decides to make
-   - If the model returns `tool_calls`, executes them via MCP and loops back
-   - If no `tool_calls`, emits the accumulated papers and `done` event, then exits
-8. **Yield SSE events**: Tokens are yielded as they arrive from the LLM stream
+8. **LLM loop**: Streams the LLM response, handling any additional tool calls the model decides to make, up to `MAX_TOOL_ITERATIONS`
+   - If the model returns tool calls, executes them via MCP and loops back
+   - If not, breaks out
+9. **Yield SSE events**: Tokens are yielded as they arrive from the LLM stream, then the deduplicated papers and the `done` / `[DONE]` sentinels
+
+Papers are kept in two buckets. `presearch_papers` come from the classifier's guess at a query; `loop_papers` come from searches the model ran deliberately after seeing the results. The final `papers` event emits `_dedup_papers(loop_papers + presearch_papers, requested_max_results)`, so the model's own searches lead the list and are what survives a `max_results` cap.
+
+A provider failure (`LLMError`, or a `ValueError` from an unconfigured key) is reported as answer text prefixed with a warning sign, not as an SSE `error` event -- the frontend treats an `error` event as a dropped stream. The exception is logged without the provider settings, which carry the API key.
 
 **Parameters:**
 | Name | Type | Description |
 |------|------|-------------|
-| `request` | `ChatRequest` | The chat request with message, history, and optional force_tool |
+| `request` | `ChatRequest` | The chat request with message, history, and optional `force_tool`, `sources`, and `llm` |
 
 **Yields:** `str` -- SSE-formatted lines (`data: {...}\n\n`)
 
-#### `_extract_search_query(client, message, history) -> SearchIntent | None`
+#### `_select_search_tools(sources, available) -> list[str]`
 
-LLM-based intent classifier that determines whether a user message is requesting a paper search.
+Picks the pre-search tools to run for the sources a request asked for.
 
 **Parameters:**
 | Name | Type | Description |
 |------|------|-------------|
-| `client` | `ollama.AsyncClient` | Ollama async client |
+| `sources` | `list[str] \| None` | Source suffixes (`"arxiv"`, `"openalex"`), matched case- and whitespace-insensitively. `None` means every source |
+| `available` | `Container[str]` | Tool names the connected MCP servers actually offer |
+
+**Returns:** Tool names to pre-call, in the stable order of `PRE_SEARCH_TOOLS`. An unknown source name selects nothing rather than raising.
+
+#### `_extract_search_query(client, message, history) -> SearchIntent | None`
+
+LLM-based intent classifier that determines whether a user message is requesting a paper search. It runs on the request's own provider, via `client.complete(..., max_tokens=256)`.
+
+**Parameters:**
+| Name | Type | Description |
+|------|------|-------------|
+| `client` | `LLMClient` | The provider client built for this request |
 | `message` | `str` | The user's current message |
 | `history` | `list[dict]` | Full message history (uses last 6 for context) |
 
@@ -216,16 +254,16 @@ Opens an MCP client session by spawning a subprocess.
 
 **Implementation:** Resolves the binary path relative to the current Python executable's directory (handles virtual environments), then uses `stdio_client()` from the MCP SDK to establish a JSON-RPC connection over stdin/stdout.
 
-#### `_mcp_tool_to_ollama(tool) -> dict`
+#### `_mcp_tool_to_canonical(tool) -> dict`
 
-Converts an MCP tool schema to Ollama's tool format.
+Converts an MCP tool schema to the orchestrator's canonical tool format, which each provider adapter then translates for its own API.
 
 **Parameters:**
 | Name | Type | Description |
 |------|------|-------------|
 | `tool` | MCP `Tool` object | Tool with `name`, `description`, `inputSchema` |
 
-**Returns:** `dict` in Ollama tool format:
+**Returns:** `dict` in canonical tool format:
 ```python
 {
     "type": "function",
@@ -236,6 +274,10 @@ Converts an MCP tool schema to Ollama's tool format.
     },
 }
 ```
+
+#### `_build_tool_exchange(tool_name, tool_args, result_texts) -> tuple[dict, dict]`
+
+Records an already-executed tool call (a forced call or a pre-search) as an assistant/tool message pair sharing a freshly minted call id. Providers require every tool result to name the call it answers, so the two messages must be appended together, in that order.
 
 #### `_parse_papers(result) -> list[dict]`
 
@@ -283,6 +325,112 @@ Resolves a binary name to an absolute path within the current virtual environmen
 
 ---
 
+### LLM Provider Adapter
+
+**File:** `orchestrator/orchestrator/llm.py`
+
+Gives the orchestrator one LLM interface regardless of backend. `agent.py` speaks a single **canonical** message/tool dialect (Ollama-shaped dicts), and this module translates it for whichever provider is configured.
+
+Canonical messages:
+
+```python
+{"role": "system",    "content": str}
+{"role": "user",      "content": str}
+{"role": "assistant", "content": str,
+ "tool_calls": [{"id": str, "function": {"name": str, "arguments": dict}}]}
+{"role": "tool",      "content": str, "tool_call_id": str, "name": str}
+```
+
+#### Constants
+
+| Name | Value | Description |
+|------|-------|-------------|
+| `DEFAULT_OLLAMA_MODEL` | `qwen2.5:7b` | Model used when a request names none |
+| `DEFAULT_OLLAMA_BASE_URL` | `http://localhost:11434` | Fallback host, after `$OLLAMA_BASE_URL` |
+| `DEFAULT_ANTHROPIC_MODEL` | `claude-opus-5` | Model used when a request names none |
+| `ANTHROPIC_STREAM_MAX_TOKENS` | `16000` | Output budget for streamed Claude responses |
+| `ANTHROPIC_MIN_COMPLETE_MAX_TOKENS` | `4096` | Floor for non-streamed Claude budgets |
+
+The floor exists because current Claude models think adaptively and thinking tokens bill against `max_tokens` -- a caller asking for 16 tokens can otherwise get back zero *text* blocks, which reads as an empty answer rather than an error. Ollama has no such tax, so the floor lives in the adapter rather than in the callers.
+
+#### `LLMSettings`
+
+```python
+@dataclass
+class LLMSettings:
+    provider: Provider = "ollama"        # "ollama" | "anthropic"
+    model: str | None = None
+    api_key: str | None = field(default=None, repr=False)  # anthropic only
+    base_url: str | None = None                            # ollama only
+```
+
+`api_key` is declared `repr=False`, which keeps the key out of reprs, f-strings, and traceback locals. `LLMSettings` crosses an HTTP boundary, so the safe thing is the default.
+
+#### `LLMClient` protocol
+
+The surface `agent.py` depends on, implemented by both adapters:
+
+| Member | Signature | Description |
+|--------|-----------|-------------|
+| `model` | `str` | The model id in use |
+| `complete` | `(messages, *, max_tokens=512) -> str` | Full assistant text; no tools, no streaming |
+| `stream` | `(messages, tools) -> AsyncIterator[StreamEvent]` | Text deltas and tool calls |
+| `list_models` | `() -> list[dict]` | `[{"id": str, "name": str}]` |
+
+A `StreamEvent` carries either a `text` delta or a completed `tool_call` (`ToolCall(id, name, arguments)`).
+
+#### `OllamaClient(model, base_url)`
+
+Ollama's own wire format *is* the canonical format, so messages and tools pass through untouched. Ollama does not id its tool calls, so `new_tool_call_id()` mints one -- the agent needs an id to pair results with calls. Transport failures, `ollama.ResponseError`, and malformed responses are translated into `LLMError` with a user-facing message (e.g. `Ollama is not reachable at <base_url>`).
+
+#### `AnthropicClient(model, api_key)`
+
+Translates canonical messages into the Anthropic Messages API: system messages are hoisted out and joined into the `system` parameter, assistant tool calls become `tool_use` blocks, and tool results become `tool_result` blocks inside a `user` message, with consecutive results merged (the API rejects a bare `tool` role and expects results batched). A conversation that would start with an assistant message gets a synthetic `(conversation start)` user message, since the API requires the first message to be from the user.
+
+Streaming yields text deltas live; `tool_use` inputs only arrive complete on the final message, so tool calls are emitted after the stream closes. SDK failures become `LLMError` with a readable message (`Anthropic rejected the API key`, `Anthropic rate limit reached, try again shortly`, and so on). `list_models()` returns only ids starting with `claude-`.
+
+#### `build_client(settings) -> LLMClient`
+
+Builds the client for `settings`, defaulting to local Ollama when `settings` is `None`.
+
+**Raises:** `ValueError` for an unknown provider, or for Anthropic with no resolvable key.
+
+#### `env_anthropic_key() -> str | None`
+
+Reads the Anthropic key from the environment, honouring both spellings: `ANTHROPIC_API_KEY` first, then `CLAUDE_API_KEY`. Used as the fallback when a request carries no key of its own.
+
+---
+
+### LLM Router
+
+**File:** `orchestrator/orchestrator/llm_router.py`
+
+REST endpoints backing the frontend's LLM provider settings panel, mounted at `/llm` in the FastAPI app.
+
+**Every endpoint answers HTTP 200.** A provider that is misconfigured, unreachable, or rejecting the key is a *result* the settings panel renders inline, not a transport failure. Responses carry an `error` string rather than a status code -- and never echo the submitted API key back. Failures are logged with the provider name only.
+
+#### `POST /llm/models`
+
+Lists the models the configured provider offers.
+
+**Request body:** `LLMConfig` (see [Pydantic Models](#pydantic-models))
+
+**Returns:** `{"models": [{"id", "name"}, ...]}`, or `{"models": [], "error": str}` when the provider cannot be reached or is not configured.
+
+#### `POST /llm/test`
+
+Round-trips one tiny completion (`"Reply with the single word: pong"`, `max_tokens=16`) to prove the provider actually answers.
+
+**Request body:** `LLMConfig`
+
+**Returns:** `{"ok": true, "model", "latency_ms", "reply"}` on success, with the reply truncated to 200 characters; otherwise `{"ok": false, "error": str}`.
+
+#### `GET /llm/env`
+
+Reports whether the server already holds an Anthropic key: `{"anthropic_api_key_present": bool}`. This lets the settings panel offer "use the server's key" without ever sending the key itself to the browser.
+
+---
+
 ### Notes Router
 
 **File:** `orchestrator/orchestrator/notes_router.py`
@@ -323,6 +471,27 @@ Lists notes with optional filters.
 
 **Returns:** `list[dict]` -- Note objects ordered by `created_at DESC`.
 
+#### `POST /notes`
+
+Creates a note and indexes it for semantic search, mirroring the `save_note` MCP tool. Backs the "Save note" action in the UI, which reaches it through the gateway's `POST /api/notes`.
+
+**Request body:** `NoteCreate`
+
+| Field | Type | Default | Description |
+|-------|------|---------|-------------|
+| `title` | `str` | _(required)_ | Note title, min length 1 |
+| `content` | `str` | _(required)_ | Note body, min length 1 |
+| `paper_id` | `str \| None` | `None` | Comma-separated paper IDs the note refers to |
+| `tags` | `list[str]` | `[]` | Tag strings |
+
+**Implementation:**
+1. Embeds `"{title} {content}"` via `_get_embedding()`
+2. Inserts the note row and its embedding vector, replacing any row with the same id
+
+**Returns:** The created note dict, in the same shape as the list endpoint.
+
+**Raises:** `HTTPException(503)` if the embedding service is unavailable. The gateway turns this into its own 503 rather than a generic 500.
+
 #### `GET /notes/search`
 
 Semantic vector search over notes.
@@ -336,7 +505,7 @@ Semantic vector search over notes.
 **Returns:** `list[dict]` -- Note objects with an additional `score` field (distance from query embedding; lower is more similar).
 
 **Implementation:**
-1. Generates an embedding for the query via Ollama's `/api/embeddings` endpoint
+1. Generates an embedding for the query via Ollama's `/api/embed` endpoint
 2. Performs KNN search on the `notes_vec` virtual table using `MATCH` with `k = limit`
 3. Fetches full note records for the matched IDs
 4. Sorts results by distance (ascending)
@@ -359,7 +528,9 @@ Returns a SQLite connection with `sqlite-vec` loaded and tables created if they 
 
 ##### `_get_embedding(text: str) -> list[float]`
 
-Generates a 768-dimensional embedding vector via Ollama's `/api/embeddings` endpoint using the model specified by `EMBED_MODEL`.
+Generates a 768-dimensional embedding vector via Ollama's `/api/embed` endpoint using the model specified by `EMBED_MODEL`. It uses the same endpoint and payload as the notes MCP server's `_get_embedding`, so notes and queries embedded here land on the same (L2-normalized) scale as the ones written by the MCP tool -- both share the `notes_vec` index.
+
+**Embeddings always need Ollama.** Anthropic has no embeddings API, so this call goes to Ollama even when chat is answered by Claude. Saving and searching notes fails without a reachable Ollama daemon and a pulled `EMBED_MODEL`.
 
 ##### `_row_to_dict(row: tuple) -> dict`
 
@@ -387,6 +558,18 @@ class ForceTool(BaseModel):
     args: dict      # Tool arguments
 ```
 
+#### `LLMConfig`
+
+```python
+class LLMConfig(BaseModel):
+    provider: Literal["ollama", "anthropic"] = "ollama"
+    model: str | None = None      # None picks the provider's default
+    api_key: str | None = None    # None falls back to the server environment
+    base_url: str | None = None   # None falls back to OLLAMA_BASE_URL
+```
+
+Mirrors `orchestrator.llm.LLMSettings` field for field, so a config can be splatted straight into it. This is also the request body of both `POST /llm/models` and `POST /llm/test`.
+
 #### `ChatRequest`
 
 ```python
@@ -395,7 +578,11 @@ class ChatRequest(BaseModel):
     message: str                  # Current user message
     history: list[Message]        # Full conversation history
     force_tool: ForceTool | None = None  # Optional forced tool call
+    sources: list[str] | None = None     # "arxiv", "openalex"; None means all
+    llm: LLMConfig | None = None         # None means the default (local Ollama)
 ```
+
+The gateway sends this with the full conversation history *and* the provider to answer it with, so the orchestrator can remain stateless in both respects.
 
 ---
 
@@ -532,7 +719,7 @@ Deletes a note and its embedding vector by ID.
 - **Location:** `$NOTES_DIR/notes.db` (default: `~/.academic-researcher/notes/notes.db`)
 - **Vector extension:** `sqlite-vec` for KNN similarity search
 - **Embedding model:** `nomic-embed-text` (768-dimensional vectors) via Ollama `/api/embed`
-- **Note:** The notes server uses `/api/embed` (new Ollama API), while the notes router uses `/api/embeddings` (legacy Ollama API). Both work, but the endpoints differ.
+- **Note:** The notes router uses the same endpoint and payload, so both writers share the `notes_vec` index on one scale. Embeddings always go to Ollama -- Anthropic has no embeddings API -- so notes save/search needs a running Ollama daemon even when chat is answered by Claude.
 
 ---
 
@@ -602,7 +789,7 @@ class Paper(BaseModel):
     abstract: str
     year: int | None = None
     url: str
-    source: str  # "arxiv" | "semantic_scholar"
+    source: str  # "arxiv" | "openalex"
 ```
 
 ---
@@ -611,10 +798,16 @@ class Paper(BaseModel):
 
 | Variable | Default | Used By | Description |
 |----------|---------|---------|-------------|
-| `OLLAMA_BASE_URL` | `http://localhost:11434` | Orchestrator, Notes server, Notes router | Ollama API base URL |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` | LLM adapter, Notes server, Notes router | Ollama API base URL. For chat it is only a fallback -- a request's `llm.base_url` wins |
 | `EMBED_MODEL` | `nomic-embed-text` | Notes server, Notes router | Ollama embedding model name |
 | `NOTES_DIR` | `~/.academic-researcher/notes` | Notes server, Notes router | Directory for notes SQLite database |
 | `OPENALEX_API_KEY` | _(none)_ | Papers server, Citations server | Optional API key for higher OpenAlex rate limits |
+| `ANTHROPIC_API_KEY` | _(none)_ | LLM adapter, LLM router | Anthropic key used when a request carries none. Checked first |
+| `CLAUDE_API_KEY` | _(none)_ | LLM adapter, LLM router | Alternative spelling of the same key. Checked second |
+
+The two Anthropic spellings are both read by `env_anthropic_key()`; whichever is set acts as the fallback for requests without a key, and is what `GET /llm/env` reports on. The key itself is never returned by any endpoint and never logged.
+
+Chat provider settings normally arrive per request from the NestJS gateway, which stores them in its own database -- see the [Backend README](../backend/README.md#prisma-schema). The environment variables above are the fallback for when nothing is stored.
 
 ---
 
@@ -643,6 +836,8 @@ The orchestrator communicates with MCP servers via **stdio** (standard input/out
 - Python 3.11+
 - [uv](https://docs.astral.sh/uv/getting-started/installation/) (Python package manager)
 - Ollama running with `qwen2.5:7b` and `nomic-embed-text` models
+
+Ollama is required either way: `nomic-embed-text` powers note embeddings even when chat is answered by Claude. To answer chats with Claude instead of `qwen2.5:7b`, set the provider on the app's Settings page, or put `ANTHROPIC_API_KEY` (or `CLAUDE_API_KEY`) in `python/.env` as a fallback.
 
 ### Installation
 

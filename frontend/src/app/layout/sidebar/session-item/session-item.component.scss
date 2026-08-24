@@ -2,62 +2,52 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 8px 6px 12px;
-  border-radius: var(--radius-md);
+  padding: 7px 12px;
+  border-radius: var(--radius-nav);
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+  font-size: 14px;
+  color: var(--app-text-nav);
   text-decoration: none;
-  color: var(--app-text-secondary);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
   min-width: 0;
+  transition: background 0.15s, color 0.15s;
 
   &:hover {
     background: var(--app-surface-hover);
     color: var(--app-text-primary);
     text-decoration: none;
 
-    .delete-btn {
-      opacity: 1;
-    }
+    .delete-btn { opacity: 1; }
   }
 
   &.active {
-    background: rgba(29, 233, 182, 0.08);
+    background: var(--accent-faint);
+    border-left-color: var(--accent-color);
     color: var(--app-text-primary);
-
-    .session-icon {
-      color: var(--accent-color);
-    }
   }
-}
 
-.session-icon {
-  font-size: 15px;
-  width: 15px;
-  height: 15px;
-  flex-shrink: 0;
-  color: var(--app-text-secondary);
-}
+  .title {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.4;
+  }
 
-.session-title {
-  flex: 1;
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  min-width: 0;
-}
+  .delete-btn {
+    opacity: 0;
+    margin-left: auto;
+    padding: 0;
+    background: none;
+    border: none;
+    color: var(--app-text-faint);
+    cursor: pointer;
+    display: flex;
+    flex-shrink: 0;
+    transition: opacity 0.15s, color 0.15s;
 
-.delete-btn {
-  opacity: 0;
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-  width: 22px !important;
-  height: 22px !important;
-  padding: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+    .material-icons { font-size: 14px; }
 
-  ::ng-deep {
-    .mat-mdc-button-touch-target { width: 22px !important; height: 22px !important; }
-    .mat-icon { font-size: 13px; width: 13px; height: 13px; line-height: 13px; }
+    &:focus-visible { opacity: 1; }
+    &:hover { color: var(--danger-color); }
+    &:disabled { cursor: default; }
   }
 }

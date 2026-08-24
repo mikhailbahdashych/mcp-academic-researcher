@@ -1,51 +1,63 @@
-<div class="notes-page">
-  <div class="notes-header">
-    <h1 class="notes-title">Notes</h1>
+<div class="page">
+  <header class="page-header">
+    <h1 class="page-title">Notes</h1>
+  </header>
 
-    <div class="search-bar">
-      <mat-icon class="search-icon">search</mat-icon>
-      <input
-        class="search-input"
-        type="text"
-        placeholder="Search your notes..."
-        [ngModel]="searchQuery()"
-        (ngModelChange)="searchQuery.set($event)"
-        autocomplete="off"
-      />
-      @if (searchQuery()) {
-        <button mat-icon-button class="clear-btn" (click)="clearSearch()" matTooltip="Clear">
-          <mat-icon>close</mat-icon>
-        </button>
-      }
-    </div>
+  <div class="search-box">
+    <span class="material-icons search-icon" aria-hidden="true">search</span>
+    <input
+      type="text"
+      placeholder="Search your notes..."
+      [ngModel]="searchQuery()"
+      (ngModelChange)="searchQuery.set($event)"
+      autocomplete="off"
+      aria-label="Search notes"
+    />
+    @if (searchQuery()) {
+      <button
+        type="button"
+        class="icon-action clear-btn"
+        matTooltip="Clear"
+        aria-label="Clear search"
+        (click)="clearSearch()"
+      >
+        <span class="material-icons">close</span>
+      </button>
+    }
   </div>
 
   @if (loading()) {
     <div class="loading-state">
-      <mat-spinner diameter="36"></mat-spinner>
+      <mat-spinner diameter="28"></mat-spinner>
     </div>
   } @else if (error()) {
     <div class="empty-state">
-      <mat-icon>error_outline</mat-icon>
-      <p class="text-secondary">{{ error() }}</p>
+      <span class="material-icons empty-icon" aria-hidden="true">error_outline</span>
+      <p class="empty-text">{{ error() }}</p>
     </div>
   } @else if (!notes().length) {
     <div class="empty-state">
       @if (searchQuery()) {
-        <mat-icon>search_off</mat-icon>
-        <p>No notes match <strong>"{{ searchQuery() }}"</strong></p>
-        <button mat-button (click)="clearSearch()">Clear search</button>
+        <span class="material-icons empty-icon" aria-hidden="true">search_off</span>
+        <p class="empty-text">No notes match "{{ searchQuery() }}"</p>
+        <button type="button" class="icon-action" (click)="clearSearch()">
+          <span class="material-icons">close</span>Clear search
+        </button>
       } @else {
-        <mat-icon>sticky_note_2</mat-icon>
-        <p class="text-secondary">No notes yet.</p>
-        <p class="text-secondary hint">Ask the AI to save research insights during a conversation.</p>
+        <span class="material-icons empty-icon" aria-hidden="true">sticky_note_2</span>
+        <p class="empty-text">No notes yet</p>
+        <p class="empty-text">Save an answer from a research thread to keep it here.</p>
       }
     </div>
   } @else {
-    <div class="notes-count text-secondary">
-      {{ notes().length }} note{{ notes().length !== 1 ? 's' : '' }}
-      @if (searchQuery()) { <span> matching "{{ searchQuery() }}"</span> }
-    </div>
+    <p class="count">
+      <span class="mono-label">
+        {{ notes().length }} note{{ notes().length === 1 ? '' : 's' }}
+      </span>
+      @if (searchQuery()) {
+        <span class="match-note text-faint">matching "{{ searchQuery() }}"</span>
+      }
+    </p>
 
     <div class="notes-list">
       @for (note of notes(); track note.id) {

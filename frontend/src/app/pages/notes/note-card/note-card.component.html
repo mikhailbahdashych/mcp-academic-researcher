@@ -1,48 +1,45 @@
-<div class="note-card" [class.expanded]="expanded()">
-  <div class="note-header" (click)="toggleExpand()">
-    <div class="note-title-row">
-      <h3 class="note-title">{{ note.title }}</h3>
-      @if (note.score != null) {
-        <span class="score-badge" matTooltip="Semantic similarity">{{ scorePercent(note.score) }}</span>
-      }
-    </div>
+<article class="note-card">
+  <div class="note-head">
+    <h3 class="note-title">{{ note.title }}</h3>
+    @if (note.score != null) {
+      <span class="score-badge mono" matTooltip="Semantic similarity">
+        {{ scorePercent(note.score) }}
+      </span>
+    }
     <button
-      mat-icon-button
-      class="delete-btn"
+      type="button"
+      class="icon-action delete-btn"
       matTooltip="Delete note"
-      (click)="onDelete($event)"
       aria-label="Delete note"
+      (click)="onDelete($event)"
     >
-      <mat-icon>delete_outline</mat-icon>
+      <span class="material-icons">delete_outline</span>
     </button>
   </div>
 
   <p class="note-content" [class.clamped]="!expanded()">{{ note.content }}</p>
 
-  @if (!expanded() && note.content.length > 200) {
-    <button class="expand-btn" (click)="toggleExpand()">Show more</button>
-  }
-  @if (expanded() && note.content.length > 200) {
-    <button class="expand-btn" (click)="toggleExpand()">Show less</button>
+  @if (note.content.length > 200) {
+    <button type="button" class="icon-action expand-btn" (click)="toggleExpand()">
+      <span class="material-icons">{{ expanded() ? 'expand_less' : 'expand_more' }}</span>
+      {{ expanded() ? 'Show less' : 'Show more' }}
+    </button>
   }
 
   <div class="note-footer">
-    <div class="note-meta">
-      @for (doi of paperIds; track doi) {
-        <span class="paper-badge" matTooltip="Click to copy DOI" (click)="copyDoi(doi, $event)">
-          <mat-icon class="paper-icon">article</mat-icon>
-          {{ doi }}
-        </span>
-      }
-      <span class="note-date text-secondary">{{ formatDate(note.created_at) }}</span>
-    </div>
-
-    @if (note.tags.length) {
-      <div class="note-tags">
-        @for (tag of note.tags; track tag) {
-          <span class="tag-chip">{{ tag }}</span>
-        }
-      </div>
+    @for (paperId of paperIds; track paperId) {
+      <button
+        type="button"
+        class="paper-badge mono truncate"
+        matTooltip="Click to copy"
+        (click)="copyDoi(paperId, $event)"
+      >
+        {{ paperId }}
+      </button>
+    }
+    <span class="note-date mono">{{ formatDate(note.created_at) }}</span>
+    @for (tag of note.tags; track tag) {
+      <span class="tag-pill mono">{{ tag }}</span>
     }
   </div>
-</div>
+</article>

@@ -3,6 +3,7 @@ import { Response } from 'express';
 import axios from 'axios';
 import { PrismaService } from '../../common/database/prisma.service';
 import { ConversationsService } from '../conversations/conversations.service';
+import { SettingsService } from '../settings/settings.service';
 
 @Injectable()
 export class ChatService {
@@ -13,6 +14,7 @@ export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly conversationsService: ConversationsService,
+    private readonly settingsService: SettingsService,
   ) {}
 
   async streamChat(
@@ -20,8 +22,15 @@ export class ChatService {
     query: string,
     res: Response,
     forceTool?: { name: string; args: Record<string, unknown> },
+    sources?: string[],
   ) {
-    const conversation = await this.conversationsService.findOne(conversationId);
+    const conversation =
+      await this.conversationsService.findOne(conversationId);
+
+    // Resolved before anything is persisted and before the stream is opened: a
+    // settings-read failure is our bug, and must surface as a normal error
+    // rather than as a half-written SSE stream blaming the orchestrator.
+    const llm = await this.settingsService.getLlmConfig();
 
     // Save user message
     await this.prisma.message.create({
@@ -40,7 +49,7 @@ export class ChatService {
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    const history = conversation.messages.map(m => ({
+    const history = conversation.messages.map((m) => ({
       role: m.role,
       content: m.content,
     }));
@@ -51,8 +60,20 @@ export class ChatService {
     try {
       const orchestratorRes = await axios.post(
         `${this.orchestratorUrl}/chat`,
-        { conversation_id: conversationId, message: query, history, force_tool: forceTool ?? null },
-        { responseType: 'stream', timeout: 60000 },
+        {
+          conversation_id: conversationId,
+          message: query,
+          history,
+          force_tool: forceTool ?? null,
+          sources: sources ?? null,
+          llm,
+        },
+        // No timeout: axios counts socket inactivity, and the orchestrator is
+        // legitimately silent until its first token — classifier, pre-search and
+        // a cold 7B or an adaptively thinking Opus can outlast any deadline,
+        // which would fabricate the "orchestrator is not running" mock answer.
+        // A refused connection still rejects immediately and falls back.
+        { responseType: 'stream', timeout: 0 },
       );
 
       await new Promise<void>((resolve, reject) => {
@@ -69,7 +90,8 @@ export class ChatService {
             try {
               const event = JSON.parse(payload);
               if (event.type === 'token') accumulatedContent += event.data;
-              if (event.type === 'papers') accumulatedPapers = JSON.stringify(event.data);
+              if (event.type === 'papers')
+                accumulatedPapers = JSON.stringify(event.data);
             } catch {
               // Ignore malformed lines
             }
@@ -80,7 +102,9 @@ export class ChatService {
         orchestratorRes.data.on('error', reject);
       });
     } catch (err) {
-      this.logger.warn(`Orchestrator unreachable, using mock stream: ${(err as Error).message}`);
+      this.logger.warn(
+        `Orchestrator unreachable, using mock stream: ${(err as Error).message}`,
+      );
       await this.sendMockStream(res, query);
       accumulatedContent = `[Mock response] You asked: "${query}". The Python Orchestrator is not running yet.`;
     }
@@ -110,7 +134,7 @@ export class ChatService {
 
     for (const token of tokens) {
       res.write(`data: ${JSON.stringify({ type: 'token', data: token })}\n\n`);
-      await new Promise(r => setTimeout(r, 80));
+      await new Promise((r) => setTimeout(r, 80));
     }
 
     res.write(`data: ${JSON.stringify({ type: 'done', data: null })}\n\n`);

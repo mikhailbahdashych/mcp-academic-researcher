@@ -1,7 +1,5 @@
-import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChatSession } from '@core/models/chat.models';
 import { StreamingService } from '@core/services/streaming.service';
@@ -9,7 +7,7 @@ import { StreamingService } from '@core/services/streaming.service';
 @Component({
   selector: 'app-session-item',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, MatIconModule, MatButtonModule, MatTooltipModule],
+  imports: [RouterLink, RouterLinkActive, MatTooltipModule],
   templateUrl: './session-item.component.html',
   styleUrl: './session-item.component.scss',
 })
