@@ -52,7 +52,6 @@ class LLMConfig(BaseModel):
     base_url: str | None = None
 
 
-
 class ChatRequest(BaseModel):
     """Request payload for the /chat endpoint.
 

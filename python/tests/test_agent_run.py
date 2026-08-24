@@ -178,7 +178,8 @@ async def test_run_orders_messages_and_pairs_tool_call_ids(monkeypatch):
     events = await _events(_request("Who cites this?"))
 
     _assert_closes_cleanly(events)
-    assert "".join(d for t, d in events if t == "token") == "Checking. Done."
+    # The blank line is the turn separator; see the segment-separation test below.
+    assert "".join(d for t, d in events if t == "token") == "Checking. \n\nDone."
     assert session.call_names == ["get_citations"]
     assert len(llm.seen_messages) == 2, "the loop should stop once no tool calls come back"
 
@@ -197,6 +198,60 @@ async def test_run_orders_messages_and_pairs_tool_call_ids(monkeypatch):
     assert messages[assistant_idx]["tool_calls"][0]["id"] == "call_abc"
     assert messages[tool_idx]["tool_call_id"] == "call_abc"
     assert messages[tool_idx]["name"] == "get_citations"
+
+
+async def test_run_separates_answer_text_across_tool_iterations(monkeypatch):
+    """Two model turns are one bubble, so the second must not weld onto the first.
+
+    Without a separator the concatenation is "part one## part two", where the
+    heading is no longer at the start of a line and renders as literal "##" —
+    in the live stream and in the copy the gateway writes to the database.
+    """
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(text="part one"),
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_sep", name="get_citations", arguments={"paper_id": "x"}
+                    )
+                ),
+            ],
+            [StreamEvent(text="## part two")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Who cites this?"))
+
+    _assert_closes_cleanly(events)
+    assert "".join(d for t, d in events if t == "token") == "part one\n\n## part two"
+
+
+async def test_run_does_not_lead_with_a_separator_when_a_turn_is_silent(monkeypatch):
+    """A tool-only first turn emitted no text, so the answer must not open blank."""
+    session = FakeSession()
+    llm = FakeLLM(
+        NO_SEARCH,
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_quiet", name="get_citations", arguments={"paper_id": "x"}
+                    )
+                )
+            ],
+            [StreamEvent(text="## the whole answer")],
+        ],
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Who cites this?"))
+
+    _assert_closes_cleanly(events)
+    assert "".join(d for t, d in events if t == "token") == "## the whole answer"
 
 
 async def test_run_pre_searches_only_the_requested_source(monkeypatch):

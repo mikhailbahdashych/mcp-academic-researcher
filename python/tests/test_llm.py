@@ -274,6 +274,21 @@ async def test_ollama_complete_honours_max_tokens(monkeypatch):
     assert captured["stream"] is False
 
 
+async def test_ollama_malformed_complete_response_becomes_llm_error(monkeypatch):
+    """A reply without a usable message is a provider failure, not a crash."""
+
+    class Response:
+        message = None
+
+    async def fake_chat(**kwargs):
+        return Response()
+
+    c = OllamaClient(model="m", base_url="http://x")
+    monkeypatch.setattr(c._client, "chat", fake_chat)
+    with pytest.raises(LLMError, match="Ollama request failed at http://x"):
+        await c.complete([{"role": "user", "content": "hi"}])
+
+
 async def test_ollama_timeout_becomes_llm_error(monkeypatch):
     async def fake_chat(**kwargs):
         raise httpx.ReadTimeout("too slow")

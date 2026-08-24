@@ -183,9 +183,12 @@ class OllamaClient:
                 stream=False,
                 options={"num_predict": max_tokens},
             )
-        except _OLLAMA_ERRORS as exc:
+            # Read inside the try: a daemon that answers with a malformed message
+            # must surface as an LLMError like every other Ollama failure, not as
+            # a bare AttributeError the caller has no way to render.
+            return response.message.content or ""
+        except (*_OLLAMA_ERRORS, AttributeError) as exc:
             raise _ollama_error(exc, self.base_url) from exc
-        return response.message.content or ""
 
     async def stream(
         self, messages: list[dict], tools: list[dict]

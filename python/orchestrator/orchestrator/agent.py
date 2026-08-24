@@ -451,13 +451,24 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
             else:
                 llm_tools = all_tools
 
+            # Every iteration is a separate model turn, but the tokens all land in
+            # one answer bubble. Without a break between turns the previous turn's
+            # last word runs straight into this turn's first one, so an answer that
+            # opens with a heading arrives as "...studies.## Heading" and the
+            # heading never parses as markdown. The separator is a token like any
+            # other, so it also reaches the copy the gateway persists.
+            emitted_any_text = False
+
             for _ in range(MAX_TOOL_ITERATIONS):
                 full_content = ""
                 tool_calls: list[ToolCall] = []
 
                 async for event in client.stream(messages, llm_tools):
                     if event.text:
+                        if emitted_any_text and not full_content:
+                            yield _sse_token("\n\n")
                         full_content += event.text
+                        emitted_any_text = True
                         yield _sse_token(event.text)
                     if event.tool_call:
                         tool_calls.append(event.tool_call)
