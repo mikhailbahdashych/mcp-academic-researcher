@@ -426,3 +426,49 @@ async def test_run_reports_a_missing_api_key_as_answer_text(monkeypatch):
 
     _assert_closes_cleanly(events)
     assert events[0] == ("token", "⚠️ Anthropic API key is not configured")
+
+
+def _model_cites(max_results: int, answer: str) -> tuple[FakeSession, "FakeLLM"]:
+    """Same shape as ``_model_searches_again`` but the answer restates titles."""
+    session = FakeSession(papers_by_query={"rag relevance": RELEVANT_PAPER})
+    llm = FakeLLM(
+        RECENT_SEARCH.format(n=max_results),
+        [
+            [
+                StreamEvent(
+                    tool_call=ToolCall(
+                        id="call_1", name="search_arxiv", arguments={"query": "rag relevance"}
+                    )
+                )
+            ],
+            [StreamEvent(text=answer)],
+        ],
+    )
+    return session, llm
+
+
+async def test_run_lists_exactly_the_papers_the_answer_cites(monkeypatch):
+    """When the answer restates titles, uncited search noise stays off the rail."""
+    session, llm = _model_cites(
+        max_results=5, answer="Only The Relevant Paper matters for this question."
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find recent papers on RAG"))
+
+    _assert_closes_cleanly(events)
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER]
+
+
+async def test_run_cited_papers_are_not_capped_by_the_requested_count(monkeypatch):
+    """An answer that uses more sources than the per-search count shows them all."""
+    session, llm = _model_cites(
+        max_results=1,
+        answer="The Relevant Paper builds on A Fake Paper; both are needed here.",
+    )
+    _install(monkeypatch, llm, session)
+
+    events = await _events(_request("Find 1 recent paper on RAG"))
+
+    _assert_closes_cleanly(events)
+    assert next(d for t, d in events if t == "papers") == [RELEVANT_PAPER, PAPER]

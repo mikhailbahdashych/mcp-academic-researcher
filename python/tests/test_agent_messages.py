@@ -8,7 +8,7 @@ touching an LLM.
 
 import json
 
-from orchestrator.agent import _build_tool_exchange, _select_search_tools
+from orchestrator.agent import _build_tool_exchange, _select_cited_papers, _select_search_tools
 
 AVAILABLE = {"search_arxiv", "search_openalex", "search_notes", "save_note"}
 
@@ -59,3 +59,56 @@ def test_select_search_tools_with_no_sources_selects_nothing():
 
 def test_select_search_tools_skips_tools_the_servers_do_not_offer():
     assert _select_search_tools(None, {"search_openalex"}) == ["search_openalex"]
+
+
+# --- _select_cited_papers -------------------------------------------------
+
+LONG_TITLE = (
+    "Early Time-Restricted Feeding Reduces Appetite and Increases Fat Oxidation "
+    "but Does Not Affect Energy Expenditure in Humans"
+)
+
+FASTING = {"id": "W1", "title": "Flipping the Metabolic Switch", "source": "openalex"}
+HIIT = {"id": "W2", "title": "Effects of high-intensity interval training", "source": "openalex"}
+TRUNCATED = {"id": "W3", "title": LONG_TITLE, "source": "openalex"}
+SHORT = {"id": "W4", "title": "RAG", "source": "arxiv"}
+
+
+def test_select_cited_papers_keeps_only_titles_the_answer_mentions():
+    answer = "As argued in Flipping the Metabolic Switch, ketones drive the effect."
+    assert _select_cited_papers(answer, [FASTING, HIIT]) == [FASTING]
+
+
+def test_select_cited_papers_orders_by_first_mention():
+    answer = (
+        "Effects of high-intensity interval training came first here, "
+        "then Flipping the Metabolic Switch."
+    )
+    assert _select_cited_papers(answer, [FASTING, HIIT]) == [HIIT, FASTING]
+
+
+def test_select_cited_papers_matches_a_truncated_long_title_by_prefix():
+    answer = (
+        "See Early Time-Restricted Feeding Reduces Appetite and Increases Fat "
+        "Oxidation... for the calorimetry data."
+    )
+    assert _select_cited_papers(answer, [TRUNCATED, HIIT]) == [TRUNCATED]
+
+
+def test_select_cited_papers_survives_markdown_and_case_noise():
+    answer = "the review (**flipping the METABOLIC switch!**) says otherwise"
+    assert _select_cited_papers(answer, [FASTING]) == [FASTING]
+
+
+def test_select_cited_papers_returns_empty_when_nothing_matches():
+    assert _select_cited_papers("No titles restated here.", [FASTING, HIIT]) == []
+
+
+def test_select_cited_papers_ignores_very_short_titles():
+    """A three-letter title would match half the answers ever written."""
+    assert _select_cited_papers("Everything about RAG pipelines.", [SHORT]) == []
+
+
+def test_select_cited_papers_does_not_duplicate_repeated_mentions():
+    answer = "Flipping the Metabolic Switch, and again Flipping the Metabolic Switch."
+    assert _select_cited_papers(answer, [FASTING]) == [FASTING]

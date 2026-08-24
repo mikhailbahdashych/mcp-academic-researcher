@@ -203,6 +203,49 @@ def _dedup_papers(papers: list[dict], limit: int | None = None) -> list[dict]:
     return result
 
 
+#: Titles shorter than this (normalised) are too generic to prove a citation.
+_MIN_CITED_TITLE_LEN = 12
+#: Long titles are often truncated with an ellipsis; a prefix this long is
+#: still distinctive enough to count as a mention.
+_CITED_TITLE_PREFIX_LEN = 40
+
+
+def _normalise_text(text: str) -> str:
+    """Lowercase and collapse everything non-alphanumeric, so markdown emphasis,
+    punctuation and casing differences cannot break a title match."""
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+def _select_cited_papers(answer_text: str, papers: list[dict]) -> list[dict]:
+    """Return the papers whose titles the answer actually mentions, in the order
+    they are first mentioned.
+
+    This is what the sources rail should show: the model restates titles when it
+    uses a paper (headings, inline mentions, its own numbered source list), while
+    retrieved-but-irrelevant results are never named. Matching is done on
+    normalised text; titles longer than ``_CITED_TITLE_PREFIX_LEN`` also match on
+    their prefix, because models routinely truncate long titles with an ellipsis.
+    An empty return means the answer restated no titles (typical for small local
+    models) and the caller should fall back to the retrieval order.
+    """
+    haystack = _normalise_text(answer_text)
+    if not haystack:
+        return []
+
+    mentioned: list[tuple[int, dict]] = []
+    for paper in papers:
+        title = _normalise_text(paper.get("title", ""))
+        if len(title) < _MIN_CITED_TITLE_LEN:
+            continue
+        position = haystack.find(title)
+        if position < 0 and len(title) > _CITED_TITLE_PREFIX_LEN:
+            position = haystack.find(title[:_CITED_TITLE_PREFIX_LEN])
+        if position >= 0:
+            mentioned.append((position, paper))
+
+    return [paper for _, paper in sorted(mentioned, key=lambda pair: pair[0])]
+
+
 DEFAULT_MAX_RESULTS = 5
 
 
@@ -358,6 +401,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
         # max_results cap they are what survives.
         presearch_papers: list[dict] = []
         loop_papers: list[dict] = []
+        answer_text = ""
         requested_max_results: int | None = None
         messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
         for msg in request.history:
@@ -469,6 +513,7 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
                             yield _sse_token("\n\n")
                         full_content += event.text
                         emitted_any_text = True
+                        answer_text += event.text
                         yield _sse_token(event.text)
                     if event.tool_call:
                         tool_calls.append(event.tool_call)
@@ -516,8 +561,14 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
             )
             yield _sse_token(f"\u26a0\ufe0f {detail}")
 
-        # Model-initiated searches first: _dedup_papers keeps first occurrences, so
-        # this decides both the order and, under a cap, which papers survive.
-        yield _sse_papers(_dedup_papers(loop_papers + presearch_papers, requested_max_results))
+        # The rail should show what the answer used, not what the searches
+        # happened to return: papers whose titles the answer mentions, in
+        # first-mention order and without the per-search cap (an answer may cite
+        # far more than one search's worth). When the answer restates no titles,
+        # fall back to retrieval order — model-initiated searches first, capped —
+        # so "find 5 papers" flows and terse local models behave as before.
+        retrieved = _dedup_papers(loop_papers + presearch_papers)
+        cited = _select_cited_papers(answer_text, retrieved)
+        yield _sse_papers(cited or _dedup_papers(retrieved, requested_max_results))
         yield _sse_done()
         yield "data: [DONE]\n\n"
