@@ -50,31 +50,33 @@
 
     <ul class="session-list">
       @for (session of filteredSessions(); track session.id) {
-        <li class="session-row" [routerLink]="['/research', session.id]">
-          <div class="row-body">
-            <p class="row-title truncate">{{ session.title }}</p>
-            @if (getSnippet(session); as snippet) {
-              <p class="row-snippet truncate">{{ snippet }}</p>
-            }
-            <div class="row-meta mono">
-              <span class="material-icons" aria-hidden="true">schedule</span>
-              <span>{{ formatDate(session) }}</span>
-              @if (session.papers.length) {
-                <span aria-hidden="true">·</span>
-                <span class="material-icons" aria-hidden="true">article</span>
-                <span>{{ session.papers.length }} sources</span>
+        <li>
+          <a class="session-row" [routerLink]="['/research', session.id]">
+            <div class="row-body">
+              <p class="row-title truncate">{{ session.title }}</p>
+              @if (getSnippet(session); as snippet) {
+                <p class="row-snippet truncate">{{ snippet }}</p>
               }
+              <div class="row-meta mono">
+                <span class="material-icons" aria-hidden="true">schedule</span>
+                <span>{{ formatDate(session) }}</span>
+                @if (session.papers.length) {
+                  <span aria-hidden="true">·</span>
+                  <span class="material-icons" aria-hidden="true">article</span>
+                  <span>{{ session.papers.length }} sources</span>
+                }
+              </div>
             </div>
-          </div>
-          <button
-            type="button"
-            class="icon-action delete-btn"
-            matTooltip="Delete"
-            aria-label="Delete thread"
-            (click)="onDelete($event, session.id)"
-          >
-            <span class="material-icons">delete_outline</span>
-          </button>
+            <button
+              type="button"
+              class="icon-action delete-btn"
+              matTooltip="Delete"
+              aria-label="Delete thread"
+              (click)="onDelete($event, session.id)"
+            >
+              <span class="material-icons">delete_outline</span>
+            </button>
+          </a>
         </li>
       }
     </ul>

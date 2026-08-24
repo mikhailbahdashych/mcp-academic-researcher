@@ -1,14 +1,15 @@
 import {
   Component,
+  EventEmitter,
   HostListener,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
   inject,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MarkdownService } from 'ngx-markdown';
-import { CitationFocusService } from '@core/services/citation-focus.service';
 import { wrapCitations } from './citation-transform';
 
 /**
@@ -17,7 +18,11 @@ import { wrapCitations } from './citation-transform';
  * Parsing goes through ngx-markdown's `MarkdownService` (same trust level as the
  * `<markdown>` component it replaces — the content is our own backend's LLM output),
  * then `wrapCitations` rewrites the citation markers and the result is bound with
- * `[innerHTML]`. Clicking a chip asks the sources rail to reveal that source.
+ * `[innerHTML]`.
+ *
+ * A chip click is reported as the bare number it carries. Resolving that number
+ * to a source needs the message it belongs to, which the viewer deliberately
+ * knows nothing about, so the host decides what to reveal.
  */
 @Component({
   selector: 'app-markdown-viewer',
@@ -31,14 +36,16 @@ import { wrapCitations } from './citation-transform';
 })
 export class MarkdownViewerComponent implements OnChanges {
   @Input() content = '';
-  /** Number of sources in the session; markers above it stay plain text. */
+  /** Number of sources this answer cited; markers above it stay plain text. */
   @Input() maxCitations = 0;
+
+  /** The 1-based number a clicked citation chip carries. */
+  @Output() citeClick = new EventEmitter<number>();
 
   protected rendered: SafeHtml = '';
 
   private readonly markdownService = inject(MarkdownService);
   private readonly sanitizer = inject(DomSanitizer);
-  private readonly citationFocus = inject(CitationFocusService);
 
   /** Guards against an out-of-order async parse overwriting a newer render. */
   private renderToken = 0;
@@ -53,7 +60,7 @@ export class MarkdownViewerComponent implements OnChanges {
     if (!chip) return;
     event.preventDefault();
     const index = Number(chip.getAttribute('data-cite'));
-    if (Number.isInteger(index) && index > 0) this.citationFocus.focus(index);
+    if (Number.isInteger(index) && index > 0) this.citeClick.emit(index);
   }
 
   private render(): void {

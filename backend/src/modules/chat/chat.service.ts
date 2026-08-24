@@ -68,7 +68,12 @@ export class ChatService {
           sources: sources ?? null,
           llm,
         },
-        { responseType: 'stream', timeout: 60000 },
+        // No timeout: axios counts socket inactivity, and the orchestrator is
+        // legitimately silent until its first token — classifier, pre-search and
+        // a cold 7B or an adaptively thinking Opus can outlast any deadline,
+        // which would fabricate the "orchestrator is not running" mock answer.
+        // A refused connection still rejects immediately and falls back.
+        { responseType: 'stream', timeout: 0 },
       );
 
       await new Promise<void>((resolve, reject) => {

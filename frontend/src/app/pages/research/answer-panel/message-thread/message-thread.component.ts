@@ -24,11 +24,24 @@ import { MessageBubbleComponent } from '../message-bubble/message-bubble.compone
 export class MessageThreadComponent implements AfterViewChecked {
   @Input() messages: Message[] = [];
   @Input() isStreaming = false;
-  /** Number of sources in the session — bounds the citation chips. */
-  @Input() maxCitations = 0;
+  /**
+   * Number of sources in the session — the citation bound for messages that
+   * carry no source list of their own (threads saved before per-message papers).
+   */
+  @Input() fallbackCitations = 0;
 
   @Output() saveNote = new EventEmitter<Message>();
   @Output() rewrite = new EventEmitter<Message>();
+
+  /**
+   * How many `[n]` markers become chips in one turn.
+   *
+   * The model numbers its citations against its own source list for that turn,
+   * so the bound is per message, not per session.
+   */
+  citationBound(message: Message): number {
+    return message.papers?.length || this.fallbackCitations;
+  }
 
   @ViewChild('scrollAnchor') scrollAnchor!: ElementRef<HTMLDivElement>;
 

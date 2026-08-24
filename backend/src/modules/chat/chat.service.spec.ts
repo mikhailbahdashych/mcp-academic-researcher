@@ -99,6 +99,21 @@ describe('ChatService', () => {
     );
   });
 
+  it('opens the orchestrator stream without an inactivity timeout', async () => {
+    // axios measures its timeout as socket silence, and the orchestrator is
+    // legitimately silent until the first token, so any deadline here shows up
+    // as the mock "orchestrator is not running" answer on a slow cold start.
+    stubOrchestratorStream();
+
+    await service.streamChat('conv-1', 'hi', res);
+
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.anything(),
+      expect.objectContaining({ timeout: 0 }),
+    );
+  });
+
   it('sends null for force_tool and sources when neither is requested', async () => {
     stubOrchestratorStream();
 

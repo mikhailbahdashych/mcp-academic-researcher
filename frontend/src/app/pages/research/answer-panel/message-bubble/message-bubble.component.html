@@ -11,6 +11,7 @@
           <app-markdown-viewer
             [content]="message.content"
             [maxCitations]="maxCitations"
+            (citeClick)="onCiteClick($event)"
           ></app-markdown-viewer>
         }
         @if (message.isStreaming) {

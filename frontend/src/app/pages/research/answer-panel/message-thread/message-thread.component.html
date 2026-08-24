@@ -2,7 +2,7 @@
   @for (message of messages; track message.id) {
     <app-message-bubble
       [message]="message"
-      [maxCitations]="maxCitations"
+      [maxCitations]="citationBound(message)"
       [disableRewrite]="isStreaming"
       (saveNote)="saveNote.emit($event)"
       (rewrite)="rewrite.emit($event)"

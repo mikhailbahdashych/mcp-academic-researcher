@@ -112,6 +112,16 @@ export class AnswerPanelComponent implements OnInit, OnDestroy, OnChanges {
     } else if (event.type === 'papers') {
       const papers = event.data as Paper[];
       if (papers.length > 0) {
+        // Both lists matter: the message's own copy is what its citation chips
+        // resolve against (and what a reload restores), while the session list
+        // is the accumulated rail. Message first, so `addPapers`'s save catches it.
+        if (this.currentMessageId) {
+          this.sessionService.setMessagePapers(
+            this.sessionId,
+            this.currentMessageId,
+            papers
+          );
+        }
         this.sessionService.addPapers(this.sessionId, papers);
       }
     }

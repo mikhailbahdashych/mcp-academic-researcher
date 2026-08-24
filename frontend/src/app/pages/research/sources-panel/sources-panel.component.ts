@@ -25,8 +25,8 @@ const HIGHLIGHT_MS = 1200;
  * Right-hand rail listing the papers accumulated for the current session.
  *
  * Rows expand in place to reveal the abstract and per-paper actions. A citation
- * chip in the answer publishes its index through CitationFocusService, which the
- * rail turns into "expand, scroll into view, flash".
+ * chip in the answer publishes the source it names through CitationFocusService,
+ * which the rail turns into "expand, scroll into view, flash".
  */
 @Component({
   selector: 'app-sources-panel',
@@ -57,19 +57,27 @@ export class SourcesPanelComponent implements OnDestroy {
   constructor() {
     effect(
       () => {
-        const index = this.citationFocus.focusedIndex();
+        const paperId = this.citationFocus.focusedPaperId();
+        const focusedIndex = this.citationFocus.focusedIndex();
         this.citationFocus.tick();
-        if (index == null) return;
 
-        const paper = untracked(() => this.papers())[index - 1];
+        const papers = untracked(() => this.papers());
+        // An id says which source the answer meant, whatever position the rail
+        // now lists it at; a bare index is the positional fallback for threads
+        // whose messages carry no source list of their own.
+        const position = paperId
+          ? papers.findIndex(p => p.id === paperId) + 1
+          : focusedIndex ?? 0;
+
+        const paper = papers[position - 1];
         if (!paper) return;
 
         this.expandedId.set(paper.id);
-        this.highlightedIndex.set(index);
+        this.highlightedIndex.set(position);
 
         queueMicrotask(() =>
           document
-            .getElementById(`source-${index}`)
+            .getElementById(`source-${position}`)
             ?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
         );
 
