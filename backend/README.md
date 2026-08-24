@@ -1,6 +1,6 @@
 # Backend -- NestJS API Gateway
 
-The backend is a NestJS 10 API gateway that serves as the persistence layer and SSE streaming proxy between the Angular frontend and the Python orchestrator. It manages conversations and messages in SQLite via Prisma, validates requests, and forwards chat queries to the orchestrator while streaming responses back to the client.
+The backend is a NestJS 10 API gateway that serves as the persistence layer and SSE streaming proxy between the Angular frontend and the Python orchestrator. It manages conversations, messages, and LLM provider settings in SQLite via Prisma, validates requests, and forwards chat queries to the orchestrator -- together with the provider config to answer them with -- while streaming responses back to the client.
 
 [Back to project root](../README.md)
 
@@ -24,39 +24,41 @@ The backend is a NestJS 10 API gateway that serves as the persistence layer and 
 ## Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│  NestJS Application (port 3000, prefix /api)                 │
-│                                                              │
-│  ┌────────────────┐  ┌────────────────┐  ┌───────────────┐  │
-│  │ Conversations   │  │  Chat          │  │  Notes        │  │
-│  │ Module          │  │  Module        │  │  Module       │  │
-│  │                │  │                │  │               │  │
-│  │ Controller     │  │ Controller     │  │ Controller    │  │
-│  │ Service        │  │ Service        │  │ Service       │  │
-│  │ DTO            │  │ DTO            │  │               │  │
-│  └───────┬────────┘  └───────┬────────┘  └───────┬───────┘  │
-│          │                   │                   │           │
-│          └───────────┬───────┘                   │           │
-│                      │                           │           │
-│  ┌───────────────────▼───────────────────────────▼────────┐  │
-│  │                 PrismaModule (Global)                    │  │
-│  │                 PrismaService                           │  │
-│  │                 SQLite via Prisma 6                      │  │
-│  └─────────────────────────────────────────────────────────┘  │
-│                                                              │
-│  ┌─────────────────────────────────────────────────────────┐  │
-│  │                 ConfigModule (Global)                    │  │
-│  │                 .env file loading                        │  │
-│  └─────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────┐
+│  NestJS Application (port 3000, prefix /api)                         │
+│                                                                      │
+│  ┌──────────────┐ ┌─────────────┐ ┌─────────────┐ ┌────────────────┐ │
+│  │ Conversations│ │  Chat       │ │  Notes      │ │  Settings      │ │
+│  │ Module       │ │  Module     │ │  Module     │ │  Module        │ │
+│  │              │ │             │ │             │ │                │ │
+│  │ Controller   │ │ Controller  │ │ Controller  │ │ Controller     │ │
+│  │ Service      │ │ Service     │ │ Service     │ │ Service        │ │
+│  │ DTO          │ │ DTO         │ │ DTO         │ │ DTOs           │ │
+│  └───────┬──────┘ └──────┬──────┘ └──────┬──────┘ └────────┬───────┘ │
+│          │               │               │                 │         │
+│          └───────────────┴───────┬───────┴─────────────────┘         │
+│                                  │                                   │
+│  ┌───────────────────────────────▼─────────────────────────────────┐ │
+│  │                 PrismaModule (Global)                           │ │
+│  │                 PrismaService                                   │ │
+│  │                 SQLite via Prisma 6                             │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+│                                                                      │
+│  ┌─────────────────────────────────────────────────────────────────┐ │
+│  │                 ConfigModule (Global)                           │ │
+│  │                 .env file loading                               │ │
+│  └─────────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────────┘
                            │
-                           │ HTTP (axios)
+                           │ HTTP (axios) -- Chat, Notes, Settings
                            ▼
               ┌──────────────────────┐
               │ Python Orchestrator  │
               │ (port 8000)          │
               └──────────────────────┘
 ```
+
+`NotesModule` is a pure proxy and holds no Prisma state of its own; the other three read and write the SQLite database.
 
 ---
 
@@ -76,6 +78,7 @@ Root module that imports all feature modules:
     ConversationsModule,
     ChatModule,
     NotesModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}
@@ -118,7 +121,9 @@ SSE streaming endpoint that proxies chat requests to the Python orchestrator.
 
 **Service:** `ChatService` -- handles the streaming proxy logic, saves messages to the database
 
-**Imports:** `ConversationsModule` (to use `ConversationsService.findOne()`)
+**Imports:** `ConversationsModule` (to use `ConversationsService.findOne()`), `SettingsModule` (to use `SettingsService.getLlmConfig()`)
+
+Every request to the orchestrator carries an `llm` block resolved from the stored settings, plus the paper `sources` the client asked for. See [SSE Streaming Contract](#sse-streaming-contract).
 
 ### NotesModule
 
@@ -128,7 +133,24 @@ Proxy endpoints for notes operations. The actual notes storage is in the Python 
 
 **Controller:** `NotesController` -- prefix `notes`
 
-**Service:** `NotesService` -- forwards requests to the orchestrator via axios
+**Service:** `NotesService` -- forwards requests to the orchestrator via axios. Creating a note translates the orchestrator's 503 (embedding service down) into a `ServiceUnavailableException`, and a delete of a missing note into a `NotFoundException`.
+
+### SettingsModule
+
+**Files:** `src/modules/settings/`
+
+Stores which LLM provider answers chats, and probes providers on the settings page's behalf.
+
+**Controller:** `SettingsController` -- prefix `settings`
+
+**Service:** `SettingsService` -- reads/writes the singleton `Setting` row, and proxies provider probes to the orchestrator's `/llm/*` endpoints
+
+**Exports:** `SettingsService`, so `ChatModule` can call `getLlmConfig()` before each stream
+
+Two rules shape the whole module:
+
+- **The API key never comes back down.** `GET`/`PUT` return `anthropicApiKeySet` plus a masked `••••1234` hint, never the key. Logs record the provider name only, never the payload.
+- **A broken provider is a result, not a failure.** `POST /api/settings/models` and `POST /api/settings/test` always resolve with HTTP 200; an unconfigured, unreachable, or rejecting provider comes back in the `error` field.
 
 ---
 
@@ -149,15 +171,46 @@ All endpoints are prefixed with `/api` (set via `app.setGlobalPrefix('api')` in 
 
 | Method | Path | Description | Request Body | Response |
 |--------|------|-------------|-------------|----------|
-| `POST` | `/api/conversations/:id/messages/stream` | Stream a chat response | `StreamChatDto` | SSE event stream (`text/event-stream`) |
+| `POST` | `/api/conversations/:id/messages/stream` | Stream a chat response | `StreamChatDto` (`{ query, forceTool?, sources? }`) | SSE event stream (`text/event-stream`) |
 
 ### Notes
 
-| Method | Path | Description | Query Params | Response |
+| Method | Path | Description | Query Params / Body | Response |
 |--------|------|-------------|-------------|----------|
 | `GET` | `/api/notes` | List notes | `paper_id?`, `tags?`, `limit?` | `Note[]` |
 | `GET` | `/api/notes/search` | Semantic search notes | `q` (required), `limit?` | `Note[]` (with `score` field) |
+| `POST` | `/api/notes` | Create a note | `CreateNoteDto` | The created `Note` |
 | `DELETE` | `/api/notes/:id` | Delete a note | -- | 204 No Content |
+
+`POST /api/notes` is proxied to the orchestrator's `POST /notes`, which embeds the note before storing it. A 503 from the orchestrator (embedding service unavailable) is re-raised as a 503 with the message `Note embedding service unavailable`.
+
+### Settings
+
+| Method | Path | Description | Request Body | Response |
+|--------|------|-------------|-------------|----------|
+| `GET` | `/api/settings` | Read the current provider settings | -- | `SettingsView` |
+| `PUT` | `/api/settings` | Partially update the settings | `UpdateSettingsDto` | `SettingsView` (updated) |
+| `POST` | `/api/settings/models` | List the models a provider offers | `ProviderProbeDto` | `{ models: { id, name }[], error?: string }` -- always 200 |
+| `POST` | `/api/settings/test` | Round-trip one completion through a provider | `ProviderProbeDto` | `{ ok, model?, latencyMs?, reply?, error? }` -- always 200 |
+
+Both probe endpoints are declared `@HttpCode(200)`: they inspect a provider, they do not create anything.
+
+**`SettingsView`** -- what `GET` and `PUT` return. The stored Anthropic key is never included:
+
+```typescript
+interface SettingsView {
+  llmProvider: 'ollama' | 'anthropic';
+  ollamaBaseUrl: string;      // e.g. "http://localhost:11434"
+  ollamaModel: string;        // e.g. "qwen2.5:7b"
+  anthropicModel: string;     // e.g. "claude-opus-5"
+  anthropicApiKeySet: boolean;        // a key is stored
+  anthropicApiKeyHint: string | null; // "••••1234", null for keys of 4 chars or fewer
+  anthropicEnvKeyPresent: boolean;    // the orchestrator has its own env key
+  updatedAt: string;                  // ISO 8601
+}
+```
+
+`anthropicEnvKeyPresent` comes from the orchestrator's `GET /llm/env`. It is advisory, so an unreachable orchestrator answers `false` rather than failing the read.
 
 ---
 
@@ -196,6 +249,18 @@ model Message {
 
   @@map("messages")
 }
+
+model Setting {
+  id              String   @id @default("default")
+  llmProvider     String   @default("ollama")                  @map("llm_provider")
+  ollamaBaseUrl   String   @default("http://localhost:11434")   @map("ollama_base_url")
+  ollamaModel     String   @default("qwen2.5:7b")               @map("ollama_model")
+  anthropicModel  String   @default("claude-opus-5")            @map("anthropic_model")
+  anthropicApiKey String?                                       @map("anthropic_api_key")
+  updatedAt       DateTime @updatedAt                           @map("updated_at")
+
+  @@map("settings")
+}
 ```
 
 ### Field Descriptions
@@ -222,6 +287,27 @@ model Message {
 | `createdAt` | `DateTime` | Auto-set on creation |
 
 Messages cascade-delete when their parent conversation is deleted.
+
+**Setting:**
+
+`Setting` is a **single-row** model: the id defaults to the literal string `"default"`, and `SettingsService` reads it with an `upsert`, so the row is created with schema defaults the first time anything asks for it.
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | `String` | Always `"default"` -- the singleton row key |
+| `llmProvider` | `String` | `"ollama"` or `"anthropic"`; which provider answers chats |
+| `ollamaBaseUrl` | `String` | Ollama host, default `http://localhost:11434` |
+| `ollamaModel` | `String` | Ollama model tag, default `qwen2.5:7b` |
+| `anthropicModel` | `String` | Claude model id, default `claude-opus-5` |
+| `anthropicApiKey` | `String?` | Stored Anthropic key. Never returned by the API -- only `anthropicApiKeySet` and a `••••1234` hint are |
+| `updatedAt` | `DateTime` | Auto-updated by Prisma's `@updatedAt` |
+
+### Migrations
+
+| Migration | Contents |
+|-----------|----------|
+| `20260306061551_init` | `conversations` and `messages` tables |
+| `20260823171643_add_settings` | `settings` table (the `Setting` model above) |
 
 ---
 
@@ -259,8 +345,83 @@ class StreamChatDto {
     name: string;
     args: Record<string, unknown>;
   };
+
+  @IsOptional()
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(['arxiv', 'openalex'], { each: true })
+  sources?: string[]; // Paper sources to search; omitted means all of them
 }
 ```
+
+### CreateNoteDto
+
+**File:** `src/modules/notes/dto/create-note.dto.ts`
+
+```typescript
+class CreateNoteDto {
+  @IsString() @IsNotEmpty()
+  title!: string;              // Note title (the card heading)
+
+  @IsString() @IsNotEmpty()
+  content!: string;            // Full note body text
+
+  @IsOptional() @IsString()
+  paper_id?: string | null;    // Comma-separated paper IDs the note refers to
+
+  @IsOptional() @IsArray() @IsString({ each: true })
+  tags?: string[];             // Tag strings for categorization
+}
+```
+
+Snake-case `paper_id` is deliberate: the body is forwarded to the orchestrator's `POST /notes` unchanged.
+
+### UpdateSettingsDto
+
+**File:** `src/modules/settings/dto/update-settings.dto.ts`
+
+```typescript
+class UpdateSettingsDto {
+  @IsOptional() @IsIn(['ollama', 'anthropic'])
+  llmProvider?: 'ollama' | 'anthropic';
+
+  @IsOptional() @IsUrl({ require_tld: false, require_protocol: true })
+  ollamaBaseUrl?: string;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  ollamaModel?: string;
+
+  @IsOptional() @IsString() @MaxLength(200)
+  anthropicModel?: string;
+
+  @IsOptional() @IsString() @MaxLength(500)
+  anthropicApiKey?: string;
+}
+```
+
+Every field is optional and omission means "leave unchanged". A blank model or URL is ignored rather than stored, since an empty one would break every subsequent chat. `anthropicApiKey` is the exception: an empty string is how the UI **clears** the stored key.
+
+### ProviderProbeDto
+
+**File:** `src/modules/settings/dto/provider-probe.dto.ts`
+
+```typescript
+class ProviderProbeDto {
+  @IsIn(['ollama', 'anthropic'])
+  provider: 'ollama' | 'anthropic';   // The only required field
+
+  @IsOptional() @IsUrl({ require_tld: false, require_protocol: true })
+  baseUrl?: string;                   // Ollama host to probe
+
+  @IsOptional() @IsString() @MaxLength(500)
+  apiKey?: string;                    // Unsaved key typed into the settings page
+
+  @IsOptional() @IsString() @MaxLength(200)
+  model?: string;                     // Model to test against
+}
+```
+
+Credentials are probed **before** they are saved, so the page can validate a key the user has only typed. Omitted or blank fields fall back to what is stored (and, for the Anthropic key, ultimately to the orchestrator's own environment).
 
 ---
 
@@ -289,16 +450,41 @@ The `data: [DONE]` sentinel is emitted as the final line after the `done` event.
 ### Streaming Lifecycle (ChatService)
 
 1. Look up the conversation (throws 404 if not found)
-2. Save the user's message to the database
-3. Create a placeholder assistant message (empty content)
-4. Set SSE response headers (`Content-Type: text/event-stream`, etc.)
-5. Build the message history from the conversation's existing messages
-6. Forward the request to the Python orchestrator via axios with `responseType: 'stream'`
-7. Pipe incoming chunks directly to the client response
-8. Accumulate token content and papers for database persistence
-9. On stream end: update the assistant message with accumulated content and papers
-10. Update the conversation's `updatedAt` timestamp
-11. End the response
+2. Resolve the provider config via `SettingsService.getLlmConfig()` -- before anything is persisted and before the stream is opened, so a settings-read failure surfaces as a normal error rather than a half-written SSE stream blaming the orchestrator
+3. Save the user's message to the database
+4. Create a placeholder assistant message (empty content)
+5. Set SSE response headers (`Content-Type: text/event-stream`, etc.)
+6. Build the message history from the conversation's existing messages
+7. Forward the request to the Python orchestrator via axios with `responseType: 'stream'`
+8. Pipe incoming chunks directly to the client response
+9. Accumulate token content and papers for database persistence
+10. On stream end: update the assistant message with accumulated content and papers
+11. Update the conversation's `updatedAt` timestamp
+12. End the response
+
+### Orchestrator Request Payload
+
+The body posted to the orchestrator's `POST /chat`:
+
+```typescript
+{
+  conversation_id: string,
+  message: string,                  // StreamChatDto.query
+  history: { role, content }[],     // Prior messages of the conversation
+  force_tool: { name, args } | null,
+  sources: string[] | null,         // StreamChatDto.sources; null means every source
+  llm: {                            // From SettingsService.getLlmConfig()
+    provider: 'ollama' | 'anthropic',
+    model: string,
+    api_key: string | null,         // Anthropic only; null for Ollama
+    base_url: string | null,        // Ollama only; null for Anthropic
+  },
+}
+```
+
+Sending `llm` per request is what keeps the orchestrator stateless: it holds no provider configuration of its own, beyond an environment key it can fall back to.
+
+The axios call sets `timeout: 0` on purpose. Axios counts socket inactivity, and the orchestrator is legitimately silent until its first token -- classification, pre-search, and a cold local model can outlast any deadline, and a timeout would fabricate the "orchestrator is not running" mock answer below. A refused connection still rejects immediately and falls back.
 
 ---
 
@@ -330,6 +516,8 @@ Each token is sent with an 80ms delay to simulate streaming. The mock content is
 | `PORT` | `3000` | Server listening port |
 | `CORS_ORIGIN` | `http://localhost:4200` | Allowed CORS origin |
 
+There is deliberately **no LLM environment variable here.** The provider, model, and Anthropic key live in the `settings` table and are edited from the app's Settings page; the orchestrator's own `ANTHROPIC_API_KEY` / `CLAUDE_API_KEY` is only a fallback for when no key is stored (see the [Python README](../python/README.md#environment-variables)).
+
 ---
 
 ## Development Setup
@@ -352,8 +540,11 @@ npm install
 # Generate Prisma client
 npx prisma generate
 
-# Create/apply migrations (creates data/app.db)
-npx prisma migrate dev --name init
+# Apply the existing migrations (creates data/app.db)
+npx prisma migrate dev
+
+# Only when changing schema.prisma: create a new migration
+npx prisma migrate dev --name <name>
 ```
 
 ### Running
