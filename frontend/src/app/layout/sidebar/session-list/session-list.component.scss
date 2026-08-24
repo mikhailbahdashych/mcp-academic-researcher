@@ -1,19 +1,9 @@
-.session-list {
-  padding: 8px;
-  overflow-y: auto;
-  flex: 1;
-}
-
-.group {
-  margin-bottom: 8px;
-}
-
-.group-label {
+.mono-label {
   display: block;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--app-text-secondary);
-  padding: 8px 12px 4px;
+  padding: 20px 12px 8px;
+}
+
+.empty {
+  padding: 6px 12px;
+  font-size: 14px;
 }

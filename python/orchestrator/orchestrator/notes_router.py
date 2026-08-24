@@ -1,12 +1,15 @@
 import json
 import os
 import sqlite3
+import uuid
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Optional
 
 import httpx
 import sqlite_vec
 from fastapi import APIRouter, HTTPException, Query
+from pydantic import BaseModel, Field
 
 router = APIRouter()
 
@@ -50,7 +53,12 @@ def _get_conn() -> sqlite3.Connection:
 
 
 async def _get_embedding(text: str) -> list[float]:
-    """Generate a 768-dimensional embedding vector via Ollama's /api/embeddings endpoint.
+    """Generate a 768-dimensional embedding vector via Ollama's /api/embed endpoint.
+
+    Uses the same endpoint and payload as the notes MCP server's `_get_embedding`
+    (`mcp_servers/notes/notes/server.py`) so that notes and queries embedded here
+    land on the same (L2-normalized) scale as the ones written by the MCP tool --
+    both share the `notes_vec` index.
 
     Args:
         text: Text to embed.
@@ -63,11 +71,11 @@ async def _get_embedding(text: str) -> list[float]:
     """
     async with httpx.AsyncClient(timeout=30.0) as client:
         resp = await client.post(
-            f"{OLLAMA_BASE_URL}/api/embeddings",
-            json={"model": EMBED_MODEL, "prompt": text},
+            f"{OLLAMA_BASE_URL}/api/embed",
+            json={"model": EMBED_MODEL, "input": text},
         )
         resp.raise_for_status()
-        return resp.json()["embedding"]
+        return resp.json()["embeddings"][0]
 
 
 def _row_to_dict(row: tuple) -> dict:
@@ -81,6 +89,15 @@ def _row_to_dict(row: tuple) -> dict:
         "created_at": row[5],
         "updated_at": row[6],
     }
+
+
+class NoteCreate(BaseModel):
+    """Request body for creating a note."""
+
+    title: str = Field(min_length=1)
+    content: str = Field(min_length=1)
+    paper_id: str | None = None
+    tags: list[str] = []
 
 
 @router.get("")
@@ -127,6 +144,59 @@ async def list_notes(
         conn.close()
 
     return [_row_to_dict(row) for row in rows]
+
+
+@router.post("")
+async def create_note(note: NoteCreate):
+    """Create a note and index it for semantic search.
+
+    Embeds the note's title and content via Ollama, then stores the note row
+    and its embedding vector, mirroring the `save_note` MCP tool.
+
+    Args:
+        note: Title, content and optional paper_id / tags for the new note.
+
+    Returns:
+        The created note dict, in the same shape as the list endpoint.
+
+    Raises:
+        HTTPException: 503 if the embedding service is unavailable.
+    """
+    try:
+        embedding = await _get_embedding(f"{note.title} {note.content}")
+    except Exception as e:
+        raise HTTPException(status_code=503, detail=f"Embedding service unavailable: {e}")
+
+    note_id = str(uuid.uuid4())
+    now = datetime.now(UTC).isoformat()
+    tags_json = json.dumps(note.tags)
+
+    conn = _get_conn()
+    try:
+        conn.execute(
+            "INSERT OR REPLACE INTO notes "
+            "(id, title, content, paper_id, tags, created_at, updated_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (note_id, note.title, note.content, note.paper_id, tags_json, now, now),
+        )
+        conn.execute("DELETE FROM notes_vec WHERE note_id = ?", (note_id,))
+        conn.execute(
+            "INSERT INTO notes_vec (note_id, embedding) VALUES (?, ?)",
+            (note_id, sqlite_vec.serialize_float32(embedding)),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+
+    return {
+        "id": note_id,
+        "title": note.title,
+        "content": note.content,
+        "paper_id": note.paper_id,
+        "tags": note.tags,
+        "created_at": now,
+        "updated_at": now,
+    }
 
 
 @router.get("/search")

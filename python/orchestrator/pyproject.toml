@@ -13,9 +13,10 @@ dependencies = [
     "pydantic>=2.12.5",
     "uvicorn>=0.40.0",
     "ollama>=0.4.0",
-    "mcp>=1.25.0",
+    "mcp>=1.25.0,<2",  # 2.0 removed mcp.server.fastmcp
     "python-dotenv>=1.0.0",
     "shared",
+    "anthropic>=1.0.0",
 ]
 
 [tool.uv.sources]

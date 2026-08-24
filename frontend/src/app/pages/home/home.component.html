@@ -1,4 +1,8 @@
 <div class="home-page">
-  <app-search-hero (querySubmit)="onQuerySubmit($event)"></app-search-hero>
-  <app-suggested-topics (topicSelect)="onQuerySubmit($event)"></app-suggested-topics>
+  <section class="hero">
+    <h1 class="hero-title">Explore the <em>scientific literature</em> instantly</h1>
+    <p class="hero-subtitle">AI-synthesized answers with citations from peer-reviewed papers.</p>
+    <app-query-input size="hero" (querySubmit)="onQuerySubmit($event)"></app-query-input>
+    <app-suggested-topics (topicSelect)="onQuerySubmit($event)"></app-suggested-topics>
+  </section>
 </div>

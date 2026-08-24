@@ -1,5 +1,5 @@
-import { Component, ViewChild, inject, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, HostListener, ViewChild, inject, signal } from '@angular/core';
+import { Router, RouterOutlet } from '@angular/router';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -25,6 +25,8 @@ export class AppComponent {
 
   private readonly breakpointObserver = inject(BreakpointObserver);
 
+  private readonly router = inject(Router);
+
   readonly isHandset = toSignal(
     this.breakpointObserver
       .observe(Breakpoints.Handset)
@@ -36,6 +38,18 @@ export class AppComponent {
   readonly sidebarCollapsed = signal(
     localStorage.getItem(AppComponent.COLLAPSED_KEY) === 'true'
   );
+
+  /**
+   * ⌘K / Ctrl+K from anywhere returns to the home composer. On `/` the hero
+   * composer handles the shortcut itself (it just refocuses the textarea).
+   */
+  @HostListener('document:keydown', ['$event'])
+  onGlobalKey(event: KeyboardEvent): void {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'k' && this.router.url !== '/') {
+      event.preventDefault();
+      this.router.navigateByUrl('/');
+    }
+  }
 
   toggleCollapse(): void {
     this.sidebarCollapsed.update(v => {

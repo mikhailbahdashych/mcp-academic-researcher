@@ -1,21 +1,56 @@
 .top-bar {
-  height: var(--topbar-height);
-  background-color: var(--app-surface) !important;
-  border-bottom: 1px solid var(--app-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 56px;
+  flex-shrink: 0;
   padding: 0 8px;
+  background: var(--app-rail);
+  border-bottom: 1px solid var(--app-border-soft);
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
 .app-title {
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15.5px;
   font-weight: 600;
   color: var(--app-text-primary);
-  cursor: pointer;
-  margin-left: 4px;
+  text-decoration: none;
+
+  &:hover { text-decoration: none; }
 }
 
-.spacer {
-  flex: 1;
+.title-icon {
+  font-size: 17px;
+  color: var(--accent-color);
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-nav);
+  background: none;
+  color: var(--app-text-secondary);
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+
+  .material-icons { font-size: 19px; }
+
+  &:hover {
+    color: var(--app-text-primary);
+    background: var(--app-surface-hover);
+  }
+}
+
+.theme-btn {
+  margin-left: auto;
 }

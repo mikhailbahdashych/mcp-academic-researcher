@@ -1,34 +1,91 @@
-<div class="query-input-wrapper" [class.hero]="size === 'hero'" [class.inline]="size === 'inline'">
-  <div class="input-container" [class.disabled]="disabled">
-    <textarea
-      #textarea
-      cdkTextareaAutosize
-      cdkAutosizeMinRows="1"
-      cdkAutosizeMaxRows="8"
-      class="query-textarea"
-      [style.overflow-y]="query ? 'auto' : 'hidden'"
-      [(ngModel)]="query"
-      [placeholder]="placeholder"
-      [disabled]="disabled"
-      (keydown)="onKeydown($event)"
-      autocomplete="off"
-      autocorrect="off"
-      spellcheck="false"
-    ></textarea>
+<div
+  class="composer"
+  [class.hero]="size === 'hero'"
+  [class.inline]="size === 'inline'"
+  [class.disabled]="disabled"
+>
+  <textarea
+    #textarea
+    cdkTextareaAutosize
+    cdkAutosizeMinRows="1"
+    cdkAutosizeMaxRows="8"
+    class="composer-textarea"
+    [(ngModel)]="query"
+    [placeholder]="placeholderText"
+    [disabled]="disabled"
+    (keydown)="onKeydown($event)"
+    autocomplete="off"
+    spellcheck="false"
+    [attr.aria-label]="placeholderText"
+  ></textarea>
 
-    <div class="input-actions">
-      @if (size === 'hero') {
-        <span class="shortcut-hint text-secondary">&#8984;K</span>
-      }
-      <button
-        mat-icon-button
-        class="send-btn"
-        [disabled]="!query.trim() || disabled"
-        (click)="submit()"
-        matTooltip="Send (Enter)"
-      >
-        <mat-icon>arrow_upward</mat-icon>
-      </button>
+  @if (size === 'hero') {
+    <div class="composer-row">
+      <div class="composer-left">
+        <button
+          type="button"
+          class="scope-chip"
+          [class.active]="scope.isEnabled('arxiv')"
+          [attr.aria-pressed]="scope.isEnabled('arxiv')"
+          (click)="scope.toggle('arxiv')"
+          matTooltip="Search arXiv"
+        >
+          <span class="material-icons" aria-hidden="true">travel_explore</span>arXiv
+        </button>
+        <button
+          type="button"
+          class="scope-chip"
+          [class.active]="scope.isEnabled('openalex')"
+          [attr.aria-pressed]="scope.isEnabled('openalex')"
+          (click)="scope.toggle('openalex')"
+          matTooltip="Search OpenAlex"
+        >
+          <span class="material-icons" aria-hidden="true">hub</span>OpenAlex
+        </button>
+
+        <a
+          routerLink="/settings"
+          class="model-chip mono"
+          matTooltip="Change model in Settings"
+        >
+          <span class="material-icons" aria-hidden="true">{{ providerIcon }}</span>
+          <span class="truncate">{{ settings.currentModelLabel() }}</span>
+        </a>
+      </div>
+
+      <div class="composer-right">
+        <span class="kbd mono">&#8984;K</span>
+        <button
+          type="button"
+          class="send-btn"
+          [disabled]="!query.trim() || disabled"
+          (click)="submit()"
+          aria-label="Send"
+          matTooltip="Send (Enter)"
+        >
+          <span class="material-icons">arrow_upward</span>
+        </button>
+      </div>
     </div>
-  </div>
+  } @else {
+    <a
+      routerLink="/settings"
+      class="model-chip mono"
+      matTooltip="Change model in Settings"
+    >
+      <span class="material-icons" aria-hidden="true">{{ providerIcon }}</span>
+      <span class="truncate">{{ settings.currentModelLabel() }}</span>
+    </a>
+
+    <button
+      type="button"
+      class="send-btn"
+      [disabled]="!query.trim() || disabled"
+      (click)="submit()"
+      aria-label="Send"
+      matTooltip="Send (Enter)"
+    >
+      <span class="material-icons">arrow_upward</span>
+    </button>
+  }
 </div>

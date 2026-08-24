@@ -1,10 +1,19 @@
-<mat-toolbar class="top-bar">
-  <button mat-icon-button (click)="menuClick.emit()" aria-label="Toggle menu">
-    <mat-icon>menu</mat-icon>
+<header class="top-bar">
+  <button type="button" class="icon-btn" (click)="menuClick.emit()" aria-label="Toggle menu">
+    <span class="material-icons">menu</span>
   </button>
-  <span class="app-title" routerLink="/">MCP Researcher</span>
-  <span class="spacer"></span>
-  <button mat-icon-button (click)="themeService.toggle()" [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
-    <mat-icon>{{ themeService.isDark() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+
+  <a class="app-title" routerLink="/">
+    <span class="material-icons title-icon">science</span>
+    <span>MCP Researcher</span>
+  </a>
+
+  <button
+    type="button"
+    class="icon-btn theme-btn"
+    (click)="themeService.toggle()"
+    [attr.aria-label]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+  >
+    <span class="material-icons">{{ themeService.isDark() ? 'dark_mode' : 'light_mode' }}</span>
   </button>
-</mat-toolbar>
+</header>

@@ -3,15 +3,15 @@
   [routerLink]="['/research', session.id]"
   routerLinkActive="active"
 >
-  <mat-icon class="session-icon">chat</mat-icon>
-  <span class="session-title truncate">{{ session.title }}</span>
+  <span class="title truncate">{{ session.title }}</span>
   <button
-    mat-icon-button
+    type="button"
     class="delete-btn"
     [disabled]="isStreaming()"
     (click)="$event.preventDefault(); $event.stopPropagation(); !isStreaming() && deleteSession.emit(session.id)"
     [matTooltip]="isStreaming() ? 'Cannot delete while responding' : 'Delete'"
+    aria-label="Delete thread"
   >
-    <mat-icon>close</mat-icon>
+    <span class="material-icons">close</span>
   </button>
 </a>

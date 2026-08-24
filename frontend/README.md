@@ -1,6 +1,6 @@
 # Frontend -- Angular Application
 
-The frontend is an Angular 17 single-page application built with standalone components, Angular Material, and a signal-based state management approach. It provides a chat interface for academic research queries with real-time SSE streaming, paper source browsing, session history, and notes management.
+The frontend is an Angular 17 single-page application built with standalone components, Angular Material, and a signal-based state management approach. It provides a chat interface for academic research queries with real-time SSE streaming, paper source browsing, session history, notes management, and an LLM provider settings page.
 
 [Back to project root](../README.md)
 
@@ -29,15 +29,16 @@ The frontend is an Angular 17 single-page application built with standalone comp
 ```
 ┌──────────────────────────────────────────────────────────────────┐
 │  AppComponent (MatSidenav shell)                                  │
-│  ├── SidebarComponent                                             │
-│  │   ├── SidebarHeaderComponent (logo, theme toggle, collapse)   │
-│  │   ├── Nav links (Home, History, Notes)                        │
-│  │   └── SessionListComponent (grouped by date)                  │
-│  │       └── SessionItemComponent (per session)                  │
+│  ├── SidebarComponent (240px)                                     │
+│  │   ├── SidebarHeaderComponent (logo)                           │
+│  │   ├── Nav links (New thread ⌘K, History, Notes, Settings)     │
+│  │   ├── SessionListComponent ("Library", grouped by date)       │
+│  │   │   └── SessionItemComponent (per session)                  │
+│  │   └── SidebarFooterComponent (theme toggle, collapse)         │
 │  ├── TopBarComponent (mobile only)                               │
 │  └── <router-outlet> ─────────────────────────────────────────┐  │
-│      ├── HomeComponent                                         │  │
-│      │   ├── SearchHeroComponent                               │  │
+│      ├── HomeComponent (hero + composer)                       │  │
+│      │   ├── QueryInputComponent (hero)                        │  │
 │      │   └── SuggestedTopicsComponent                          │  │
 │      ├── ResearchComponent                                     │  │
 │      │   ├── AnswerPanelComponent                              │  │
@@ -46,12 +47,13 @@ The frontend is an Angular 17 single-page application built with standalone comp
 │      │   │   │       ├── MarkdownViewerComponent               │  │
 │      │   │   │       └── StreamingCursorComponent              │  │
 │      │   │   └── QueryInputComponent (follow-up)               │  │
-│      │   └── SourcesPanelComponent                             │  │
+│      │   └── SourcesPanelComponent (380px rail)                │  │
 │      │       └── PaperCardComponent                            │  │
 │      ├── HistoryComponent                                      │  │
 │      │   └── (inline session rows)                             │  │
-│      └── NotesComponent                                        │  │
-│          └── NoteCardComponent                                 │  │
+│      ├── NotesComponent                                        │  │
+│      │   └── NoteCardComponent                                 │  │
+│      └── SettingsComponent                                     │  │
 └──────────────────────────────────────────────────────────────────┘
 ```
 
@@ -63,27 +65,29 @@ The frontend is an Angular 17 single-page application built with standalone comp
 
 | Component | Route | Description |
 |-----------|-------|-------------|
-| `HomeComponent` | `/` | Landing page with search input and suggested topics |
-| `ResearchComponent` | `/research/:sessionId` | Split-pane chat and sources view |
+| `HomeComponent` | `/` | Landing hero with the composer and suggested topics |
+| `ResearchComponent` | `/research/:sessionId` | Answer thread plus the sources rail |
 | `HistoryComponent` | `/history` | Searchable list of past sessions |
 | `NotesComponent` | `/notes` | Notes browser with semantic search |
+| `SettingsComponent` | `/settings` | LLM provider settings: provider, model, base URL, API key |
 
 ### Layout Components
 
 | Component | Description |
 |-----------|-------------|
 | `AppComponent` | Root shell with `MatSidenav` container, responsive layout |
-| `SidebarComponent` | Navigation sidebar with collapsible state |
-| `SidebarHeaderComponent` | Logo, theme toggle button, collapse toggle |
-| `SessionListComponent` | Grouped session list (Today, Yesterday, This Week, Older) |
+| `SidebarComponent` | 240px navigation sidebar with collapsible state |
+| `SidebarHeaderComponent` | Logo, linking back to home |
+| `SessionListComponent` | Grouped session list under a "Library" label (Today, Yesterday, This Week, Older) |
 | `SessionItemComponent` | Single session link with delete button |
+| `SidebarFooterComponent` | Theme toggle and sidebar collapse toggle, pinned to the bottom |
 | `TopBarComponent` | Mobile-only toolbar with menu toggle and theme switch |
 
 ### Shared Components
 
 | Component | Description |
 |-----------|-------------|
-| `QueryInputComponent` | Auto-resizing textarea with Cmd+K shortcut, Enter to submit |
+| `QueryInputComponent` | The composer: auto-resizing textarea with Cmd+K shortcut, arXiv/OpenAlex scope chips, active-model chip, Enter to submit |
 | `PaperCardComponent` | Paper metadata card with citation copy, URL open, citation/reference lookup |
 
 ---
@@ -113,6 +117,11 @@ export const routes: Routes = [
     path: 'notes',
     loadComponent: () =>
       import('./pages/notes/notes.component').then(m => m.NotesComponent),
+  },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/settings/settings.component').then(m => m.SettingsComponent),
   },
   { path: '**', redirectTo: '' },
 ];
@@ -200,7 +209,7 @@ Handles SSE streaming via `fetch()` + `ReadableStream`. Returns an RxJS `Observa
 
 **Public Methods:**
 
-#### `streamChat(conversationId, query, forceTool?): Observable<SSEEvent>`
+#### `streamChat(conversationId, query, forceTool?, sources?): Observable<SSEEvent>`
 
 Initiates a streaming POST request to `/api/conversations/:id/messages/stream`.
 
@@ -210,6 +219,9 @@ Initiates a streaming POST request to `/api/conversations/:id/messages/stream`.
 | `conversationId` | `string` | Yes | The conversation UUID |
 | `query` | `string` | Yes | The user's query text |
 | `forceTool` | `{ name: string; args: Record<string, unknown> }` | No | Force a specific MCP tool call (used for citation/reference lookups) |
+| `sources` | `string[]` | No | Paper sources to search (`arxiv`, `openalex`), from `SearchScopeService`. Omitted means every source |
+
+Optional parameters are omitted from the request body entirely when absent, rather than sent as `null`.
 
 **Returns:** `Observable<SSEEvent>` -- emits events of type `token`, `papers`, `done`, or `error`. The Observable completes on `done` and errors on `error`. Unsubscribing aborts the fetch request.
 
@@ -294,9 +306,109 @@ Lists notes with optional filters.
 
 Performs semantic vector search over notes.
 
+#### `createNote(input: CreateNoteInput): Observable<Note>`
+
+Creates a note via `POST /api/notes`. Backs the "Save note" action on an assistant answer.
+
+```typescript
+interface CreateNoteInput {
+  title: string;
+  content: string;
+  paper_id?: string | null;  // Comma-separated paper IDs the note refers to
+  tags?: string[];
+}
+```
+
 #### `deleteNote(id: string): Observable<void>`
 
 Deletes a note by ID.
+
+---
+
+### `SettingsService`
+
+**File:** `src/app/core/services/settings.service.ts`
+
+Holds the LLM provider settings and talks to `/api/settings`. Loaded once at startup so the composer's model chip renders everywhere without each page re-fetching. A failed load leaves `settings()` null and the chip on its defaults -- the app still works, because the backend resolves the provider server-side for every chat.
+
+**Signals:**
+
+| Signal | Type | Description |
+|--------|------|-------------|
+| `settings` | `Signal<SettingsView \| null>` | Latest settings, or null before the first load lands |
+| `loading` | `Signal<boolean>` | True while a load is in flight |
+| `currentProvider` | `Signal<ProviderId>` | Active provider (computed), defaulting to `'ollama'` |
+| `currentModelLabel` | `Signal<string>` | Model name for the active provider, for the composer chip (computed) |
+
+**Public Methods:**
+
+#### `load(): void`
+
+Refreshes the cached settings from `GET /api/settings`. Errors are swallowed.
+
+#### `save(input: UpdateSettingsInput): Observable<SettingsView>`
+
+Sends a partial update to `PUT /api/settings` and adopts the returned view.
+
+#### `listModels(input: ProviderProbeInput): Observable<ModelsResult>`
+
+`POST /api/settings/models`. Never errors on a bad probe -- the response is HTTP 200 with an `error` field.
+
+#### `test(input: ProviderProbeInput): Observable<ProbeResult>`
+
+`POST /api/settings/test`. Round-trips one tiny completion; HTTP 200 either way.
+
+The module also exports `pruneProbe()`, which strips blank fields from a probe input so the backend falls back to the stored values rather than receiving empty strings.
+
+---
+
+### `SearchScopeService`
+
+**File:** `src/app/core/services/search-scope.service.ts`
+
+Holds the set of paper sources the composer searches, persisted to `localStorage` under the key `mcp_search_sources`.
+
+**Signals:**
+
+| Signal | Type | Description |
+|--------|------|-------------|
+| `sources` | `Signal<SearchSource[]>` | Enabled sources, in canonical order and never empty |
+
+**Public Methods:**
+
+#### `isEnabled(s: SearchSource): boolean`
+
+Whether a source (`'arxiv' \| 'openalex'`) is currently enabled.
+
+#### `toggle(s: SearchSource): void`
+
+Enables or disables a source. Toggling off the last remaining source is a no-op -- at least one source is always enabled.
+
+---
+
+### `CitationFocusService`
+
+**File:** `src/app/core/services/citation-focus.service.ts`
+
+Bridges a `[n]` citation chip click in the answer thread to the sources rail.
+
+**Signals:**
+
+| Signal | Type | Description |
+|--------|------|-------------|
+| `focusedPaperId` | `Signal<string \| null>` | Id of the source last requested by id. Takes precedence |
+| `focusedIndex` | `Signal<number \| null>` | 1-based position of the source last requested positionally |
+| `tick` | `Signal<number>` | Increments on every focus call, so clicking the same chip twice re-triggers the rail |
+
+**Public Methods:**
+
+#### `focusPaper(id: string): void`
+
+Reveals the source with this id, wherever the rail lists it. This is the accurate path: the model numbers its `[n]` markers against its own source list for that turn, so only the clicking message can say which paper a number means.
+
+#### `focus(index: number): void`
+
+Reveals the nth source of the session. The fallback for older threads whose messages carry no per-message source list.
 
 ---
 
@@ -396,6 +508,23 @@ interface ApiConversation {
 
 The `SessionService.hydrateSession()` method maps `ApiConversation` to `ChatSession`, converting `createdAt` strings to `Date` objects and parsing the `papers` JSON string.
 
+### Settings Types (`src/app/types/settings.types.ts`)
+
+Shapes of the LLM-provider settings JSON exchanged with the backend under `/api/settings`:
+
+| Type | Used For |
+|------|----------|
+| `ProviderId` | `'ollama' \| 'anthropic'` |
+| `SettingsView` | What `GET`/`PUT /api/settings` return |
+| `UpdateSettingsInput` | Body of `PUT /api/settings` |
+| `ProviderProbeInput` | Body of `POST /api/settings/models` and `/test` |
+| `ModelOption`, `ModelsResult` | Model-list responses |
+| `ProbeResult` | Connection-test responses |
+
+The Anthropic API key is **write-only**: it goes up in `UpdateSettingsInput` and `ProviderProbeInput`, but never comes back down. `SettingsView` carries only `anthropicApiKeySet` and a masked `anthropicApiKeyHint` (`••••1234`), plus `anthropicEnvKeyPresent` when the orchestrator has its own fallback key.
+
+Both probe results are always HTTP 200; a failed probe is an `error` string on the body, never a thrown `HttpErrorResponse`.
+
 ---
 
 ## Page Components
@@ -404,17 +533,17 @@ The `SessionService.hydrateSession()` method maps `ApiConversation` to `ChatSess
 
 **File:** `src/app/pages/home/home.component.ts`
 
-Landing page with a hero search input and suggested research topics. When the user submits a query (either typed or from a suggested topic), it creates a new session via `SessionService.createSession()` and navigates to `/research/:sessionId`.
+Landing page: a hero headline and subtitle above the composer, with suggested research topics below it. When the user submits a query (either typed or from a suggested topic), it creates a new session via `SessionService.createSession()` and navigates to `/research/:sessionId`.
 
 **Child components:**
-- `SearchHeroComponent` -- Hero section with title, description, and `QueryInputComponent`
+- `QueryInputComponent` (hero size variant) -- The composer, with its scope chips and model chip
 - `SuggestedTopicsComponent` -- Grid of clickable topic chips (e.g., "Large language models", "Quantum computing", "CRISPR gene editing", "Climate change models", "Neuroplasticity", "Protein folding")
 
 ### ResearchComponent
 
 **File:** `src/app/pages/research/research.component.ts`
 
-Two-column layout for active research. Left column shows the conversation thread, right column shows discovered paper sources.
+Two-column layout for active research. Left column shows the conversation thread, right column is the 380px sources rail.
 
 **Inputs:**
 | Name | Type | Source |
@@ -458,16 +587,24 @@ Submits a query with a forced MCP tool call. Used for citation/reference lookups
 
 **Child components:**
 - `MessageThreadComponent` -- Scrollable container for `MessageBubbleComponent` instances with auto-scroll during streaming
-- `MessageBubbleComponent` -- Renders user messages as plain text, assistant messages as markdown with copy button
-  - `MarkdownViewerComponent` -- Wraps `ngx-markdown` `<markdown>` component for rendering
+- `MessageBubbleComponent` -- Renders user messages as plain text, assistant messages as markdown with a **Copy** / **Save note** / **Rewrite** action row. Takes `maxCitations` (how many sources this answer cited) and `disableRewrite`; emits `saveNote` and `rewrite`
+  - `MarkdownViewerComponent` -- Wraps `ngx-markdown` `<markdown>` for rendering, then rewrites `[n]` citation markers into clickable chips. Emits `citeClick` with the 1-based number
   - `StreamingCursorComponent` -- Animated blinking cursor displayed during streaming
 - `QueryInputComponent` -- Follow-up query input (inline size variant)
+
+#### Citation chips
+
+**File:** `src/app/pages/research/answer-panel/markdown-viewer/citation-transform.ts`
+
+`wrapCitations(html, max)` is a pure string transform (unit-testable without a DOM) that turns `[n]` markers in the rendered markdown into `<a class="citation-chip" data-cite="n">` anchors. It splits the HTML on tags and rewrites only text segments outside `<code>`, `<pre>`, and `<a>` elements. Markers are left verbatim when they reference a source that does not exist (`n > max`, `n < 1`) or when there are no sources. Supported forms: `[1]`, `[1, 3]` (one chip per number), and `[1][2]`.
+
+Clicking a chip goes through `CitationFocusService`, which reveals the matching paper in the sources rail. The mapping is **per message** -- the model numbers its markers against its own source list for that turn, so `maxCitations` and the id lookup are scoped to the message that was clicked.
 
 ### SourcesPanelComponent
 
 **File:** `src/app/pages/research/sources-panel/sources-panel.component.ts`
 
-Displays accumulated papers for the current session with skeleton loading state.
+The 380px sources rail. Displays accumulated papers for the current session with a skeleton loading state; one card can be expanded at a time (`expandedId`), and a citation chip click scrolls to and highlights the matching card.
 
 **Inputs/Outputs:**
 | Name | Type | Direction | Description |
@@ -485,7 +622,9 @@ Searchable list of all past research sessions. Provides local text filtering via
 - Search input filters sessions by title and message content
 - Each row shows title, snippet from first assistant message, date, paper count
 - Delete button on each row
-- "New research" button navigates to home
+- "New thread" link in the page header navigates to home
+
+Sessions render as inline rows styled by the page itself; there is no separate session-card component.
 
 ### NotesComponent
 
@@ -495,6 +634,16 @@ Notes management page with debounced search (400ms). Uses `toObservable()` on th
 
 **Child components:**
 - `NoteCardComponent` -- Expandable card showing note title, content (with show more/less for 200+ characters), tags as chips, paper IDs with DOI copy, semantic similarity score badge (when from search), relative date formatting, and delete button
+
+### SettingsComponent
+
+**File:** `src/app/pages/settings/settings.component.ts`
+
+The LLM provider settings page. Under a "Model provider" section it offers a choice of Ollama or Anthropic, the model for each, the Ollama base URL, and the Anthropic API key -- plus a **Test connection** button and a **Save** button.
+
+Form state lives in local signals (`provider`, `ollamaBaseUrl`, `ollamaModel`, `anthropicModel`, `anthropicApiKey`, `clearKey`) hydrated from `SettingsService`; nothing is persisted until Save. Model lists are fetched per provider through `SettingsService.listModels()` and rendered as a select once they arrive, falling back to a free-text field while they are loading or unavailable (`ollamaSelectMode` / `anthropicSelectMode`).
+
+The API key field is write-only. The page shows the `••••1234` hint from `SettingsView` when a key is stored, offers an explicit "clear" toggle that sends `anthropicApiKey: ''`, and notes when the orchestrator has its own environment key (`anthropicEnvKeyPresent`).
 
 ---
 
@@ -513,17 +662,23 @@ Root application shell using `MatSidenav`. Manages:
 
 **File:** `src/app/layout/sidebar/sidebar.component.ts`
 
-Navigation sidebar with three nav links (Home, History, Notes), a collapsible session list, and a header with theme toggle. Accepts `collapsed` input and emits `toggleCollapse` and `closeSidenav` events.
+240px navigation sidebar: a header with the logo, four nav links (**New thread** with its ⌘K hint, **History**, **Notes**, **Settings**), the session list, and a footer. Accepts `collapsed` input and emits `toggleCollapse` and `closeSidenav` events. When collapsed, labels give way to tooltips and the session list is hidden entirely.
 
 ### SessionListComponent
 
 **File:** `src/app/layout/sidebar/session-list/session-list.component.ts`
 
-Groups sessions into time-based categories using a computed signal:
+Sits under a "Library" label and groups sessions into time-based categories using a computed signal:
 - Today
 - Yesterday
 - This Week
 - Older
+
+### SidebarFooterComponent
+
+**File:** `src/app/layout/sidebar/sidebar-footer/sidebar-footer.component.ts`
+
+Pinned to the bottom of the sidebar. Holds the theme toggle (labelled "Dark"/"Light") and the collapse toggle, which emits `toggleCollapse`. Accepts the same `collapsed` input, and swaps labels for tooltips when collapsed.
 
 ### TopBarComponent
 
@@ -539,7 +694,7 @@ Mobile-only toolbar with hamburger menu button and theme toggle. Only rendered w
 
 **File:** `src/app/shared/components/query-input/query-input.component.ts`
 
-Auto-resizing textarea (via `cdkTextareaAutosize`) with global keyboard shortcut support.
+The composer: an auto-resizing textarea (via `cdkTextareaAutosize`) with global keyboard shortcut support, in a rounded surface with a control row beneath it.
 
 **Inputs:**
 | Name | Type | Default | Description |
@@ -552,6 +707,12 @@ Auto-resizing textarea (via `cdkTextareaAutosize`) with global keyboard shortcut
 | Name | Type | Description |
 |------|------|-------------|
 | `querySubmit` | `EventEmitter<string>` | Emitted on Enter (without Shift) or send button click |
+
+**Controls:**
+
+- **Scope chips** (hero variant) -- `arXiv` and `OpenAlex` toggles backed by `SearchScopeService`. They set which sources the query searches; the last enabled one cannot be turned off
+- **Model chip** -- Shows `SettingsService.currentModelLabel()` with a provider icon, and links to `/settings`. Present in both size variants
+- **⌘K hint and send button** (hero variant)
 
 **Keyboard shortcuts:**
 - `Cmd+K` / `Ctrl+K` -- Focus the textarea (global listener)
@@ -615,29 +776,51 @@ The application uses Angular Material theming with CSS custom properties for fle
 ### Theme System
 
 - **Dark theme** is the default, applied globally via `mat.all-component-themes($dark-theme)`
-- **Light theme** overrides colors when the `light-theme` class is present on `<body>` via `mat.all-component-colors($light-theme)`
+- **Light theme** ("Paper") overrides colors when the `light-theme` class is present on `<body>` via `mat.all-component-colors($light-theme)`
 - `ThemeService` toggles the body class and persists the choice
+- The Material palettes only surface in the tooltip, snackbar, and spinner. Everything else is driven by the CSS custom properties below, so those tokens are where the look actually lives
 
 ### CSS Custom Properties
 
-All custom colors and layout values are defined as CSS variables in `:root`:
+All custom colors and layout values are defined as CSS variables in `:root`, with the light theme redefining the colors under `.light-theme`. The dark theme is a near-black console; the light theme ("Paper") is a warm off-white.
 
 | Variable | Dark Value | Light Value | Description |
 |----------|-----------|-------------|-------------|
-| `--app-bg` | `#0f1117` | `#f0f2f5` | Page background |
-| `--app-surface` | `#1a1d27` | `#ffffff` | Card/panel background |
-| `--app-surface-elevated` | `#21253a` | `#ffffff` | Elevated surface |
-| `--app-text-primary` | `#e8eaed` | `#1a1a2e` | Primary text |
-| `--app-text-secondary` | `#9aa0a6` | `#5f6368` | Secondary text |
-| `--app-border` | `rgba(255,255,255,0.08)` | `rgba(0,0,0,0.12)` | Border color |
-| `--accent-color` | `#1DE9B6` | `#1DE9B6` | Accent/highlight |
-| `--sidebar-width` | `260px` | `260px` | Sidebar width |
+| `--app-bg` | `#191A1A` | `#FBFAF4` | Page background |
+| `--app-surface` | `#202222` | `#FFFFFF` | Composer, cards |
+| `--app-rail` | `#1D1F1F` | `#F4F3EC` | Sidebar and sources rail |
+| `--app-surface-elevated` | `#262929` | `#F4F3EC` | User bubble, hover |
+| `--app-text-primary` | `#E9E9E4` | `#13343B` | Primary text |
+| `--app-text-body` | `#C9CEC9` | `#2E4547` | Long-form answer text |
+| `--app-text-secondary` | `#8D9797` | `#5F6E6F` | Secondary text |
+| `--app-text-faint` | `#6E7878` | `#8A9697` | Placeholders, mono labels |
+| `--app-border` | `rgba(255,255,255,0.08)` | `rgba(19,52,59,0.12)` | Border color |
+| `--accent-color` | `#23B5CB` | `#20808D` | Accent/highlight |
+| `--on-accent` | `#191A1A` | `#FBFAF4` | Text on an accent fill |
+
+Layout tokens are theme-independent:
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `--sidebar-width` | `240px` | Expanded sidebar |
+| `--sidebar-collapsed-width` | `56px` | Collapsed sidebar |
+| `--sources-rail-width` | `380px` | Sources rail |
+| `--content-max-width` | `720px` | Answer column |
+| `--composer-width` | `760px` | Composer |
+
+Radii (`--radius-sm` through `--radius-pill`, plus `--radius-nav`, `--radius-composer`, `--radius-followup`) and shadows (`--composer-shadow`, `--floating-shadow`) round out the token set.
 
 ### Typography
 
-- Primary font: Inter (sans-serif)
-- Monospace font: JetBrains Mono / Cascadia Code / Fira Code
-- Code blocks use `highlight.js` with the `github-dark` theme
+Three families, loaded from Google Fonts in `index.html` and exposed as tokens:
+
+| Token | Family | Used For |
+|-------|--------|----------|
+| `--font-sans` | Hanken Grotesk | UI and body text (also the Material typography config) |
+| `--font-display` | Source Serif 4 | Page titles and the home hero headline |
+| `--font-mono` | Space Mono | Section labels, keyboard hints, the model chip, code |
+
+Code blocks use `highlight.js` with the `github-dark` theme. The browser-tab icon is `src/favicon.svg`.
 
 ### Markdown Rendering
 
@@ -655,7 +838,11 @@ Markdown content is rendered via `ngx-markdown` (v17) using the `MarkdownViewerC
 
 ### SSE via `fetch()` + `ReadableStream`, Not `EventSource`
 
-The browser `EventSource` API only supports GET requests. Since the chat endpoint requires a POST body (with `query` and optional `forceTool`), the `StreamingService` uses `fetch()` with `ReadableStream` to consume the SSE stream. The response is manually parsed line-by-line.
+The browser `EventSource` API only supports GET requests. Since the chat endpoint requires a POST body (with `query` and optional `forceTool` / `sources`), the `StreamingService` uses `fetch()` with `ReadableStream` to consume the SSE stream. The response is manually parsed line-by-line.
+
+### The Provider Is Resolved Server-Side
+
+`SettingsComponent` writes the provider choice to the backend, and `SettingsService` caches it purely so the composer's model chip has something to display. The chat request itself never carries provider information: the backend reads the stored settings and attaches the `llm` block when it proxies to the orchestrator. A failed settings load therefore degrades the chip, not the chat -- and the API key never reaches the browser at all.
 
 ### Client-Generated UUIDs
 

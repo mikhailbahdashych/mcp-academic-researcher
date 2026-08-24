@@ -1,10 +1,9 @@
 <div class="suggested-topics">
-  <p class="topics-label text-secondary">Try asking about</p>
-  <div class="topics-grid">
+  <p class="mono-label">Try asking about</p>
+  <div class="topics">
     @for (topic of topics; track topic.label) {
-      <button class="topic-chip" (click)="topicSelect.emit(topic.query)">
-        <mat-icon class="topic-icon">{{ topic.icon }}</mat-icon>
-        <span>{{ topic.label }}</span>
+      <button type="button" class="topic-pill" (click)="topicSelect.emit(topic.query)">
+        {{ topic.label }}
       </button>
     }
   </div>

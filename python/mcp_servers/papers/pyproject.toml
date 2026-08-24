@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Papers search MCP server"
 requires-python = ">=3.11"
 dependencies = [
-    "mcp>=1.25.0",
+    "mcp>=1.25.0,<2",  # 2.0 removed mcp.server.fastmcp
     "pydantic>=2.12.5",
     "httpx>=0.28.1",
 ]

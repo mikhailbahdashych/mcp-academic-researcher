@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 
+/** Blinking 2px accent bar shown at the tail of a streaming answer. */
 @Component({
   selector: 'app-streaming-cursor',
   standalone: true,
@@ -8,11 +9,11 @@ import { Component } from '@angular/core';
     .cursor {
       display: inline-block;
       width: 2px;
-      height: 1.1em;
-      background: #1DE9B6;
+      height: 1.05em;
+      background: var(--accent-color);
       border-radius: 1px;
-      vertical-align: text-bottom;
-      margin-left: 1px;
+      vertical-align: -2px;
+      margin-left: 3px;
       animation: blink 0.9s step-end infinite;
     }
 

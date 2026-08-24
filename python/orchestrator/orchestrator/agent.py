@@ -1,20 +1,19 @@
 import json
-import os
+import logging
 import re
 import sys
+from collections.abc import AsyncGenerator, Container
 from contextlib import AsyncExitStack
 from dataclasses import dataclass
 from pathlib import Path
-from typing import AsyncGenerator
 
-import ollama
 from mcp import ClientSession
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
+from .llm import LLMClient, LLMError, LLMSettings, ToolCall, build_client, new_tool_call_id
 from .models import ChatRequest
 
-OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-MODEL = "qwen2.5:7b"
+logger = logging.getLogger(__name__)
 
 SYSTEM_PROMPT = (
     "You are an academic research assistant. "
@@ -27,6 +26,9 @@ SYSTEM_PROMPT = (
     "When calling save_note about specific papers, set the paper_id field to the EXACT paper IDs from the search results (the 'id' field). "
     "For arXiv papers use the arXiv ID (e.g. '2301.12345v1'). For OpenAlex papers use the DOI or OpenAlex URL from the 'id' field. "
     "NEVER invent or guess DOIs — only use IDs that appear in the search results. Comma-separate multiple IDs. "
+    "When your answer draws on specific papers from the search results, cite them "
+    "inline with bracketed numbers like [1] in the order the papers appear in your "
+    "final source list. "
 )
 
 
@@ -47,15 +49,18 @@ def _resolve_bin(name: str) -> str:
     return str(candidate) if candidate.exists() else name
 
 
-def _mcp_tool_to_ollama(tool) -> dict:
-    """Convert an MCP tool schema to Ollama's tool-calling format.
+def _mcp_tool_to_canonical(tool) -> dict:
+    """Convert an MCP tool schema to the canonical tool format.
+
+    The canonical format is the one `llm.py` translates for each provider (it
+    happens to be Ollama's own wire format).
 
     Args:
         tool: MCP Tool object with name, description, and inputSchema attributes.
 
     Returns:
-        Dictionary in Ollama's expected tool format with type, function.name,
-        function.description, and function.parameters.
+        Dictionary with type, function.name, function.description, and
+        function.parameters.
     """
     return {
         "type": "function",
@@ -94,6 +99,79 @@ def _parse_papers(result) -> list[dict]:
     return papers
 
 
+#: Paper-search tools that can be pre-called; a request names them by suffix.
+#: Also the only tools whose results may enter the sources list. Kept a list,
+#: not a set: `_select_search_tools` returns them in this order.
+PRE_SEARCH_TOOLS = ["search_arxiv", "search_openalex"]
+
+#: Tools served by the notes MCP server. Notes carry a `title` just like papers
+#: do, so an ungated accumulator would rank them into the sources rail.
+NOTE_TOOL_NAMES = {"save_note", "get_notes", "search_notes", "delete_note"}
+
+#: Excluded from the LLM's tool list after a pre-search, so it cannot re-run them.
+#: This is about tool *offering*, not about what counts as a paper.
+SEARCH_TOOL_NAMES = {"search_arxiv", "search_openalex", "search_notes"}
+
+#: Ceiling on LLM round trips per request, so a tool-calling loop cannot run away.
+MAX_TOOL_ITERATIONS = 8
+
+
+def _select_search_tools(sources: list[str] | None, available: Container[str]) -> list[str]:
+    """Pick the pre-search tools to run for the sources a request asked for.
+
+    Args:
+        sources: Source suffixes ("arxiv", "openalex"), matched case- and
+            whitespace-insensitively; None means every source.
+        available: Tool names the connected MCP servers actually offer.
+
+    Returns:
+        Tool names to pre-call, in a stable order. Unknown source names select
+        nothing rather than raising.
+    """
+    wanted = None if sources is None else {s.strip().lower() for s in sources}
+    return [
+        name
+        for name in PRE_SEARCH_TOOLS
+        if name in available and (wanted is None or name.split("_", 1)[1] in wanted)
+    ]
+
+
+def _result_texts(result) -> list[str]:
+    """Extract the text of each content item in an MCP tool result."""
+    return [getattr(c, "text", str(c)) for c in result.content]
+
+
+def _build_tool_exchange(
+    tool_name: str, tool_args: dict, result_texts: list[str]
+) -> tuple[dict, dict]:
+    """Record an already-executed tool call as an assistant/tool message pair.
+
+    Providers require every tool result to name the call it answers, so the two
+    messages share a freshly minted id.
+
+    Args:
+        tool_name: Name of the tool that was called.
+        tool_args: Arguments it was called with.
+        result_texts: Text content items the tool returned.
+
+    Returns:
+        The (assistant, tool) message pair, ready to append in that order.
+    """
+    call_id = new_tool_call_id()
+    assistant = {
+        "role": "assistant",
+        "content": "",
+        "tool_calls": [{"id": call_id, "function": {"name": tool_name, "arguments": tool_args}}],
+    }
+    tool = {
+        "role": "tool",
+        "content": json.dumps(result_texts),
+        "tool_call_id": call_id,
+        "name": tool_name,
+    }
+    return assistant, tool
+
+
 def _sse_token(text: str) -> str:
     """Format a text token as an SSE data line."""
     return f"data: {json.dumps({'type': 'token', 'data': text})}\n\n"
@@ -125,6 +203,49 @@ def _dedup_papers(papers: list[dict], limit: int | None = None) -> list[dict]:
     return result
 
 
+#: Titles shorter than this (normalised) are too generic to prove a citation.
+_MIN_CITED_TITLE_LEN = 12
+#: Long titles are often truncated with an ellipsis; a prefix this long is
+#: still distinctive enough to count as a mention.
+_CITED_TITLE_PREFIX_LEN = 40
+
+
+def _normalise_text(text: str) -> str:
+    """Lowercase and collapse everything non-alphanumeric, so markdown emphasis,
+    punctuation and casing differences cannot break a title match."""
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+def _select_cited_papers(answer_text: str, papers: list[dict]) -> list[dict]:
+    """Return the papers whose titles the answer actually mentions, in the order
+    they are first mentioned.
+
+    This is what the sources rail should show: the model restates titles when it
+    uses a paper (headings, inline mentions, its own numbered source list), while
+    retrieved-but-irrelevant results are never named. Matching is done on
+    normalised text; titles longer than ``_CITED_TITLE_PREFIX_LEN`` also match on
+    their prefix, because models routinely truncate long titles with an ellipsis.
+    An empty return means the answer restated no titles (typical for small local
+    models) and the caller should fall back to the retrieval order.
+    """
+    haystack = _normalise_text(answer_text)
+    if not haystack:
+        return []
+
+    mentioned: list[tuple[int, dict]] = []
+    for paper in papers:
+        title = _normalise_text(paper.get("title", ""))
+        if len(title) < _MIN_CITED_TITLE_LEN:
+            continue
+        position = haystack.find(title)
+        if position < 0 and len(title) > _CITED_TITLE_PREFIX_LEN:
+            position = haystack.find(title[:_CITED_TITLE_PREFIX_LEN])
+        if position >= 0:
+            mentioned.append((position, paper))
+
+    return [paper for _, paper in sorted(mentioned, key=lambda pair: pair[0])]
+
+
 DEFAULT_MAX_RESULTS = 5
 
 
@@ -138,7 +259,7 @@ class SearchIntent:
 
 
 async def _extract_search_query(
-    client: ollama.AsyncClient,
+    client: LLMClient,
     message: str,
     history: list[dict],
 ) -> SearchIntent | None:
@@ -187,13 +308,7 @@ async def _extract_search_query(
         "SEARCH: no\nQUERY:\nMAX_RESULTS: 5\nSORT_BY_DATE: no\nYEAR_FROM:\nYEAR_TO:\n"
     )
 
-    response = await client.chat(
-        model=MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        stream=False,
-    )
-
-    text = response.message.content or ""
+    text = await client.complete([{"role": "user", "content": prompt}], max_tokens=256)
 
     is_search = bool(re.search(r"SEARCH:\s*yes", text, re.IGNORECASE))
     if not is_search:
@@ -245,13 +360,21 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
     This async generator orchestrates the full request lifecycle:
     1. Spawns MCP server subprocesses (papers, citations, notes)
     2. Builds a tool registry mapping tool names to MCP sessions
-    3. Classifies user intent (search vs. non-search) via LLM
-    4. Pre-calls search tools if a search intent is detected
-    5. Runs the LLM loop, handling any additional tool calls
-    6. Yields SSE-formatted strings for each token, paper, and done event
+    3. Builds the LLM client for the provider the request asked for
+    4. Classifies user intent (search vs. non-search) via the LLM
+    5. Pre-calls search tools if a search intent is detected
+    6. Runs the LLM loop, handling any additional tool calls
+    7. Yields SSE-formatted strings for each token, paper, and done event
+
+    Messages are ordered the way every provider expects: system prompt, history,
+    the user's message, then the assistant/tool pairs recording any pre-calls.
+
+    A provider failure is reported as answer text (a leading warning sign) rather
+    than an SSE ``error`` event, which the frontend treats as a dropped stream.
 
     Args:
-        request: ChatRequest with message, history, and optional force_tool.
+        request: ChatRequest with message, history, and optional force_tool,
+            sources, and llm provider config.
 
     Yields:
         SSE-formatted strings (e.g., 'data: {"type":"token","data":"..."}\n\n').
@@ -263,150 +386,189 @@ async def run(request: ChatRequest) -> AsyncGenerator[str, None]:
 
         # Build tool registry
         tool_session: dict[str, ClientSession] = {}
-        ollama_tools: list[dict] = []
+        all_tools: list[dict] = []
         for session in (papers_session, citations_session, notes_session):
             result = await session.list_tools()
             for tool in result.tools:
                 tool_session[tool.name] = session
-                ollama_tools.append(_mcp_tool_to_ollama(tool))
+                all_tools.append(_mcp_tool_to_canonical(tool))
 
-        accumulated_papers: list[dict] = []
+        # Papers are kept in two buckets because they are not equally trustworthy.
+        # The pre-search runs off the classifier's guess at a query, so a request
+        # like "recent papers on X" can return the newest arXiv entries rather than
+        # relevant ones. When the model notices that and searches again itself, its
+        # results are the deliberate ones — they lead the source list, and under a
+        # max_results cap they are what survives.
+        presearch_papers: list[dict] = []
+        loop_papers: list[dict] = []
+        answer_text = ""
         requested_max_results: int | None = None
         messages: list[dict] = [{"role": "system", "content": SYSTEM_PROMPT}]
         for msg in request.history:
             messages.append({"role": msg.role, "content": msg.content})
 
-        client = ollama.AsyncClient(host=OLLAMA_BASE_URL)
+        try:
+            client = build_client(
+                LLMSettings(**request.llm.model_dump()) if request.llm else None
+            )
 
-        search_query: SearchIntent | None = None
+            # --- Classify intent before appending the current message, so the
+            # classifier's recent-context window does not see it twice ---
+            search_query: SearchIntent | None = None
+            if not request.force_tool:
+                search_query = await _extract_search_query(client, request.message, messages)
 
-        if request.force_tool:
-            # --- Forced tool call: skip pre-search, call the specified tool directly ---
-            tool_name = request.force_tool.name
-            tool_args = request.force_tool.args
-            session = tool_session.get(tool_name, citations_session)
-            try:
-                result = await session.call_tool(tool_name, tool_args)
-                accumulated_papers.extend(_parse_papers(result))
-                messages.append({
-                    "role": "assistant",
-                    "content": "",
-                    "tool_calls": [{"function": {"name": tool_name, "arguments": tool_args}}],
-                })
-                messages.append({
-                    "role": "tool",
-                    "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
-                })
-            except Exception as e:
-                messages.append({"role": "user", "content": f"Tool call failed: {e}"})
-        else:
-            # --- Classify intent and extract a clean search query ---
-            search_query = await _extract_search_query(client, request.message, messages)
+            messages.append({"role": "user", "content": request.message})
 
-            if search_query:
+            if request.force_tool:
+                # --- Forced tool call: skip pre-search, call the specified tool directly ---
+                tool_name = request.force_tool.name
+                tool_args = request.force_tool.args
+                session = tool_session.get(tool_name, citations_session)
+                try:
+                    result = await session.call_tool(tool_name, tool_args)
+                except Exception as exc:
+                    logger.exception("Forced tool %s failed", tool_name)
+                    # Still pair the call with a result: a dangling tool call is a
+                    # protocol error for Anthropic, and the model needs to know.
+                    messages.extend(
+                        _build_tool_exchange(
+                            tool_name, tool_args, [json.dumps({"error": str(exc)})]
+                        )
+                    )
+                else:
+                    # Citation tools do return papers, so this is not gated on
+                    # PRE_SEARCH_TOOLS — only note results are excluded.
+                    if tool_name not in NOTE_TOOL_NAMES:
+                        presearch_papers.extend(_parse_papers(result))
+                    messages.extend(
+                        _build_tool_exchange(tool_name, tool_args, _result_texts(result))
+                    )
+            elif search_query:
                 # --- Pre-search: only when the message is actually a paper search request ---
                 requested_max_results = search_query.max_results
-                tool_args: dict = {"query": search_query.query, "max_results": requested_max_results}
+                search_args: dict = {
+                    "query": search_query.query,
+                    "max_results": requested_max_results,
+                }
                 if search_query.sort_by_date:
-                    tool_args["sort_by_date"] = True
+                    search_args["sort_by_date"] = True
                 if search_query.year_from is not None:
-                    tool_args["year_from"] = search_query.year_from
+                    search_args["year_from"] = search_query.year_from
                 if search_query.year_to is not None:
-                    tool_args["year_to"] = search_query.year_to
+                    search_args["year_to"] = search_query.year_to
 
-                for tool_name in ["search_arxiv", "search_openalex"]:
-                    if tool_name not in tool_session:
-                        continue
+                for tool_name in _select_search_tools(request.sources, tool_session):
                     try:
-                        result = await tool_session[tool_name].call_tool(tool_name, tool_args)
-                        accumulated_papers.extend(_parse_papers(result))
-                        messages.append({
-                            "role": "assistant",
-                            "content": "",
-                            "tool_calls": [{"function": {"name": tool_name, "arguments": tool_args}}],
-                        })
-                        messages.append({
-                            "role": "tool",
-                            "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
-                        })
+                        result = await tool_session[tool_name].call_tool(tool_name, search_args)
                     except Exception:
-                        pass
+                        # One dead source must not sink the answer the other found.
+                        logger.exception("Pre-search tool %s failed", tool_name)
+                        continue
+                    presearch_papers.extend(_parse_papers(result))
+                    messages.extend(
+                        _build_tool_exchange(tool_name, search_args, _result_texts(result))
+                    )
 
                 # --- Pre-fetch related notes so LLM has context without calling the tool itself ---
                 if "search_notes" in tool_session:
+                    notes_args = {"query": search_query.query, "limit": 5}
                     try:
                         notes_result = await tool_session["search_notes"].call_tool(
-                            "search_notes", {"query": search_query.query, "limit": 5}
+                            "search_notes", notes_args
                         )
-                        messages.append({
-                            "role": "assistant",
-                            "content": "",
-                            "tool_calls": [{"function": {"name": "search_notes", "arguments": {"query": search_query.query, "limit": 5}}}],
-                        })
-                        messages.append({
-                            "role": "tool",
-                            "content": json.dumps([getattr(c, "text", str(c)) for c in notes_result.content]),
-                        })
                     except Exception:
-                        pass
+                        logger.exception("Note pre-fetch failed")
+                    else:
+                        messages.extend(
+                            _build_tool_exchange(
+                                "search_notes", notes_args, _result_texts(notes_result)
+                            )
+                        )
 
-        messages.append({"role": "user", "content": request.message})
+            # --- LLM loop: model summarizes results, may call more tools ---
+            # After pre-search, exclude search tools and search_notes to prevent duplicate calls
+            if search_query:
+                llm_tools = [
+                    t for t in all_tools if t["function"]["name"] not in SEARCH_TOOL_NAMES
+                ]
+            else:
+                llm_tools = all_tools
 
-        # --- LLM loop: model summarizes results, may call more tools ---
-        # After pre-search, exclude search tools and search_notes to prevent duplicate calls
-        SEARCH_TOOL_NAMES = {"search_arxiv", "search_openalex", "search_notes"}
-        if search_query:
-            llm_tools = [t for t in ollama_tools if t["function"]["name"] not in SEARCH_TOOL_NAMES]
-        else:
-            llm_tools = ollama_tools
+            # Every iteration is a separate model turn, but the tokens all land in
+            # one answer bubble. Without a break between turns the previous turn's
+            # last word runs straight into this turn's first one, so an answer that
+            # opens with a heading arrives as "...studies.## Heading" and the
+            # heading never parses as markdown. The separator is a token like any
+            # other, so it also reaches the copy the gateway persists.
+            emitted_any_text = False
 
-        while True:
-            response = await client.chat(
-                model=MODEL,
-                messages=messages,
-                tools=llm_tools,
-                stream=True,
-            )
+            for _ in range(MAX_TOOL_ITERATIONS):
+                full_content = ""
+                tool_calls: list[ToolCall] = []
 
-            full_content = ""
-            tool_calls = []
+                async for event in client.stream(messages, llm_tools):
+                    if event.text:
+                        if emitted_any_text and not full_content:
+                            yield _sse_token("\n\n")
+                        full_content += event.text
+                        emitted_any_text = True
+                        answer_text += event.text
+                        yield _sse_token(event.text)
+                    if event.tool_call:
+                        tool_calls.append(event.tool_call)
 
-            async for chunk in response:
-                msg = chunk.message
-                if msg.content:
-                    full_content += msg.content
-                    yield _sse_token(msg.content)
-                if msg.tool_calls:
-                    tool_calls.extend(msg.tool_calls)
-
-            if not tool_calls:
-                yield _sse_papers(_dedup_papers(accumulated_papers, requested_max_results))
-                yield _sse_done()
-                yield "data: [DONE]\n\n"
-                break
-
-            messages.append({
-                "role": "assistant",
-                "content": full_content,
-                "tool_calls": [
-                    {"function": {"name": tc.function.name, "arguments": tc.function.arguments}}
-                    for tc in tool_calls
-                ],
-            })
-
-            for tc in tool_calls:
-                tool_name = tc.function.name
-                tool_args = tc.function.arguments or {}
-                if isinstance(tool_args, str):
-                    tool_args = json.loads(tool_args)
-
-                session = tool_session.get(tool_name, papers_session)
-                result = await session.call_tool(tool_name, tool_args)
-
-                if tool_name in SEARCH_TOOL_NAMES:
-                    accumulated_papers.extend(_parse_papers(result))
+                if not tool_calls:
+                    break
 
                 messages.append({
-                    "role": "tool",
-                    "content": json.dumps([getattr(c, "text", str(c)) for c in result.content]),
+                    "role": "assistant",
+                    "content": full_content,
+                    "tool_calls": [
+                        {"id": tc.id, "function": {"name": tc.name, "arguments": tc.arguments}}
+                        for tc in tool_calls
+                    ],
                 })
+
+                for tc in tool_calls:
+                    session = tool_session.get(tc.name, papers_session)
+                    try:
+                        result = await session.call_tool(tc.name, tc.arguments)
+                    except Exception as exc:
+                        # Hand the failure back as the tool's result: the model can
+                        # apologise or retry, where a raised error would kill the stream.
+                        logger.exception("Tool %s failed", tc.name)
+                        content = json.dumps({"error": str(exc)})
+                    else:
+                        if tc.name in PRE_SEARCH_TOOLS:
+                            loop_papers.extend(_parse_papers(result))
+                        content = json.dumps(_result_texts(result))
+
+                    messages.append({
+                        "role": "tool",
+                        "content": content,
+                        "tool_call_id": tc.id,
+                        "name": tc.name,
+                    })
+        except Exception as exc:
+            # LLMError and ValueError (e.g. an unconfigured key) already read as
+            # user-facing text; anything else gets a prefix so the bubble is not
+            # a bare repr. The exception is logged without any provider settings,
+            # which would carry the API key.
+            logger.exception("Chat request failed (%s)", type(exc).__name__)
+            detail = (
+                str(exc) if isinstance(exc, LLMError | ValueError) else f"Request failed: {exc}"
+            )
+            yield _sse_token(f"\u26a0\ufe0f {detail}")
+
+        # The rail should show what the answer used, not what the searches
+        # happened to return: papers whose titles the answer mentions, in
+        # first-mention order and without the per-search cap (an answer may cite
+        # far more than one search's worth). When the answer restates no titles,
+        # fall back to retrieval order — model-initiated searches first, capped —
+        # so "find 5 papers" flows and terse local models behave as before.
+        retrieved = _dedup_papers(loop_papers + presearch_papers)
+        cited = _select_cited_papers(answer_text, retrieved)
+        yield _sse_papers(cited or _dedup_papers(retrieved, requested_max_results))
+        yield _sse_done()
+        yield "data: [DONE]\n\n"
